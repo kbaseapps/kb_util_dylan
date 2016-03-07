@@ -61,6 +61,9 @@ class JSONObjectEncoder(json.JSONEncoder):
 sync_methods = {}
 async_run_methods = {}
 async_check_methods = {}
+async_run_methods['kb_util_dylan.KButil_Insert_SingleEndLibrary_async'] = ['kb_util_dylan', 'KButil_Insert_SingleEndLibrary']
+async_check_methods['kb_util_dylan.KButil_Insert_SingleEndLibrary_check'] = ['kb_util_dylan', 'KButil_Insert_SingleEndLibrary']
+sync_methods['kb_util_dylan.KButil_Insert_SingleEndLibrary'] = True
 async_run_methods['kb_util_dylan.KButil_FASTQ_to_FASTA_async'] = ['kb_util_dylan', 'KButil_FASTQ_to_FASTA']
 async_check_methods['kb_util_dylan.KButil_FASTQ_to_FASTA_check'] = ['kb_util_dylan', 'KButil_FASTQ_to_FASTA']
 sync_methods['kb_util_dylan.KButil_FASTQ_to_FASTA'] = True
@@ -335,6 +338,10 @@ class Application(object):
         self.serverlog.set_log_level(6)
         self.rpc_service = JSONRPCServiceCustom()
         self.method_authentication = dict()
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Insert_SingleEndLibrary,
+                             name='kb_util_dylan.KButil_Insert_SingleEndLibrary',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Insert_SingleEndLibrary'] = 'required'
         self.rpc_service.add(impl_kb_util_dylan.KButil_FASTQ_to_FASTA,
                              name='kb_util_dylan.KButil_FASTQ_to_FASTA',
                              types=[dict])

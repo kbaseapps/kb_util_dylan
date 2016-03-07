@@ -141,6 +141,24 @@ public class KbUtilDylanClient {
     }
 
     /**
+     * <p>Original spec-file function name: KButil_Insert_SingleEndLibrary</p>
+     * <pre>
+     * Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilInsertSingleEndLibraryParams KButilInsertSingleEndLibraryParams} (original type "KButil_Insert_SingleEndLibrary_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilInsertSingleEndLibraryOutput KButilInsertSingleEndLibraryOutput} (original type "KButil_Insert_SingleEndLibrary_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilInsertSingleEndLibraryOutput kButilInsertSingleEndLibrary(KButilInsertSingleEndLibraryParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilInsertSingleEndLibraryOutput>> retType = new TypeReference<List<KButilInsertSingleEndLibraryOutput>>() {};
+        List<KButilInsertSingleEndLibraryOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Insert_SingleEndLibrary", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
+
+    /**
      * <p>Original spec-file function name: KButil_FASTQ_to_FASTA</p>
      * <pre>
      * Method for Converting a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary

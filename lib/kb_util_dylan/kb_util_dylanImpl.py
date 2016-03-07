@@ -29,6 +29,19 @@ class kb_util_dylan:
         #END_CONSTRUCTOR
         pass
 
+    def KButil_Insert_SingleEndLibrary(self, ctx, params):
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Insert_SingleEndLibrary
+        #END KButil_Insert_SingleEndLibrary
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Insert_SingleEndLibrary return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
     def KButil_FASTQ_to_FASTA(self, ctx, params):
         # ctx is the context object
         # return variables are: returnVal

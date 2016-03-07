@@ -111,6 +111,109 @@ sub new
 
 
 
+=head2 KButil_Insert_SingleEndLibrary
+
+  $return = $obj->KButil_Insert_SingleEndLibrary($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a kb_util_dylan.KButil_Insert_SingleEndLibrary_Params
+$return is a kb_util_dylan.KButil_Insert_SingleEndLibrary_Output
+KButil_Insert_SingleEndLibrary_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_sequence has a value which is a kb_util_dylan.sequence
+	output_name has a value which is a kb_util_dylan.data_obj_name
+workspace_name is a string
+sequence is a string
+data_obj_name is a string
+KButil_Insert_SingleEndLibrary_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+data_obj_ref is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a kb_util_dylan.KButil_Insert_SingleEndLibrary_Params
+$return is a kb_util_dylan.KButil_Insert_SingleEndLibrary_Output
+KButil_Insert_SingleEndLibrary_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_sequence has a value which is a kb_util_dylan.sequence
+	output_name has a value which is a kb_util_dylan.data_obj_name
+workspace_name is a string
+sequence is a string
+data_obj_name is a string
+KButil_Insert_SingleEndLibrary_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+data_obj_ref is a string
+
+
+=end text
+
+=item Description
+
+Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
+
+=back
+
+=cut
+
+ sub KButil_Insert_SingleEndLibrary
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function KButil_Insert_SingleEndLibrary (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to KButil_Insert_SingleEndLibrary:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'KButil_Insert_SingleEndLibrary');
+	}
+    }
+
+    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
+	method => "kb_util_dylan.KButil_Insert_SingleEndLibrary",
+	params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'KButil_Insert_SingleEndLibrary',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Insert_SingleEndLibrary",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'KButil_Insert_SingleEndLibrary',
+				       );
+    }
+}
+ 
+
+
 =head2 KButil_FASTQ_to_FASTA
 
   $return = $obj->KButil_FASTQ_to_FASTA($params)
@@ -384,7 +487,7 @@ a string
 
 
 
-=head2 KButil_Insert_SingleEndLibray_Params
+=head2 KButil_Insert_SingleEndLibrary_Params
 
 =over 4
 

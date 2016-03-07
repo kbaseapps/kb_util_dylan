@@ -171,6 +171,13 @@ class kb_util_dylan(object):
             raise ServerError('Unknown', 0, 'An unknown server error occurred')
         return resp['result']
  
+    def KButil_Insert_SingleEndLibrary(self, params, json_rpc_context = None):
+        if json_rpc_context and type(json_rpc_context) is not dict:
+            raise ValueError('Method KButil_Insert_SingleEndLibrary: argument json_rpc_context is not type dict as required.')
+        resp = self._call('kb_util_dylan.KButil_Insert_SingleEndLibrary',
+                          [params], json_rpc_context)
+        return resp[0]
+  
     def KButil_FASTQ_to_FASTA(self, params, json_rpc_context = None):
         if json_rpc_context and type(json_rpc_context) is not dict:
             raise ValueError('Method KButil_FASTQ_to_FASTA: argument json_rpc_context is not type dict as required.')

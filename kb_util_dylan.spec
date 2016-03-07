@@ -27,7 +27,7 @@ module kb_util_dylan {
         workspace_name workspace_name;
 	sequence       input_sequence;
         data_obj_name  output_name;
-    } KButil_Insert_SingleEndLibray_Params;
+    } KButil_Insert_SingleEndLibrary_Params;
 
 
     /* KButil_Insert_SingleEndLibrary Output
@@ -66,6 +66,11 @@ module kb_util_dylan {
 */
     } KButil_FASTQ_to_FASTA_Output;
 	
+
+    /*  Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
+    */
+    funcdef KButil_Insert_SingleEndLibrary (KButil_Insert_SingleEndLibrary_Params params)  returns (KButil_Insert_SingleEndLibrary_Output) authentication required;
+
 
     /*  Method for Converting a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary
     */
