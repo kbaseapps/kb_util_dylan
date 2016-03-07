@@ -1,0 +1,45 @@
+#
+# define display information
+#
+name: Insert FASTA or FASTQ to KBase
+tooltip: |
+    Create SingleEndLibrary Object in KBase
+screenshots: []
+
+icon: kb-orange.png
+
+#
+# define a set of similar methods that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    input_sequence:
+        ui-name : |
+            Insert Sequences
+        short-hint : |
+            FASTA or FASTQ sequences to insert
+        placeholder : |
+            Enter FASTA or FASTQ sequence...
+    output_name:
+        ui-name : |
+            Object Name
+        short-hint : |
+            Name for your SingleEndLibrary Object
+
+description : |
+    <p>This method inserts a FASTA or FASTQ file into KBase as a SingleEndLibrary object.</p>
+
