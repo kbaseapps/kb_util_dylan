@@ -2,7 +2,7 @@ module-name:
     kb_util_dylan
 
 module-description:
-    A KBase module
+    KBase Utilities
 
 service-language:
     python
