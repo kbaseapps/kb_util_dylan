@@ -1,14 +1,23 @@
 package us.kbase.kbutildylan;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
+import us.kbase.common.service.JsonClientException;
+import us.kbase.common.service.RpcContext;
+import us.kbase.common.service.UnauthorizedException;
 
 /**
  * <p>Original spec-file module name: kb_util_dylan</p>
  * <pre>
- * A KBase module: kb_util_dylan
+ * ** A KBase module: kb_util_dylan
+ * **
+ * ** This module contains basic utilities
  * </pre>
  */
 public class KbUtilDylanClient {
@@ -20,6 +29,35 @@ public class KbUtilDylanClient {
      */
     public KbUtilDylanClient(URL url) {
         caller = new JsonClientCaller(url);
+    }
+    /** Constructs a client with a custom URL.
+     * @param url the URL of the service.
+     * @param token the user's authorization token.
+     * @throws UnauthorizedException if the token is not valid.
+     * @throws IOException if an IOException occurs when checking the token's
+     * validity.
+     */
+    public KbUtilDylanClient(URL url, AuthToken token) throws UnauthorizedException, IOException {
+        caller = new JsonClientCaller(url, token);
+    }
+
+    /** Constructs a client with a custom URL.
+     * @param url the URL of the service.
+     * @param user the user name.
+     * @param password the password for the user name.
+     * @throws UnauthorizedException if the credentials are not valid.
+     * @throws IOException if an IOException occurs when checking the user's
+     * credentials.
+     */
+    public KbUtilDylanClient(URL url, String user, String password) throws UnauthorizedException, IOException {
+        caller = new JsonClientCaller(url, user, password);
+    }
+
+    /** Get the token this client uses to communicate with the server.
+     * @return the authorization token.
+     */
+    public AuthToken getToken() {
+        return caller.getToken();
     }
 
     /** Get the URL of the service with which this client communicates.
@@ -100,5 +138,23 @@ public class KbUtilDylanClient {
 
     public void _setFileForNextRpcResponse(File f) {
         caller.setFileForNextRpcResponse(f);
+    }
+
+    /**
+     * <p>Original spec-file function name: KButil_FASTQ_to_FASTA</p>
+     * <pre>
+     * Method for Converting a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilFASTQToFASTAParams KButilFASTQToFASTAParams} (original type "KButil_FASTQ_to_FASTA_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilFASTQToFASTAOutput KButilFASTQToFASTAOutput} (original type "KButil_FASTQ_to_FASTA_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilFASTQToFASTAOutput kButilFASTQToFASTA(KButilFASTQToFASTAParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilFASTQToFASTAOutput>> retType = new TypeReference<List<KButilFASTQToFASTAOutput>>() {};
+        List<KButilFASTQToFASTAOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_FASTQ_to_FASTA", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
     }
 }

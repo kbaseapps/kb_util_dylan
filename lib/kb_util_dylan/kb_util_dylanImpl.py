@@ -8,7 +8,9 @@ class kb_util_dylan:
     kb_util_dylan
 
     Module Description:
-    A KBase module: kb_util_dylan
+    ** A KBase module: kb_util_dylan
+**
+** This module contains basic utilities
     '''
 
     ######## WARNING FOR GEVENT USERS #######
@@ -26,3 +28,16 @@ class kb_util_dylan:
         #BEGIN_CONSTRUCTOR
         #END_CONSTRUCTOR
         pass
+
+    def KButil_FASTQ_to_FASTA(self, ctx, params):
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_FASTQ_to_FASTA
+        #END KButil_FASTQ_to_FASTA
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_FASTQ_to_FASTA return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
