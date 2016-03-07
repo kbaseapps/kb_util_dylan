@@ -241,16 +241,19 @@ class kb_util_dylan:
 
         #### Create the file to upload
         ##
-        input_file_name = 'user_query.fna'
+        input_file_name = params['output_name']
         forward_reads_file_path = os.path.join(self.scratch,input_file_name)
         forward_reads_file_handle = open(forward_reads_file_path, 'w', 0)
         self.log(console, 'writing query reads file: '+str(forward_reads_file_path))
 
         seq_cnt = 0
         input_sequence_buf = params['input_sequence']
-        if not input_sequence_buf.startswith('>'):
+        input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
+        input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
+        if not input_sequence_buf.startswith('>') and not input_sequence_buf.startswith('@'):
             forward_reads_file_handle.write('>'+params['output_name']+"\n")
             seq_cnt = 1
+
         forward_reads_file_handle.write(input_sequence_buf)
         forward_reads_file_handle.close()
 
