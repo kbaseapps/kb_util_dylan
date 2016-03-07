@@ -221,7 +221,7 @@ class kb_util_dylan:
     def KButil_Insert_SingleEndLibrary(self, ctx, params):
         # ctx is the context object
         # return variables are: returnVal
-        #BEGIN VSearch_BasicSearch
+        #BEGIN KButil_Insert_SingleEndLibrary
         console = []
         self.log(console,'Running KButil_Insert_SingleEndLibrary with params=')
         self.log(console, "\n"+pformat(params))
@@ -252,6 +252,7 @@ class kb_util_dylan:
             forward_reads_file_handle.write('>'+params['output_name']+"\n")
             seq_cnt = 1
         forward_reads_file_handle.write(input_sequence_buf)
+        forward_reads_file_handle.close()
 
         for line in input_sequence_buf.split("\n"):
             if line.startswith('>'):
@@ -274,7 +275,7 @@ class kb_util_dylan:
         #
         self.log(console,"UPLOADING RESULTS")  # DEBUG
 
-        sequencing_tech = 'artificial_reads'
+        sequencing_tech = 'N/A'
         self.upload_SingleEndLibrary_to_shock_and_ws (ctx,
                                                       console,  # DEBUG
                                                       params['workspace_name'],
@@ -328,3 +329,204 @@ class kb_util_dylan:
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
+
+
+
+    def KButil_FASTQ_to_FASTA(self, ctx, params):
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_FASTQ_to_FASTA
+        console = []
+        self.log(console,'Running KButil_FASTQ_to_FASTA with params=')
+        self.log(console, "\n"+pformat(params))
+        report = 'Running KButil_FASTQ_to_FASTA with params='
+        report += "\n"+pformat(params)
+
+
+        #### do some basic checks
+        #
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'input_name' not in params:
+            raise ValueError('input_name parameter is required')
+        if 'output_name' not in params:
+            raise ValueError('output_name parameter is required')
+
+
+        # Obtain the input object
+        #
+        forward_reads_file_compression = None
+        sequencing_tech = 'N/A'
+        try:
+            ws = workspaceService(self.workspaceURL, token=ctx['token'])
+            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['input_name']}])
+            data = objects[0]['data']
+            info = objects[0]['info']
+            # Object Info Contents
+            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
+            # 0 - obj_id objid
+            # 1 - obj_name name
+            # 2 - type_string type
+            # 3 - timestamp save_date
+            # 4 - int version
+            # 5 - username saved_by
+            # 6 - ws_id wsid
+            # 7 - ws_name workspace
+            # 8 - string chsum
+            # 9 - int size 
+            # 10 - usermeta meta
+            type_name = info[2].split('.')[1].split('-')[0]
+
+            if type_name == 'SingleEndLibrary':
+                type_namespace = info[2].split('.')[0]
+                if type_namespace == 'KBaseAssembly':
+                    file_name = data['handle']['file_name']
+                elif type_namespace == 'KBaseFile':
+                    file_name = data['lib']['file']['file_name']
+                else:
+                    raise ValueError('bad data type namespace: '+type_namespace)
+                #self.log(console, 'INPUT_FILENAME: '+file_name)  # DEBUG
+                if file_name[-3:] == ".gz":
+                    forward_reads_file_compression = 'gz'
+                if 'sequencing_tech' in data:
+                    sequencing_tech = data['sequencing_tech']
+
+        except Exception as e:
+            raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+            #to get the full stack trace: traceback.format_exc()
+        
+        # pull data from SHOCK
+        #
+        try:
+            if 'lib' in data:
+                forward_reads = data['lib']['file']
+            elif 'handle' in data:
+                forward_reads = data['handle']
+            else:
+                self.log(console,"bad structure for 'forward_reads'")
+                raise ValueError("bad structure for 'forward_reads'")
+
+            ### NOTE: this section is what could be replaced by the transform services
+            forward_reads_file_path = os.path.join(self.scratch,forward_reads['file_name'])
+            forward_reads_file_handle = open(forward_reads_file_path, 'w', 0)
+            self.log(console, 'downloading reads file: '+str(forward_reads_file_path))
+            headers = {'Authorization': 'OAuth '+ctx['token']}
+            r = requests.get(forward_reads['url']+'/node/'+forward_reads['id']+'?download', stream=True, headers=headers)
+            for chunk in r.iter_content(1024):
+                forward_reads_file_handle.write(chunk)
+            forward_reads_file_handle.close();
+            self.log(console, 'done')
+            ### END NOTE
+        except Exception as e:
+            print(traceback.format_exc())
+            raise ValueError('Unable to download single-end read library files: ' + str(e))
+
+
+        #### Create the file to upload
+        ##
+        output_file_name   = params['output_name']+'.fna'
+        output_file_path  = os.path.join(self.scratch,output_file_name)
+        input_file_handle  = open(forward_reads_file_path, 'r', -1)
+        output_file_handle = open(output_file_path, 'w', -1)
+        self.log(console, 'PROCESSING reads file: '+str(forward_reads_file_path))
+
+        seq_cnt = 0
+        header = None
+        last_header = None
+        last_seq_buf = None
+        last_line_was_header = False
+        for line in input_file_handle:
+            if line.startswith('@'):
+                seq_cnt += 1
+                header = line[1:]
+                if last_header != None:
+                    output_file_handle.write('>'+last_header)
+                    output_file_handle.write(last_seq_buf)
+                last_seq_buf = None
+                last_header = header
+                last_line_was_header = True
+            elif last_line_was_header:
+                last_seq_buf = line
+                last_line_was_header = False
+            else:
+                continue
+        if last_header != None:
+            output_file_handle.write('>'+last_header)
+            output_file_handle.write(last_seq_buf)
+
+        input_file_handle.close()
+        output_file_handle.close()
+        
+
+        # load the method provenance from the context object
+        #
+        self.log(console,"SETTING PROVENANCE")  # DEBUG
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects'] = []
+        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
+        provenance[0]['service'] = 'kb_util_dylan'
+        provenance[0]['method'] = 'KButil_FASTQ_to_FASTA'
+
+
+        # Upload results
+        #
+        self.log(console,"UPLOADING RESULTS")  # DEBUG
+
+        self.upload_SingleEndLibrary_to_shock_and_ws (ctx,
+                                                      console,  # DEBUG
+                                                      params['workspace_name'],
+                                                      params['output_name'],
+                                                      output_file_path,
+                                                      provenance,
+                                                      sequencing_tech
+                                                      )
+
+        # build output report object
+        #
+        self.log(console,"BUILDING REPORT")  # DEBUG
+        report += 'sequences in library:  '+str(seq_cnt)
+
+        reportObj = {
+            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_FASTQ_to_FASTA'}],
+            'text_message':report
+        }
+
+        reportName = 'kbutil_fastq_to_fasta_report_'+str(hex(uuid.getnode()))
+        report_obj_info = ws.save_objects({
+#                'id':info[6],
+                'workspace':params['workspace_name'],
+                'objects':[
+                    {
+                        'type':'KBaseReport.Report',
+                        'data':reportObj,
+                        'name':reportName,
+                        'meta':{},
+                        'hidden':1,
+                        'provenance':provenance
+                    }
+                ]
+            })[0]
+
+        self.log(console,"BUILDING RETURN OBJECT")
+#        returnVal = { 'output_report_name': reportName,
+#                      'output_report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+#                      'output_filtered_ref': params['workspace_name']+'/'+params['output_filtered_name']
+#                      }
+        returnVal = { 'report_name': reportName,
+                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+                      }
+        self.log(console,"KButil_FASTQ_to_FASTA DONE")
+
+        #END KButil_FASTQ_to_FASTA
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_FASTQ_to_FASTA return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+
