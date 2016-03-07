@@ -19,7 +19,7 @@
             "default_values": [ "" ],
             "field_type": "textarea",
             "textarea_options" : {
-                 "n_rows" : 30
+                 "n_rows" : 20
             }
         },
         {
