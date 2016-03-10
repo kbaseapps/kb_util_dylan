@@ -297,14 +297,14 @@ class kb_util_dylan:
                 split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+1])
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
                 forward_reads_file_handle.write(split_input_sequence_buf[i])
-                forward_reads_file_handle.write(split_input_sequence_buf[i+1])
+                forward_reads_file_handle.write(split_input_sequence_buf[i+1].lower())
             elif line.startswith('@'):
                 split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+1])
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
                 split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+3])
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+3])
                 forward_reads_file_handle.write(split_input_sequence_buf[i])
-                forward_reads_file_handle.write(split_input_sequence_buf[i+1])
+                forward_reads_file_handle.write(split_input_sequence_buf[i+1].lower())
                 forward_reads_file_handle.write(split_input_sequence_buf[i+2])
                 forward_reads_file_handle.write(split_input_sequence_buf[i+3])
 
