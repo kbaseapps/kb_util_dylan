@@ -226,7 +226,7 @@ class kb_util_dylan:
         self.log(console,'Running KButil_Insert_SingleEndLibrary with params=')
         self.log(console, "\n"+pformat(params))
         report = 'Running KButil_Insert_SingleEndLibrary with params='
-#        report += "\n"+pformat(params)  # DEBUG
+        report += "\n"+pformat(params)  # DEBUG
 
 
         #### do some basic checks
@@ -251,7 +251,7 @@ class kb_util_dylan:
         input_sequence_buf = params['input_sequence']
         if input_sequence_buf.startswith('@'):
             fastq_format = True
-        self.log(console,"INPUT_SEQ BEFORE: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
+#        self.log(console,"INPUT_SEQ BEFORE: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
         input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&#39;',  "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
@@ -264,12 +264,12 @@ class kb_util_dylan:
         input_sequence_buf = re.sub ('&#37;',  '%', input_sequence_buf)
         input_sequence_buf = re.sub ('&#47;',  '/', input_sequence_buf)
         input_sequence_buf = re.sub ('&#63;',  '?', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#92;',  chr(92), input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#92;',  chr(92), input_sequence_buf)  # FIX LATER
         input_sequence_buf = re.sub ('&#96;',  '`', input_sequence_buf)
         input_sequence_buf = re.sub ('&#124;', '|', input_sequence_buf)
         input_sequence_buf = re.sub ('&amp;', '&', input_sequence_buf)
         input_sequence_buf = re.sub ('&#38;', '&', input_sequence_buf)
-        self.log(console,"INPUT_SEQ AFTER: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
+#        self.log(console,"INPUT_SEQ AFTER: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
         if not input_sequence_buf.startswith('>') and not input_sequence_buf.startswith('@'):
             forward_reads_file_handle.write('>'+params['output_name']+"\n")
             seq_cnt = 1
