@@ -265,7 +265,15 @@ class kb_util_dylan:
             if line.startswith('>') or line.startswith('@'):
                 seq_cnt += 1
                 if not DNA_pattern.match(split_input_sequence_buf[i+1]):
-                    raise ValueError ("BAD record:\n"+line+"\n"+split_input_sequence_buf[i+1]+"\n")
+                    if fastq_format:
+                        bad_record = "\n".join(split_input_sequence_buf[i],
+                                               split_input_sequence_buf[i+1],
+                                               split_input_sequence_buf[i+2],
+                                               split_input_sequence_buf[i+3])
+                    else:
+                        bad_record = "\n".join(split_input_sequence_buf[i],
+                                               split_input_sequence_buf[i+1])
+                    raise ValueError ("BAD record:\n"+bad_record+"\n")
                     sys.exit(0)
             if fastq_format and line.startswith('@'):
                 format_ok = True
