@@ -264,7 +264,7 @@ class kb_util_dylan:
         input_sequence_buf = re.sub ('&#37;',  '%', input_sequence_buf)
         input_sequence_buf = re.sub ('&#47;',  '/', input_sequence_buf)
         input_sequence_buf = re.sub ('&#63;',  '?', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#92;',  chr(92), input_sequence_buf)
+        input_sequence_buf = re.sub ("\&\#92;",  chr(92), input_sequence_buf)
         input_sequence_buf = re.sub ('&#96;',  '`', input_sequence_buf)
         input_sequence_buf = re.sub ('&#124;', '|', input_sequence_buf)
         input_sequence_buf = re.sub ('&amp;', '&', input_sequence_buf)
