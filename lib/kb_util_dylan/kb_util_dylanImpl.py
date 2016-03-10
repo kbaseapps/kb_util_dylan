@@ -282,13 +282,13 @@ class kb_util_dylan:
                 seq_cnt += 1
                 if not DNA_pattern.match(split_input_sequence_buf[i+1]):
                     if fastq_format:
-                        bad_record = "\n".join(split_input_sequence_buf[i],
-                                               split_input_sequence_buf[i+1],
-                                               split_input_sequence_buf[i+2],
-                                               split_input_sequence_buf[i+3])
+                        bad_record = "\n".join([split_input_sequence_buf[i],
+                                                split_input_sequence_buf[i+1],
+                                                split_input_sequence_buf[i+2],
+                                                split_input_sequence_buf[i+3]])
                     else:
-                        bad_record = "\n".join(split_input_sequence_buf[i],
-                                               split_input_sequence_buf[i+1])
+                        bad_record = "\n".join([split_input_sequence_buf[i],
+                                                split_input_sequence_buf[i+1]])
                     raise ValueError ("BAD record:\n"+bad_record+"\n")
                     sys.exit(0)
             if fastq_format and line.startswith('@'):
@@ -312,8 +312,8 @@ class kb_util_dylan:
             if line.startswith('>'):
                 split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+1])
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
-                record = "\n".join(split_input_sequence_buf[i], \
-                                   split_input_sequence_buf[i+1].lower()) \
+                record = "\n".join([split_input_sequence_buf[i], \
+                                    split_input_sequence_buf[i+1].lower()]) \
                          + "\n"
 
                 forward_reads_file_handle.write(record)
@@ -322,10 +322,10 @@ class kb_util_dylan:
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
                 split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+3])
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+3])
-                record = "\n".join(split_input_sequence_buf[i], \
-                                   split_input_sequence_buf[i+1].lower(), \
-                                   split_input_sequence_buf[i+2], \
-                                   split_input_sequence_buf[i+3]) \
+                record = "\n".join([split_input_sequence_buf[i], \
+                                    split_input_sequence_buf[i+1].lower(), \
+                                    split_input_sequence_buf[i+2], \
+                                    split_input_sequence_buf[i+3]]) \
                          + "\n"
                 forward_reads_file_handle.write(record)
 
