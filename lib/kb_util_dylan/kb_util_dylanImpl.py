@@ -312,8 +312,8 @@ class kb_util_dylan:
             if line.startswith('>'):
                 split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+1])
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
-                record = "\n".join(split_input_sequence_buf[i],
-                                   split_input_sequence_buf[i+1].lower())
+                record = "\n".join(split_input_sequence_buf[i], \
+                                   split_input_sequence_buf[i+1].lower()) \
                          + "\n"
 
                 forward_reads_file_handle.write(record)
@@ -322,11 +322,10 @@ class kb_util_dylan:
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
                 split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+3])
                 split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+3])
-                record = "\n".join(split_input_sequence_buf[i],
-                                   split_input_sequence_buf[i+1].lower(),
-                                   
-                                   split_input_sequence_buf[i+2],
-                                   split_input_sequence_buf[i+3])
+                record = "\n".join(split_input_sequence_buf[i], \
+                                   split_input_sequence_buf[i+1].lower(), \
+                                   split_input_sequence_buf[i+2], \
+                                   split_input_sequence_buf[i+3]) \
                          + "\n"
                 forward_reads_file_handle.write(record)
 
