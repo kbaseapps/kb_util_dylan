@@ -31,7 +31,7 @@ parameters :
         ui-name : |
             Insert Sequences
         short-hint : |
-            DNA FASTA or FASTQ sequences to insert.  PROTEIN sequences not available at this time.
+            DNA or RNA FASTA or FASTQ sequences to insert.  PROTEIN sequences not available at this time.
         placeholder : |
             Enter FASTA or FASTQ sequence...
     output_name:
