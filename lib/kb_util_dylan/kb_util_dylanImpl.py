@@ -258,9 +258,6 @@ class kb_util_dylan:
             forward_reads_file_handle.write('>'+params['output_name']+"\n")
             seq_cnt = 1
 
-        forward_reads_file_handle.write(input_sequence_buf)
-        forward_reads_file_handle.close()
-
         # format checks
         DNA_pattern = re.compile("^[acgtuACGTU ]+$")
         split_input_sequence_buf = input_sequence_buf.split("\n")
@@ -279,9 +276,31 @@ class kb_util_dylan:
                     format_ok = False
                 if not seq_len == len(split_input_sequence_buf[i+3]):
                     format_ok = False
-                if not format_ok
+                if not format_ok:
                     raise ValueError ("BAD record:\n"+line+"\n"+split_input_sequence_buf[i+1]+"\n")
                     sys.exit(0)
+
+
+        # write that sucker, removing spaces
+        #
+        #forward_reads_file_handle.write(input_sequence_buf)        input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
+        for i,line in enumerate(split_input_sequence_buf):
+            if line.startswith('>'):
+                split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+1])
+                split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
+                forward_reads_file_handle.write(split_input_sequence_buf[i])
+                forward_reads_file_handle.write(split_input_sequence_buf[i+1])
+            elif line.startswith('@'):
+                split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+1])
+                split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
+                split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+3])
+                split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+3])
+                forward_reads_file_handle.write(split_input_sequence_buf[i])
+                forward_reads_file_handle.write(split_input_sequence_buf[i+1])
+                forward_reads_file_handle.write(split_input_sequence_buf[i+2])
+                forward_reads_file_handle.write(split_input_sequence_buf[i+3])
+
+        forward_reads_file_handle.close()
 
 
         # load the method provenance from the context object
