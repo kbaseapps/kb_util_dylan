@@ -3,7 +3,7 @@
 #
 name: Insert FASTA or FASTQ to KBase
 tooltip: |
-    Create SingleEndLibrary Object in KBase
+    Create SingleEndLibrary (DNA) Object in KBase
 screenshots: []
 
 icon: kb-orange.png
@@ -31,7 +31,7 @@ parameters :
         ui-name : |
             Insert Sequences
         short-hint : |
-            FASTA or FASTQ sequences to insert
+            DNA FASTA or FASTQ sequences to insert.  PROTEIN sequences not available at this time.
         placeholder : |
             Enter FASTA or FASTQ sequence...
     output_name:
