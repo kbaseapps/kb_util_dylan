@@ -248,7 +248,7 @@ class kb_util_dylan:
 
         seq_cnt = 0
         input_sequence_buf = params['input_sequence']
-        self.log(console,"INPUT_SEQ: '''\n"+input_sequence_buf+"'''")  # DEBUG
+        self.log(console,"INPUT_SEQ: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
         input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
         if not input_sequence_buf.startswith('>') and not input_sequence_buf.startswith('@'):
@@ -307,6 +307,7 @@ class kb_util_dylan:
         }
 
         reportName = 'kbutil_insert_singleendlibrary_report_'+str(hex(uuid.getnode()))
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
                 'workspace':params['workspace_name'],
@@ -506,6 +507,7 @@ class kb_util_dylan:
         }
 
         reportName = 'kbutil_fastq_to_fasta_report_'+str(hex(uuid.getnode()))
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
                 'workspace':params['workspace_name'],
