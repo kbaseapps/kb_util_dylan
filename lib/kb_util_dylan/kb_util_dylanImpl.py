@@ -253,22 +253,22 @@ class kb_util_dylan:
             fastq_format = True
 #        self.log(console,"INPUT_SEQ BEFORE: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
         input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
-        input_sequence_buf = re.sub ('&#39;',  "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#34;',  '"', input_sequence_buf)
-        input_sequence_buf = re.sub ('&lt;;',  '<', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#60;',  '<', input_sequence_buf)
-        input_sequence_buf = re.sub ('&gt;',   '>', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#62;',  '>', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#36;',  '$', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#37;',  '%', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#47;',  '/', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#63;',  '?', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#92;',  chr(92), input_sequence_buf)  # FIX LATER
-        input_sequence_buf = re.sub ('&#96;',  '`', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#124;', '|', input_sequence_buf)
-        input_sequence_buf = re.sub ('&amp;', '&', input_sequence_buf)
-        input_sequence_buf = re.sub ('&#38;', '&', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#39;',  "'", input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#34;',  '"', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&lt;;',  '<', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#60;',  '<', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&gt;',   '>', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#62;',  '>', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#36;',  '$', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#37;',  '%', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#47;',  '/', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#63;',  '?', input_sequence_buf)
+##        input_sequence_buf = re.sub ('&#92;',  chr(92), input_sequence_buf)  # FIX LATER
+#        input_sequence_buf = re.sub ('&#96;',  '`', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#124;', '|', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&amp;', '&', input_sequence_buf)
+#        input_sequence_buf = re.sub ('&#38;', '&', input_sequence_buf)
 #        self.log(console,"INPUT_SEQ AFTER: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
 
         DNA_pattern = re.compile("^[acgtuACGTU ]+$")
