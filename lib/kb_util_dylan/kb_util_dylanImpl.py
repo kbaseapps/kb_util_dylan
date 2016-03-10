@@ -251,7 +251,7 @@ class kb_util_dylan:
         input_sequence_buf = params['input_sequence']
         if input_sequence_buf.startswith('@'):
             fastq_format = True
-        self.log(console,"INPUT_SEQ: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
+        #self.log(console,"INPUT_SEQ: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
         input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&#39;',  "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
