@@ -248,7 +248,7 @@ class kb_util_dylan:
 
         seq_cnt = 0
         input_sequence_buf = params['input_sequence']
-        self.log(console,"INPUT_SEQ: '''\n"+input_seqeunce_buf+"'''")  # DEBUG
+        self.log(console,"INPUT_SEQ: '''\n"+input_sequence_buf+"'''")  # DEBUG
         input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
         if not input_sequence_buf.startswith('>') and not input_sequence_buf.startswith('@'):
