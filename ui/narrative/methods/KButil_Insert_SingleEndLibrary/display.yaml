@@ -3,7 +3,7 @@
 #
 name: Insert FASTA or FASTQ to KBase
 tooltip: |
-    Create SingleEndLibrary (DNA) Object in KBase
+    Create SingleEndLibrary (DNA) Object in KBase.  Note that large files should be uploaded using Data Import, not by this tool.
 screenshots: []
 
 icon: kb-orange.png
