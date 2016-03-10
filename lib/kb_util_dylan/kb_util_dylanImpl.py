@@ -337,8 +337,8 @@ class kb_util_dylan:
                 elif line.startswith('@'):
                     split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+1])
                     split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+1])
-                    split_input_sequence_buf[i+1] = re.sub (" ","",split_input_sequence_buf[i+3])
-                    split_input_sequence_buf[i+1] = re.sub ("\t","",split_input_sequence_buf[i+3])
+                    split_input_sequence_buf[i+3] = re.sub (" ","",split_input_sequence_buf[i+3])
+                    split_input_sequence_buf[i+3] = re.sub ("\t","",split_input_sequence_buf[i+3])
                     record = "\n".join([split_input_sequence_buf[i], \
                                         split_input_sequence_buf[i+1].lower(), \
                                         split_input_sequence_buf[i+2], \
