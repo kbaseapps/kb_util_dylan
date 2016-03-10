@@ -248,6 +248,7 @@ class kb_util_dylan:
 
         seq_cnt = 0
         input_sequence_buf = params['input_sequence']
+        self.log(console,"INPUT_SEQ: '''\n"+input_seqeunce_buf+"'''")  # DEBUG
         input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
         if not input_sequence_buf.startswith('>') and not input_sequence_buf.startswith('@'):
@@ -257,10 +258,17 @@ class kb_util_dylan:
         forward_reads_file_handle.write(input_sequence_buf)
         forward_reads_file_handle.close()
 
-        for line in input_sequence_buf.split("\n"):
-            if line.startswith('>'):
+        # check for DNA only
+        pattern = re.compile("^[acgtuACGTU ]+$")
+        split_input_sequence_buf = input_sequence_buf.split("\n")
+        for i,line in enumerate(split_input_sequence_buf):
+            if line.startswith('>') or line.startswith('@'):
                 seq_cnt += 1
-        
+                if not pattern.match(split_input_sequence_buf[i+1]):
+                    raise ValueError ("BAD record:\n"+line+"\n"+split_input_sequence_buf[i+1]+"\n")
+                    sys.exit(0)
+                
+
 
         # load the method provenance from the context object
         #
