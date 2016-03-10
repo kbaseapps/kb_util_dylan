@@ -247,7 +247,10 @@ class kb_util_dylan:
         self.log(console, 'writing query reads file: '+str(forward_reads_file_path))
 
         seq_cnt = 0
+        fastq_format = False
         input_sequence_buf = params['input_sequence']
+        if input_sequence_buf.startswith('@'):
+            fastq_format = True
         self.log(console,"INPUT_SEQ: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
         input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
         input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
@@ -258,16 +261,27 @@ class kb_util_dylan:
         forward_reads_file_handle.write(input_sequence_buf)
         forward_reads_file_handle.close()
 
-        # check for DNA only
-        pattern = re.compile("^[acgtuACGTU ]+$")
+        # format checks
+        DNA_pattern = re.compile("^[acgtuACGTU ]+$")
         split_input_sequence_buf = input_sequence_buf.split("\n")
         for i,line in enumerate(split_input_sequence_buf):
             if line.startswith('>') or line.startswith('@'):
                 seq_cnt += 1
-                if not pattern.match(split_input_sequence_buf[i+1]):
+                if not DNA_pattern.match(split_input_sequence_buf[i+1]):
                     raise ValueError ("BAD record:\n"+line+"\n"+split_input_sequence_buf[i+1]+"\n")
                     sys.exit(0)
-                
+            if fastq_format and line.startswith('@'):
+                format_ok = True
+                seq_len = len(split_input_sequence_buf[i+1])
+                if not seq_len > 0:
+                    format_ok = False
+                if not split_input_sequence_buf[i+1].startswith('+'):
+                    format_ok = False
+                if not seq_len == len(split_input_sequence_buf[i+3]):
+                    format_ok = False
+                if not format_ok
+                    raise ValueError ("BAD record:\n"+line+"\n"+split_input_sequence_buf[i+1]+"\n")
+                    sys.exit(0)
 
 
         # load the method provenance from the context object
