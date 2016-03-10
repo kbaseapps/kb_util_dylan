@@ -296,12 +296,12 @@ class kb_util_dylan:
                 seq_len = len(split_input_sequence_buf[i+1])
                 if not seq_len > 0:
                     format_ok = False
-                if not split_input_sequence_buf[i+1].startswith('+'):
+                if not split_input_sequence_buf[i+2].startswith('+'):
                     format_ok = False
                 if not seq_len == len(split_input_sequence_buf[i+3]):
                     format_ok = False
                 if not format_ok:
-                    raise ValueError ("BAD record:\n"+line+"\n"+split_input_sequence_buf[i+1]+"\n")
+                    raise ValueError ("BAD record:\n"+bad_record+"\n")
                     sys.exit(0)
 
 
