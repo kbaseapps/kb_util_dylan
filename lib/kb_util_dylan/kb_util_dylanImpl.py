@@ -225,8 +225,9 @@ class kb_util_dylan:
         console = []
         self.log(console,'Running KButil_Insert_SingleEndLibrary with params=')
         self.log(console, "\n"+pformat(params))
-        report = 'Running KButil_Insert_SingleEndLibrary with params='
-        report += "\n"+pformat(params)  # DEBUG
+        report = ''
+#        report = 'Running KButil_Insert_SingleEndLibrary with params='
+#        report += "\n"+pformat(params)  # DEBUG
 
 
         #### do some basic checks
@@ -378,7 +379,7 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        report += 'sequences in library:  '+str(seq_cnt)
+        report += 'sequences in library:  '+str(seq_cnt)+"\n"
 
         reportObj = {
             'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Insert_SingleEndLibrary'}],
@@ -430,8 +431,9 @@ class kb_util_dylan:
         console = []
         self.log(console,'Running KButil_FASTQ_to_FASTA with params=')
         self.log(console, "\n"+pformat(params))
-        report = 'Running KButil_FASTQ_to_FASTA with params='
-        report += "\n"+pformat(params)
+        report = ''
+#        report = 'Running KButil_FASTQ_to_FASTA with params='
+#        report += "\n"+pformat(params)
 
 
         #### do some basic checks
@@ -578,7 +580,7 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        report += 'sequences in library:  '+str(seq_cnt)
+        report += 'sequences in library:  '+str(seq_cnt)+"\n"
 
         reportObj = {
             'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_FASTQ_to_FASTA'}],
