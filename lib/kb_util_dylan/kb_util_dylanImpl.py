@@ -331,7 +331,7 @@ class kb_util_dylan:
                     seq_line = re.sub (" ","",split_input_sequence_buf[i+1])
                     seq_line = re.sub ("\t","",seq_line)
                     seq_line = seq_line.lower()
-                    record = "\n".join(line,seq_line)+"\n"
+                    record = "\n".join([line,seq_line])+"\n"
                     forward_reads_file_handle.write(record)
                 elif line.startswith('@'):
                     seq_line = re.sub (" ","",split_input_sequence_buf[i+1])
@@ -339,7 +339,7 @@ class kb_util_dylan:
                     seq_line = seq_line.lower()
                     qual_line = re.sub (" ","",split_input_sequence_buf[i+3])
                     qual_line = re.sub ("\t","",qual_line)
-                    record = "\n".join(line, seq_line, split_input_sequence_buf[i+2], qual_line)+"\n"
+                    record = "\n".join([line, seq_line, split_input_sequence_buf[i+2], qual_line])+"\n"
                     forward_reads_file_handle.write(record)
 
         forward_reads_file_handle.close()
