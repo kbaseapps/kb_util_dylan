@@ -328,10 +328,16 @@ class kb_util_dylan:
             #forward_reads_file_handle.write(input_sequence_buf)        input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
             for i,line in enumerate(split_input_sequence_buf):
                 if line.startswith('>'):
-                    seq_line = re.sub (" ","",split_input_sequence_buf[i+1])
-                    seq_line = re.sub ("\t","",seq_line)
-                    seq_line = seq_line.lower()
-                    record = "\n".join([line,seq_line])+"\n"
+                    record_buf = []
+                    record_buf.append(line)
+                    for j in range(i+1,len(split_input_sequence_buf)):
+                        if split_input_sequence_buf[j].startswith('>'):
+                            break
+                        seq_line = re.sub (" ","",split_input_sequence_buf[j])
+                        seq_line = re.sub ("\t","",seq_line)
+                        seq_line = seq_line.lower()
+                        record_buf.append(seq_line)
+                    record = "\n".join(record_buf)+"\n"
                     forward_reads_file_handle.write(record)
                 elif line.startswith('@'):
                     seq_line = re.sub (" ","",split_input_sequence_buf[i+1])
