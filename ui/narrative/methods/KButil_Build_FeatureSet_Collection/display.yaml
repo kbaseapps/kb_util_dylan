@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Convert FASTQ to FASTA
+name: Collect Individual Features into a FeatureSet
 tooltip: |
-    Turns SingleEndLibrary containing FASTQ into SingleEndLibrary containing FASTA
+    Allows user to add "free" features into a FeatureSet
 screenshots: []
 
 icon: kb-orange.png
@@ -27,18 +27,17 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    input_name:
+    input_names:
         ui-name : |
-            Input FASTQ Object
+            Feature Names
         short-hint : |
-            Input SingleEndLibrary containing FASTQ
+            Add a list of Feature Names here
     output_name:
         ui-name : |
-            Output FASTA Object
+            Output FeatureSet Name
         short-hint : |
-            Output SingleEndLibrary containing FASTA
+            Name for the FeatureSet Collection
 
 
 description : |
-    <p>This method converts a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary.</p>
-
+    <p>This method allows the user to collect "free" features into a FeatureSet that is easier to manipulate.</p>

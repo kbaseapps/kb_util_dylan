@@ -5,21 +5,21 @@
     ],
     "contact": "help@kbase.us",
     "visible": true,
-    "categories": ["active","util","sequence"],
+    "categories": ["active","util"],
     "widgets": {
         "input": null,
         "output": "kbaseReportView"
     },
     "parameters": [ 
         {
-            "id": "input_name",
-            "optional": true,
+            "id": "input_names",
+            "optional": false,
             "advanced": false,
-            "allow_multiple": false,
+            "allow_multiple": true,
             "default_values": [ "" ],
-            "field_type": "text",
+            "field_type": "textarea",
             "text_options": {
-                "valid_ws_types": [ "KBaseAssembly.SingleEndLibrary","KBaseFile.SingleEndLibrary" ]
+                "valid_ws_types": [ "KBaseGenome.Feature" ]
             }
         },
         {
@@ -30,8 +30,8 @@
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types": [ "KBaseAssembly.SingleEndLibrary","KBaseFile.SingleEndLibrary" ],
-		"is_output_name": true		  
+                "valid_ws_types": [ "KBaseCollections.FeatureSet" ],
+		"is_output_name": true
             }
         }
     ],
@@ -46,8 +46,8 @@
                     "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "input_name",
-                    "target_property": "input_name"
+                    "input_parameter": "input_names",
+                    "target_property": "input_names"
                 },
                 {
                     "input_parameter": "output_name",
@@ -68,7 +68,7 @@
                     "target_property": "report_ref"
                 },
                 {
-		    "constant_value": "16",
+		    "constant_value": "2",
                     "target_property": "report_window_line_height"
                 }
             ]
