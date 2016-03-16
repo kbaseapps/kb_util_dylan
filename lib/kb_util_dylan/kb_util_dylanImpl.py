@@ -421,7 +421,6 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-
     def KButil_FASTQ_to_FASTA(self, ctx, params):
         # ctx is the context object
         # return variables are: returnVal
@@ -620,7 +619,6 @@ class kb_util_dylan:
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
-
 
     def KButil_Merge_FeatureSet_Collection(self, ctx, params):
         # ctx is the context object
