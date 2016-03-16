@@ -67,6 +67,24 @@ module kb_util_dylan {
     } KButil_FASTQ_to_FASTA_Output;
 	
 
+    /* KButil_Build_FeatureSet_Collection Input Params
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_name  input_names;
+        data_obj_name  output_name;
+    } KButil_Build_FeatureSet_Collection_Params;
+
+
+    /* KButil_Build_FeatureSet_Collection Output
+    */
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Build_FeatureSet_Collection_Output;
+	
+
+
     /*  Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
     */
     funcdef KButil_Insert_SingleEndLibrary (KButil_Insert_SingleEndLibrary_Params params)  returns (KButil_Insert_SingleEndLibrary_Output) authentication required;
@@ -75,4 +93,9 @@ module kb_util_dylan {
     /*  Method for Converting a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary
     */
     funcdef KButil_FASTQ_to_FASTA (KButil_FASTQ_to_FASTA_Params params)  returns (KButil_FASTQ_to_FASTA_Output) authentication required;
+
+
+    /*  Method for building individual features into a FeatureSet
+    */
+    funcdef KButil_Build_FeatureSet_Collection (KButil_Build_FeatureSet_Collection params)  returns (KButil_Build_FeatureSet_Collection_Output) authentication required;
 };
