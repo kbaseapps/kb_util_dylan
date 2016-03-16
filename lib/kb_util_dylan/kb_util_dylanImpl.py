@@ -722,8 +722,8 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        self.log(console,"features in set: "+str(len(element_order)))
-        report += 'features in set: '+str(len(element_order))+"\n"
+        self.log(console,"features in set: "+str(len(element_ordering)))
+        report += 'features in set: '+str(len(element_ordering))+"\n"
 
         reportObj = {
             'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Merge_FeatureSet_Collection'}],
