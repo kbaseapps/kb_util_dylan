@@ -622,12 +622,12 @@ class kb_util_dylan:
         return [returnVal]
 
 
-    def KButil_Build_FeatureSet_Collection(self, ctx, params):
+    def KButil_Merge_FeatureSet_Collection(self, ctx, params):
         # ctx is the context object
         # return variables are: returnVal
-        #BEGIN KButil_Build_FeatureSet_Collection
+        #BEGIN KButil_Merge_FeatureSet_Collection
         console = []
-        self.log(console,'Running KButil_Build_FeatureSet_Collection with params=')
+        self.log(console,'Running KButil_Merge_FeatureSet_Collection with params=')
         self.log(console, "\n"+pformat(params))
         report = ''
 #        report = 'Running KButil_FASTQ_to_FASTA with params='
@@ -650,10 +650,10 @@ class kb_util_dylan:
         #
         element_ordering = []
         elements = {}
-        for feature_name in params['input_names']:
+        for featureSet_name in params['input_names']:
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+feature_name}])
+                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+featureSet_name}])
                 data = objects[0]['data']
                 info = objects[0]['info']
                 # Object Info Contents
@@ -675,23 +675,14 @@ class kb_util_dylan:
                 raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
                 #to get the full stack trace: traceback.format_exc()
 
-            if type_name != 'Feature':
-                raise ValueError("Bad Type:  Should be Feature instead of '"+type_name+"'")
+            if type_name != 'FeatureSet':
+                raise ValueError("Bad Type:  Should be FeatureSet instead of '"+type_name+"'")
 
-
-            feature = data
-            fId = feature['id']
-            gId = feature['genome_id']
-            genome_ref = params['workspace_name']+'/'+gId  # THIS IS PROBABLY WRONG
-            element_ordering.append(fId]
-            elements[fId] = [genome_ref]
+            this_featureSet = data
+            element_ordering.extend(this_featureSet['element_ordering'])
+            for fId in this_featureSet['elements'].keys():
+                elements[fId] = this_featureSet['elements'][fId]
             
-        output_FeatureSet = {
-                              'description': params['desc'],
-                              'element_ordering': element_ordering,
-                              'elements': elements
-                            }
-
 
         # load the method provenance from the context object
         #
@@ -701,14 +692,20 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         provenance[0]['input_ws_objects'] = []
-        for feature_name in params['input_names']:
-            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+feature_name)
+        for featureSet_name in params['input_names']:
+            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+featureSet_name)
         provenance[0]['service'] = 'kb_util_dylan'
-        provenance[0]['method'] = 'KButil_Build_FeatureSet_Collection'
+        provenance[0]['method'] = 'KButil_Merge_FeatureSet_Collection'
 
 
         # Store output object
         #
+        output_FeatureSet = {
+                              'description': params['desc'],
+                              'element_ordering': element_ordering,
+                              'elements': elements
+                            }
+
         new_obj_info = ws.save_objects({
                             'workspace': params['workspace_name'],
                             'objects':[{
@@ -728,10 +725,10 @@ class kb_util_dylan:
         report += 'features in set: '+str(len(element_order))+"\n"
 
         reportObj = {
-            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Build_FeatureSet_Collection'}],
+            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Merge_FeatureSet_Collection'}],
             'text_message':report
         }
-        reportName = 'kb_util_dylan_build_featureset_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_merge_featureset_report_'+str(hex(uuid.getnode()))
         report_obj_info = ws.save_objects({
 #                'id':info[6],
                 'workspace':params['workspace_name'],
@@ -754,13 +751,13 @@ class kb_util_dylan:
         returnVal = { 'report_name': reportName,
                       'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
                       }
-        self.log(console,"KButil_Build_FeatureSet_Collection DONE")
+        self.log(console,"KButil_Merge_FeatureSet_Collection DONE")
 
-        #END KButil_Build_FeatureSet_Collection
+        #END KButil_Merge_FeatureSet_Collection
 
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
-            raise ValueError('Method KButil_Build_FeatureSet_Collection return value ' +
+            raise ValueError('Method KButil_Merge_FeatureSet_Collection return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
