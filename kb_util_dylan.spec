@@ -67,22 +67,22 @@ module kb_util_dylan {
     } KButil_FASTQ_to_FASTA_Output;
 	
 
-    /* KButil_Build_FeatureSet_Collection Input Params
+    /* KButil_Merge_FeatureSet_Collection Input Params
     */
     typedef structure {
         workspace_name workspace_name;
 	data_obj_name  input_names;
         data_obj_name  output_name;
 	string         desc;
-    } KButil_Build_FeatureSet_Collection_Params;
+    } KButil_Merge_FeatureSet_Collection_Params;
 
 
-    /* KButil_Build_FeatureSet_Collection Output
+    /* KButil_Merge_FeatureSet_Collection Output
     */
     typedef structure {
 	data_obj_name report_name;
 	data_obj_ref  report_ref;
-    } KButil_Build_FeatureSet_Collection_Output;
+    } KButil_Merge_FeatureSet_Collection_Output;
 	
 
 
@@ -96,7 +96,7 @@ module kb_util_dylan {
     funcdef KButil_FASTQ_to_FASTA (KButil_FASTQ_to_FASTA_Params params)  returns (KButil_FASTQ_to_FASTA_Output) authentication required;
 
 
-    /*  Method for building individual features into a FeatureSet
+    /*  Method for merging FeatureSets into a combined FeatureSet
     */
-    funcdef KButil_Build_FeatureSet_Collection (KButil_Build_FeatureSet_Collection_Params params)  returns (KButil_Build_FeatureSet_Collection_Output) authentication required;
+    funcdef KButil_Merge_FeatureSet_Collection (KButil_Merge_FeatureSet_Collection_Params params)  returns (KButil_Merge_FeatureSet_Collection_Output) authentication required;
 };
