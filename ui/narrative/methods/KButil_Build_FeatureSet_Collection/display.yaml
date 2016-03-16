@@ -27,6 +27,13 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
+    desc:
+        ui-name : |
+            Description
+        short-hint : |
+            Describe Purpose or Contents of FeatureSet
+        placeholder: |
+            Enter Description
     input_names:
         ui-name : |
             Feature Names

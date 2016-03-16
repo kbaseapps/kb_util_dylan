@@ -12,6 +12,17 @@
     },
     "parameters": [ 
         {
+            "id": "desc",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+		"is_output_name": true
+            }
+        },
+        {
             "id": "input_names",
             "optional": false,
             "advanced": false,
@@ -44,6 +55,10 @@
                 {
                     "narrative_system_variable": "workspace",
                     "target_property": "workspace_name"
+                },
+                {
+                    "input_parameter": "desc",
+                    "target_property": "desc"
                 },
                 {
                     "input_parameter": "input_names",
