@@ -39,7 +39,7 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "KButil_FASTQ_to_FASTA",
+            "method": "KButil_Build_FeatureSet_Collection",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
