@@ -97,5 +97,5 @@ module kb_util_dylan {
 
     /*  Method for building individual features into a FeatureSet
     */
-    funcdef KButil_Build_FeatureSet_Collection (KButil_Build_FeatureSet_Collection params)  returns (KButil_Build_FeatureSet_Collection_Output) authentication required;
+    funcdef KButil_Build_FeatureSet_Collection (KButil_Build_FeatureSet_Collection_Params params)  returns (KButil_Build_FeatureSet_Collection_Output) authentication required;
 };
