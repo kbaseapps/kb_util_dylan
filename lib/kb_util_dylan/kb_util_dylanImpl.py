@@ -648,7 +648,14 @@ class kb_util_dylan:
         #
         element_ordering = []
         elements = {}
+        featureSet_seen = dict()
         for featureSet_name in params['input_names']:
+            if not featureSet_name in featureSet_seen.keys():
+                featureSet_seen[featureSet_name] = 1
+            else:
+                raise ValueError ("repeat featureSet_name: '"+featureSet_name+"'")
+                sys.exit(0)
+
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
                 objects = ws.get_objects([{'ref': params['workspace_name']+'/'+featureSet_name}])
