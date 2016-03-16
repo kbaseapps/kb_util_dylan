@@ -677,7 +677,10 @@ class kb_util_dylan:
                 raise ValueError("Bad Type:  Should be FeatureSet instead of '"+type_name+"'")
 
             this_featureSet = data
-            element_ordering.extend(this_featureSet['element_ordering'])
+            if 'element_ordering' in this_featureSet.keys():
+                element_ordering.extend(this_featureSet['element_ordering'])
+            else:
+                element_ordering.extend(sorted(this_featureSet['elements'].keys()))
             for fId in this_featureSet['elements'].keys():
                 elements[fId] = this_featureSet['elements'][fId]
             
