@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Collect Individual Features into a FeatureSet
+name: Merge FeatureSets
 tooltip: |
-    Allows user to add "free" features into a FeatureSet
+    Allows user to merge multiple FeatureSets
 screenshots: []
 
 icon: kb-orange.png
@@ -31,20 +31,20 @@ parameters :
         ui-name : |
             Description
         short-hint : |
-            Describe Purpose or Contents of FeatureSet
+            Describe Purpose or Contents of Output FeatureSet
         placeholder: |
             Enter Description
     input_names:
         ui-name : |
-            Feature Names
+            Input FeatureSet Names
         short-hint : |
-            Add a list of Feature Names here
+            Add a list of FeatureSet Names here
     output_name:
         ui-name : |
             Output FeatureSet Name
         short-hint : |
-            Name for the FeatureSet Collection
+            Name for the Output FeatureSet Collection
 
 
 description : |
-    <p>This method allows the user to collect "free" features into a FeatureSet that is easier to manipulate.</p>
+    <p>This method allows the user to merge several FeatureSets into one FeatureSet.</p>
