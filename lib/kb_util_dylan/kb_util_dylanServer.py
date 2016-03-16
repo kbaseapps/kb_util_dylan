@@ -67,6 +67,9 @@ sync_methods['kb_util_dylan.KButil_Insert_SingleEndLibrary'] = True
 async_run_methods['kb_util_dylan.KButil_FASTQ_to_FASTA_async'] = ['kb_util_dylan', 'KButil_FASTQ_to_FASTA']
 async_check_methods['kb_util_dylan.KButil_FASTQ_to_FASTA_check'] = ['kb_util_dylan', 'KButil_FASTQ_to_FASTA']
 sync_methods['kb_util_dylan.KButil_FASTQ_to_FASTA'] = True
+async_run_methods['kb_util_dylan.KButil_Build_FeatureSet_Collection_async'] = ['kb_util_dylan', 'KButil_Build_FeatureSet_Collection']
+async_check_methods['kb_util_dylan.KButil_Build_FeatureSet_Collection_check'] = ['kb_util_dylan', 'KButil_Build_FeatureSet_Collection']
+sync_methods['kb_util_dylan.KButil_Build_FeatureSet_Collection'] = True
 
 class AsyncJobServiceClient(object):
 
@@ -346,6 +349,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_FASTQ_to_FASTA',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_FASTQ_to_FASTA'] = 'required'
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Build_FeatureSet_Collection,
+                             name='kb_util_dylan.KButil_Build_FeatureSet_Collection',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Build_FeatureSet_Collection'] = 'required'
         self.auth_client = biokbase.nexus.Client(
             config={'server': 'nexus.api.globusonline.org',
                     'verify_ssl': True,

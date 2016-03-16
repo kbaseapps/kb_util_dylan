@@ -175,4 +175,22 @@ public class KbUtilDylanClient {
         List<KButilFASTQToFASTAOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_FASTQ_to_FASTA", args, retType, true, true, jsonRpcContext);
         return res.get(0);
     }
+
+    /**
+     * <p>Original spec-file function name: KButil_Build_FeatureSet_Collection</p>
+     * <pre>
+     * Method for building individual features into a FeatureSet
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilBuildFeatureSetCollectionParams KButilBuildFeatureSetCollectionParams} (original type "KButil_Build_FeatureSet_Collection_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilBuildFeatureSetCollectionOutput KButilBuildFeatureSetCollectionOutput} (original type "KButil_Build_FeatureSet_Collection_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilBuildFeatureSetCollectionOutput kButilBuildFeatureSetCollection(KButilBuildFeatureSetCollectionParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilBuildFeatureSetCollectionOutput>> retType = new TypeReference<List<KButilBuildFeatureSetCollectionOutput>>() {};
+        List<KButilBuildFeatureSetCollectionOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Build_FeatureSet_Collection", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
 }
