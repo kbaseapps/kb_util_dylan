@@ -684,10 +684,15 @@ class kb_util_dylan:
                 raise ValueError("Bad Type:  Should be FeatureSet instead of '"+type_name+"'")
 
             this_featureSet = data
+            this_element_ordering = []
             if 'element_ordering' in this_featureSet.keys():
-                element_ordering.extend(this_featureSet['element_ordering'])
+                this_element_ordering = this_featureSet['element_ordering']
             else:
-                element_ordering.extend(sorted(this_featureSet['elements'].keys()))
+                this_element_ordering = sorted(this_featureSet['elements'].keys())
+            element_ordering.extend(this_element_ordering)
+            self.log(console,'features in input set '+featureSet_name+': '+str(len(this_element_ordering)))
+            report += 'features in input set '+featureSet_name+': '+str(len(this_element_ordering))+"\n"
+
             for fId in this_featureSet['elements'].keys():
                 elements[fId] = this_featureSet['elements'][fId]
             
@@ -729,8 +734,8 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        self.log(console,"features in set: "+str(len(element_ordering)))
-        report += 'features in set: '+str(len(element_ordering))+"\n"
+        self.log(console,"features in output set "+params['output_name']+": "+str(len(element_ordering)))
+        report += 'features in output set '+params['output_set']+': '+str(len(element_ordering))+"\n"
 
         reportObj = {
             'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Merge_FeatureSet_Collection'}],
