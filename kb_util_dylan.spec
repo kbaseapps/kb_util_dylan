@@ -73,6 +73,7 @@ module kb_util_dylan {
         workspace_name workspace_name;
 	data_obj_name  input_names;
         data_obj_name  output_name;
+	string         desc;
     } KButil_Build_FeatureSet_Collection_Params;
 
 
