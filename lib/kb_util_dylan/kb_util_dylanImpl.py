@@ -620,3 +620,147 @@ class kb_util_dylan:
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
+
+
+    def KButil_Build_FeatureSet_Collection(self, ctx, params):
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Build_FeatureSet_Collection
+        console = []
+        self.log(console,'Running KButil_Build_FeatureSet_Collection with params=')
+        self.log(console, "\n"+pformat(params))
+        report = ''
+#        report = 'Running KButil_FASTQ_to_FASTA with params='
+#        report += "\n"+pformat(params)
+
+
+        #### do some basic checks
+        #
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'desc' not in params:
+            raise ValueError('desc parameter is required')
+        if 'input_names' not in params:
+            raise ValueError('input_names parameter is required')
+        if 'output_name' not in params:
+            raise ValueError('output_name parameter is required')
+
+
+        # Build FeatureSet
+        #
+        element_ordering = []
+        elements = {}
+        for feature_name in params['input_names']:
+            try:
+                ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+feature_name}])
+                data = objects[0]['data']
+                info = objects[0]['info']
+                # Object Info Contents
+                # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
+                # 0 - obj_id objid
+                # 1 - obj_name name
+                # 2 - type_string type
+                # 3 - timestamp save_date
+                # 4 - int version
+                # 5 - username saved_by
+                # 6 - ws_id wsid
+                # 7 - ws_name workspace
+                # 8 - string chsum
+                # 9 - int size 
+                # 10 - usermeta meta
+                type_name = info[2].split('.')[1].split('-')[0]
+
+            except Exception as e:
+                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                #to get the full stack trace: traceback.format_exc()
+
+            if type_name != 'Feature':
+                raise ValueError("Bad Type:  Should be Feature instead of '"+type_name+"'")
+
+
+            feature = data
+            fId = feature['id']
+            gId = feature['genome_id']
+            genome_ref = params['workspace_name']+'/'+gId  # THIS IS PROBABLY WRONG
+            element_ordering.append(fId]
+            elements[fId] = [genome_ref]
+            
+        output_FeatureSet = {
+                              'description': params['desc'],
+                              'element_ordering': element_ordering,
+                              'elements': elements
+                            }
+
+
+        # load the method provenance from the context object
+        #
+        self.log(console,"SETTING PROVENANCE")  # DEBUG
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects'] = []
+        for feature_name in params['input_names']:
+            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+feature_name)
+        provenance[0]['service'] = 'kb_util_dylan'
+        provenance[0]['method'] = 'KButil_Build_FeatureSet_Collection'
+
+
+        # Store output object
+        #
+        new_obj_info = ws.save_objects({
+                            'workspace': params['workspace_name'],
+                            'objects':[{
+                                    'type': 'KBaseCollections.FeatureSet',
+                                    'data': output_FeatureSet,
+                                    'name': params['output_name'],
+                                    'meta': {},
+                                    'provenance': provenance
+                                }]
+                        })
+
+
+        # build output report object
+        #
+        self.log(console,"BUILDING REPORT")  # DEBUG
+        self.log(console,"features in set: "+str(len(element_order)))
+        report += 'features in set: '+str(len(element_order))+"\n"
+
+        reportObj = {
+            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Build_FeatureSet_Collection'}],
+            'text_message':report
+        }
+        reportName = 'kb_util_dylan_build_featureset_report_'+str(hex(uuid.getnode()))
+        report_obj_info = ws.save_objects({
+#                'id':info[6],
+                'workspace':params['workspace_name'],
+                'objects':[
+                    {
+                        'type':'KBaseReport.Report',
+                        'data':reportObj,
+                        'name':reportName,
+                        'meta':{},
+                        'hidden':1,
+                        'provenance':provenance
+                    }
+                ]
+            })[0]
+
+
+        # Build report and return
+        #
+        self.log(console,"BUILDING RETURN OBJECT")
+        returnVal = { 'report_name': reportName,
+                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+                      }
+        self.log(console,"KButil_Build_FeatureSet_Collection DONE")
+
+        #END KButil_Build_FeatureSet_Collection
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Build_FeatureSet_Collection return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
