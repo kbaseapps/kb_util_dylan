@@ -284,7 +284,6 @@ class kb_util_dylan:
                     line = re.sub ("\t","",line)
                     if not DNA_pattern.match(line):
                         raise ValueError ("BAD record:\n"+line+"\n")
-                        sys.exit(0)
                     forward_reads_file_handle.write(line.lower()+"\n")
 
         else:
@@ -302,7 +301,6 @@ class kb_util_dylan:
                             bad_record = "\n".join([split_input_sequence_buf[i],
                                                     split_input_sequence_buf[i+1]])
                         raise ValueError ("BAD record:\n"+bad_record+"\n")
-                        sys.exit(0)
                     if fastq_format and line.startswith('@'):
                         format_ok = True
                         seq_len = len(split_input_sequence_buf[i+1])
@@ -318,7 +316,6 @@ class kb_util_dylan:
                                                     split_input_sequence_buf[i+2],
                                                     split_input_sequence_buf[i+3]])
                             raise ValueError ("BAD record:\n"+bad_record+"\n")
-                            sys.exit(0)
 
 
             # write that sucker, removing spaces
@@ -654,7 +651,6 @@ class kb_util_dylan:
                 featureSet_seen[featureSet_name] = 1
             else:
                 raise ValueError ("repeat featureSet_name: '"+featureSet_name+"'")
-                sys.exit(0)
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
