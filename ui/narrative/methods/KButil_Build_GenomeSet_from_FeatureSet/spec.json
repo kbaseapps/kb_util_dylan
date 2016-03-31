@@ -61,8 +61,8 @@
                     "target_property": "desc"
                 },
                 {
-                    "input_parameter": "input_names",
-                    "target_property": "input_names"
+                    "input_parameter": "input_name",
+                    "target_property": "input_name"
                 },
                 {
                     "input_parameter": "output_name",
