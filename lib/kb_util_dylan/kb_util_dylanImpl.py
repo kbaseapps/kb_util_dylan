@@ -863,8 +863,7 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         provenance[0]['input_ws_objects'] = []
-        for featureSet_name in params['input_names']:
-            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
+        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Build_GenomeSet_from_FeatureSet'
 
