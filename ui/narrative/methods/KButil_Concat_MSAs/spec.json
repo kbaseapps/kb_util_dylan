@@ -62,7 +62,7 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "KButil_Merge_FeatureSet_Collection",
+            "method": "KButil_Concat_MSAs",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
