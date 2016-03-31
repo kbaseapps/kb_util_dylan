@@ -832,7 +832,7 @@ class kb_util_dylan:
             for genomeRef in featureSet['elements'][fId]:
 
                 try:
-                    ref = genome_seen[genomeRef]
+                    already_included = genome_seen[genomeRef]
                 except:
                     genome_seen[genomeRef] = True
 
@@ -849,7 +849,10 @@ class kb_util_dylan:
                         raise ValueError("Bad Type:  Should be Genome instead of '"+type_name+"' for ref: '"+genomeRef+"'")
                     
                     genome_id = genomeObj['id']
+                    if not genome_id in elements.keys():
+                        elements[genome_id] = dict()
                     elements[genome_id]['ref'] = genomeRef  # the key line
+                    self.log(console,"adding element "+genome_id+" : "+genomeRef)  # DEBUG
             
 
         # load the method provenance from the context object
