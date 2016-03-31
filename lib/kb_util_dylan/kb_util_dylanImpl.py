@@ -770,7 +770,6 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-
     def KButil_Build_GenomeSet_from_FeatureSet(self, ctx, params):
         # ctx is the context object
         # return variables are: returnVal

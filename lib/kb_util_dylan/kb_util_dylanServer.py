@@ -70,6 +70,9 @@ sync_methods['kb_util_dylan.KButil_FASTQ_to_FASTA'] = True
 async_run_methods['kb_util_dylan.KButil_Merge_FeatureSet_Collection_async'] = ['kb_util_dylan', 'KButil_Merge_FeatureSet_Collection']
 async_check_methods['kb_util_dylan.KButil_Merge_FeatureSet_Collection_check'] = ['kb_util_dylan', 'KButil_Merge_FeatureSet_Collection']
 sync_methods['kb_util_dylan.KButil_Merge_FeatureSet_Collection'] = True
+async_run_methods['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet_async'] = ['kb_util_dylan', 'KButil_Build_GenomeSet_from_FeatureSet']
+async_check_methods['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet_check'] = ['kb_util_dylan', 'KButil_Build_GenomeSet_from_FeatureSet']
+sync_methods['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet'] = True
 
 class AsyncJobServiceClient(object):
 
@@ -353,6 +356,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Merge_FeatureSet_Collection',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Merge_FeatureSet_Collection'] = 'required'
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet,
+                             name='kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet'] = 'required'
         self.auth_client = biokbase.nexus.Client(
             config={'server': 'nexus.api.globusonline.org',
                     'verify_ssl': True,

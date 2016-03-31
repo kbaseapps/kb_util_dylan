@@ -83,7 +83,46 @@ module kb_util_dylan {
 	data_obj_name report_name;
 	data_obj_ref  report_ref;
     } KButil_Merge_FeatureSet_Collection_Output;
-	
+
+
+    /* KButil_Build_GenomeSet_from_FeatureSet Input Params
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_name  input_name;
+        data_obj_name  output_name;
+	string         desc;
+    } KButil_Build_GenomeSet_from_FeatureSet_Params;
+
+
+    /* KButil_Build_GenomeSet_from_FeatureSet Output
+    */
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Build_GenomeSet_from_FeatureSet_Output;
+
+
+    /* KButil_Concat_MSAs Input Params
+    */
+/*
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_name  input_names;
+        data_obj_name  output_name;
+	string         desc;
+	int            blanks_flag;
+    } KButil_Concat_MSAs_Params;
+*/
+
+    /* KButil_Concat_MSAs Output
+    */
+/*
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Concat_MSAs_Output;
+*/
 
 
     /*  Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
@@ -99,4 +138,15 @@ module kb_util_dylan {
     /*  Method for merging FeatureSets into a combined FeatureSet
     */
     funcdef KButil_Merge_FeatureSet_Collection (KButil_Merge_FeatureSet_Collection_Params params)  returns (KButil_Merge_FeatureSet_Collection_Output) authentication required;
+
+
+    /*  Method for obtaining a GenomeSet from a FeatureSet
+    */
+    funcdef KButil_Build_GenomeSet_from_FeatureSet (KButil_Build_GenomeSet_from_FeatureSet_Params params)  returns (KButil_Build_GenomeSet_from_FeatureSet_Output) authentication required;
+
+
+    /*  Method for Concatenating MSAs into a combined MSA
+    */
+/*    funcdef KButil_Concat_MSAs (KButil_Concat_MSAs_Params params)  returns (KButil_Concat_MSAs_Output) authentication required;*/
 };
+
