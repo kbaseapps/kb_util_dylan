@@ -211,4 +211,22 @@ public class KbUtilDylanClient {
         List<KButilBuildGenomeSetFromFeatureSetOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet", args, retType, true, true, jsonRpcContext);
         return res.get(0);
     }
+
+    /**
+     * <p>Original spec-file function name: KButil_Concat_MSAs</p>
+     * <pre>
+     * Method for Concatenating MSAs into a combined MSA
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilConcatMSAsParams KButilConcatMSAsParams} (original type "KButil_Concat_MSAs_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilConcatMSAsOutput KButilConcatMSAsOutput} (original type "KButil_Concat_MSAs_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilConcatMSAsOutput kButilConcatMSAs(KButilConcatMSAsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilConcatMSAsOutput>> retType = new TypeReference<List<KButilConcatMSAsOutput>>() {};
+        List<KButilConcatMSAsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Concat_MSAs", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
 }

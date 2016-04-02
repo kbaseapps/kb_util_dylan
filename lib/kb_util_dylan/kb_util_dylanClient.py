@@ -198,4 +198,11 @@ class kb_util_dylan(object):
         resp = self._call('kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet',
                           [params], json_rpc_context)
         return resp[0]
+  
+    def KButil_Concat_MSAs(self, params, json_rpc_context = None):
+        if json_rpc_context and type(json_rpc_context) is not dict:
+            raise ValueError('Method KButil_Concat_MSAs: argument json_rpc_context is not type dict as required.')
+        resp = self._call('kb_util_dylan.KButil_Concat_MSAs',
+                          [params], json_rpc_context)
+        return resp[0]
  

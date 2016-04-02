@@ -519,6 +519,111 @@ Method for obtaining a GenomeSet from a FeatureSet
     }
 }
  
+
+
+=head2 KButil_Concat_MSAs
+
+  $return = $obj->KButil_Concat_MSAs($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a kb_util_dylan.KButil_Concat_MSAs_Params
+$return is a kb_util_dylan.KButil_Concat_MSAs_Output
+KButil_Concat_MSAs_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_names has a value which is a kb_util_dylan.data_obj_name
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+	blanks_flag has a value which is an int
+workspace_name is a string
+data_obj_name is a string
+KButil_Concat_MSAs_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+data_obj_ref is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a kb_util_dylan.KButil_Concat_MSAs_Params
+$return is a kb_util_dylan.KButil_Concat_MSAs_Output
+KButil_Concat_MSAs_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_names has a value which is a kb_util_dylan.data_obj_name
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+	blanks_flag has a value which is an int
+workspace_name is a string
+data_obj_name is a string
+KButil_Concat_MSAs_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+data_obj_ref is a string
+
+
+=end text
+
+=item Description
+
+Method for Concatenating MSAs into a combined MSA
+
+=back
+
+=cut
+
+ sub KButil_Concat_MSAs
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function KButil_Concat_MSAs (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to KButil_Concat_MSAs:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'KButil_Concat_MSAs');
+	}
+    }
+
+    my $result = $self->{client}->call($self->{url}, $self->{headers}, {
+	method => "kb_util_dylan.KButil_Concat_MSAs",
+	params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'KButil_Concat_MSAs',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Concat_MSAs",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'KButil_Concat_MSAs',
+				       );
+    }
+}
+ 
   
 
 sub version {
@@ -532,16 +637,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'KButil_Build_GenomeSet_from_FeatureSet',
+                method_name => 'KButil_Concat_MSAs',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method KButil_Build_GenomeSet_from_FeatureSet",
+            error => "Error invoking method KButil_Concat_MSAs",
             status_line => $self->{client}->status_line,
-            method_name => 'KButil_Build_GenomeSet_from_FeatureSet',
+            method_name => 'KButil_Concat_MSAs',
         );
     }
 }
@@ -973,6 +1078,86 @@ desc has a value which is a string
 =item Description
 
 KButil_Build_GenomeSet_from_FeatureSet Output
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Concat_MSAs_Params
+
+=over 4
+
+
+
+=item Description
+
+KButil_Concat_MSAs Input Params
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_names has a value which is a kb_util_dylan.data_obj_name
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+blanks_flag has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_names has a value which is a kb_util_dylan.data_obj_name
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+blanks_flag has a value which is an int
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Concat_MSAs_Output
+
+=over 4
+
+
+
+=item Description
+
+KButil_Concat_MSAs Output
 
 
 =item Definition

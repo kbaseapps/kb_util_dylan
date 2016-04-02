@@ -73,6 +73,9 @@ sync_methods['kb_util_dylan.KButil_Merge_FeatureSet_Collection'] = True
 async_run_methods['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet_async'] = ['kb_util_dylan', 'KButil_Build_GenomeSet_from_FeatureSet']
 async_check_methods['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet_check'] = ['kb_util_dylan', 'KButil_Build_GenomeSet_from_FeatureSet']
 sync_methods['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet'] = True
+async_run_methods['kb_util_dylan.KButil_Concat_MSAs_async'] = ['kb_util_dylan', 'KButil_Concat_MSAs']
+async_check_methods['kb_util_dylan.KButil_Concat_MSAs_check'] = ['kb_util_dylan', 'KButil_Concat_MSAs']
+sync_methods['kb_util_dylan.KButil_Concat_MSAs'] = True
 
 class AsyncJobServiceClient(object):
 
@@ -360,6 +363,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet'] = 'required'
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Concat_MSAs,
+                             name='kb_util_dylan.KButil_Concat_MSAs',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Concat_MSAs'] = 'required'
         self.auth_client = biokbase.nexus.Client(
             config={'server': 'nexus.api.globusonline.org',
                     'verify_ssl': True,
