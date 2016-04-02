@@ -105,24 +105,20 @@ module kb_util_dylan {
 
     /* KButil_Concat_MSAs Input Params
     */
-/*
     typedef structure {
         workspace_name workspace_name;
 	data_obj_name  input_names;
         data_obj_name  output_name;
 	string         desc;
-	int            blanks_flag;
+	int            blanks_flag;  /* actually bool */
     } KButil_Concat_MSAs_Params;
-*/
 
     /* KButil_Concat_MSAs Output
     */
-/*
     typedef structure {
 	data_obj_name report_name;
 	data_obj_ref  report_ref;
     } KButil_Concat_MSAs_Output;
-*/
 
 
     /*  Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
@@ -147,6 +143,6 @@ module kb_util_dylan {
 
     /*  Method for Concatenating MSAs into a combined MSA
     */
-/*    funcdef KButil_Concat_MSAs (KButil_Concat_MSAs_Params params)  returns (KButil_Concat_MSAs_Output) authentication required;*/
+    funcdef KButil_Concat_MSAs (KButil_Concat_MSAs_Params params)  returns (KButil_Concat_MSAs_Output) authentication required;
 };
 
