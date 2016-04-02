@@ -929,3 +929,168 @@ class kb_util_dylan:
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
+
+
+    def KButil_Concat_MSAs(self, ctx, params):
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Concat_MSAs
+        console = []
+        self.log(console,'Running KButil_Concat_MSAs with params=')
+        self.log(console, "\n"+pformat(params))
+        report = ''
+#        report = 'Running KButil_Concat_MSAs with params='
+#        report += "\n"+pformat(params)
+
+
+        #### do some basic checks
+        #
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'desc' not in params:
+            raise ValueError('desc parameter is required')
+        if 'input_names' not in params:
+            raise ValueError('input_names parameter is required')
+        if 'output_name' not in params:
+            raise ValueError('output_name parameter is required')
+
+
+        # Build FeatureSet
+        #
+        row_order = []
+        alignment = {}
+        curr_pos = 0
+        MSA_seen = {}
+        for MSA_name in params['input_names']:
+            if not MSA_name in MSA_seen.keys():
+                MSA_seen[featureSet_name] = 1
+            else:
+                raise ValueError ("repeat MSA_name: '"+MSA_name+"'")
+
+            try:
+                ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+MSA_name}])
+                data = objects[0]['data']
+                info = objects[0]['info']
+                # Object Info Contents
+                # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
+                # 0 - obj_id objid
+                # 1 - obj_name name
+                # 2 - type_string type
+                # 3 - timestamp save_date
+                # 4 - int version
+                # 5 - username saved_by
+                # 6 - ws_id wsid
+                # 7 - ws_name workspace
+                # 8 - string chsum
+                # 9 - int size 
+                # 10 - usermeta meta
+                type_name = info[2].split('.')[1].split('-')[0]
+
+            except Exception as e:
+                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                #to get the full stack trace: traceback.format_exc()
+
+            if type_name != 'MSA':
+                raise ValueError("Bad Type:  Should be MSA instead of '"+type_name+"'")
+
+            this_MSA = data
+            this_row_order = []
+            if 'row_order' in this_MSA.keys():
+                this_row_order = this_MSA['row_order']:
+            else:
+                this_row_order = sorted(this_MSA['alignment'].keys())
+
+            for row_id in this_row_order:
+                id_pieces = re.split('\.', row_id)
+                genome_id = ".".join(id_pieces[0:1])
+                if genome_id not in alignment.keys():
+                    row_order.append(genome_id)
+
+            report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order))+"\n"
+            self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
+            self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
+
+            # build alignment records
+            this_aln_len = len(this_MSA['alignment'][this_row_order[0]])
+            curr_pos += this_aln_len
+
+# HERE
+            
+
+        # load the method provenance from the context object
+        #
+        self.log(console,"SETTING PROVENANCE")  # DEBUG
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects'] = []
+        for featureSet_name in params['input_names']:
+            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+featureSet_name)
+        provenance[0]['service'] = 'kb_util_dylan'
+        provenance[0]['method'] = 'KButil_Merge_FeatureSet_Collection'
+
+
+        # Store output object
+        #
+        output_FeatureSet = {
+                              'description': params['desc'],
+                              'element_ordering': element_ordering,
+                              'elements': elements
+                            }
+
+        new_obj_info = ws.save_objects({
+                            'workspace': params['workspace_name'],
+                            'objects':[{
+                                    'type': 'KBaseCollections.FeatureSet',
+                                    'data': output_FeatureSet,
+                                    'name': params['output_name'],
+                                    'meta': {},
+                                    'provenance': provenance
+                                }]
+                        })
+
+
+        # build output report object
+        #
+        self.log(console,"BUILDING REPORT")  # DEBUG
+        self.log(console,"features in output set "+params['output_name']+": "+str(len(element_ordering)))
+        report += 'features in output set '+params['output_name']+': '+str(len(element_ordering))+"\n"
+
+        reportObj = {
+            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Merge_FeatureSet_Collection'}],
+            'text_message':report
+        }
+        reportName = 'kb_util_dylan_merge_featureset_report_'+str(hex(uuid.getnode()))
+        report_obj_info = ws.save_objects({
+#                'id':info[6],
+                'workspace':params['workspace_name'],
+                'objects':[
+                    {
+                        'type':'KBaseReport.Report',
+                        'data':reportObj,
+                        'name':reportName,
+                        'meta':{},
+                        'hidden':1,
+                        'provenance':provenance
+                    }
+                ]
+            })[0]
+
+
+        # Build report and return
+        #
+        self.log(console,"BUILDING RETURN OBJECT")
+        returnVal = { 'report_name': reportName,
+                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+                      }
+        self.log(console,"KButil_Merge_FeatureSet_Collection DONE")
+        #END KButil_Concat_MSAs
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Concat_MSAs return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
