@@ -1011,7 +1011,7 @@ class kb_util_dylan:
             # build row_order
             this_row_order = []
             if 'row_order' in this_MSA.keys():
-                this_row_order = this_MSA['row_order']:
+                this_row_order = this_MSA['row_order']
             else:
                 this_row_order = sorted(this_MSA['alignment'].keys())
 
