@@ -965,7 +965,7 @@ class kb_util_dylan:
         sequence_type = None
         for MSA_i,MSA_name in enumerate(params['input_names']):
             if not MSA_name in MSA_seen.keys():
-                MSA_seen[featureSet_name] = 1
+                MSA_seen[MSA_name] = True
             else:
                 raise ValueError ("repeat MSA_name: '"+MSA_name+"'")
 
