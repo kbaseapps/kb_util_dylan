@@ -961,7 +961,9 @@ class kb_util_dylan:
         alignment = {}
         curr_pos = 0
         MSA_seen = {}
-        for MSA_name in params['input_names']:
+        discard_set = {}
+        sequence_type = None
+        for MSA_i,MSA_name in enumerate(params['input_names']):
             if not MSA_name in MSA_seen.keys():
                 MSA_seen[featureSet_name] = 1
             else:
@@ -995,28 +997,77 @@ class kb_util_dylan:
                 raise ValueError("Bad Type:  Should be MSA instead of '"+type_name+"'")
 
             this_MSA = data
+
+            # set sequence_type
+            try:
+                this_sequence_type = this_MSA['sequence_type']
+                if sequence_type == None:
+                    sequence_type = this_sequence_type
+                elif this_sequence_type != sequence_type:
+                    raise ValueError ("inconsistent sequence type for MSA "+MSA_name+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
+            except:
+                pass
+
+            # build row_order
             this_row_order = []
             if 'row_order' in this_MSA.keys():
                 this_row_order = this_MSA['row_order']:
             else:
                 this_row_order = sorted(this_MSA['alignment'].keys())
 
+            # concat alignments using base genome_id to unify (input rows are probably gene ids)
+            this_aln_len = len(this_MSA['alignment'][this_row_order[0]])
+            genome_row_ids_updated = {}
             for row_id in this_row_order:
                 id_pieces = re.split('\.', row_id)
-                genome_id = ".".join(id_pieces[0:1])
+                if len(id_pieces) >= 2:
+                    genome_id = ".".join(id_pieces[0:1])  # just want genome_id
+                else:
+                    genome_id = row_id
+
+                this_row_len = len(this_MSA['alignment'][row_id])
+                if this_row_len != this_aln_len:
+                    raise ValueError("inconsistent alignment len in "+MSA_name+": first_row_len="+this_aln_len+" != "+this_row_len+" ("+row_id+")")
+
+                # create new rows
                 if genome_id not in alignment.keys():
                     row_order.append(genome_id)
+                    alignment[genome_id] = ''
+                    if MSA_i > 0:
+                        discard_set[genome_id] = True
+                        alignment[genome_id] += ''.join(['-' for s in range(curr_pos)])
+                # add new 
+                genome_row_ids_updated[genome_id] = True
+                alignment[genome_id] += this_MSA['alignment'][row_id]
+
+            # append blanks for rows that weren't in new MSA
+            if MSA_i > 0:
+                for genome_id in alignment.keys():
+                    try:
+                        updated = genome_row_ids_updated[genome_id]
+                    except:
+                        discard_set[genome_id] = True
+                        alignment[genome_id] += ''.join(['-' for s in range(this_aln_len)])
+            # update curr_pos
+            curr_pos += this_aln_len
 
             report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order))+"\n"
             self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
             self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
 
-            # build alignment records
-            this_aln_len = len(this_MSA['alignment'][this_row_order[0]])
-            curr_pos += this_aln_len
+        # remove incomplete rows if not adding blanks
+        if 'blanks_flag' in params and params['blanks_flag'] != None and params['blanks_flag'] == '0':
+            new_row_order = []
+            new_alignment = {}
+            for genome_id in row_order:
+                try:
+                    discard = discard_set[genome_id]
+                except:
+                    new_row_order.append(genome_id)
+                    new_alignment[genome_id] = alignment[genome_id]
+            row_order = new_row_order
+            alignment = new_alignment
 
-# HERE
-            
 
         # load the method provenance from the context object
         #
@@ -1026,25 +1077,28 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         provenance[0]['input_ws_objects'] = []
-        for featureSet_name in params['input_names']:
-            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+featureSet_name)
+        for MSA_name in params['input_names']:
+            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+MSA_name)
         provenance[0]['service'] = 'kb_util_dylan'
-        provenance[0]['method'] = 'KButil_Merge_FeatureSet_Collection'
+        provenance[0]['method'] = 'KButil_Concat_MSAs'
 
 
         # Store output object
         #
-        output_FeatureSet = {
-                              'description': params['desc'],
-                              'element_ordering': element_ordering,
-                              'elements': elements
-                            }
+        output_MSA = {
+                       'name': params['output_name'],
+                       'description': params['desc'],
+                       'row_order': row_order,
+                       'alignment': alignment
+                     }
+        if sequence_type != None:
+            output_MSA['sequence_type'] = sequence_type
 
         new_obj_info = ws.save_objects({
                             'workspace': params['workspace_name'],
                             'objects':[{
-                                    'type': 'KBaseCollections.FeatureSet',
-                                    'data': output_FeatureSet,
+                                    'type': 'KBaseTrees.MSA',
+                                    'data': output_MSA,
                                     'name': params['output_name'],
                                     'meta': {},
                                     'provenance': provenance
@@ -1055,14 +1109,14 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        self.log(console,"features in output set "+params['output_name']+": "+str(len(element_ordering)))
-        report += 'features in output set '+params['output_name']+': '+str(len(element_ordering))+"\n"
+        self.log(console,"rows in output MSA "+params['output_name']+": "+str(len(row_order)))
+        report += 'rows in output MSA '+params['output_name']+': '+str(len(row_order))+"\n"
 
         reportObj = {
-            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Merge_FeatureSet_Collection'}],
+            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Concat_MSAs'}],
             'text_message':report
         }
-        reportName = 'kb_util_dylan_merge_featureset_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_concat_msas_report_'+str(hex(uuid.getnode()))
         report_obj_info = ws.save_objects({
 #                'id':info[6],
                 'workspace':params['workspace_name'],
@@ -1085,7 +1139,7 @@ class kb_util_dylan:
         returnVal = { 'report_name': reportName,
                       'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
                       }
-        self.log(console,"KButil_Merge_FeatureSet_Collection DONE")
+        self.log(console,"KButil_Concat_MSAs DONE")
         #END KButil_Concat_MSAs
 
         # At some point might do deeper type checking...
