@@ -964,11 +964,10 @@ class kb_util_dylan:
         discard_set = {}
         sequence_type = None
         for MSA_i,MSA_name in enumerate(params['input_names']):
-# RESTORE
-#            if not MSA_name in MSA_seen.keys():
-#                MSA_seen[MSA_name] = True
-#            else:
-#                raise ValueError ("repeat MSA_name: '"+MSA_name+"'")
+            if not MSA_name in MSA_seen.keys():
+                MSA_seen[MSA_name] = True
+            else:
+                raise ValueError ("repeat MSA_name: '"+MSA_name+"'")
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
