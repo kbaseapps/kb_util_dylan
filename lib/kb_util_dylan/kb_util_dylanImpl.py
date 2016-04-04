@@ -1020,6 +1020,8 @@ class kb_util_dylan:
             # DEBUG
             for row_id in this_row_order:
                 self.log(console,"ROW_ORDER_ID: '"+row_id+"'")
+            for row_id in sorted(this_MSA['alignment']:
+                self.log(console,"ALIGNMENT_ID: '"+row_id+"'")
 
             # concat alignments using base genome_id to unify (input rows are probably gene ids)
             this_aln_len = len(this_MSA['alignment'][this_row_order[0]])
