@@ -964,10 +964,11 @@ class kb_util_dylan:
         discard_set = {}
         sequence_type = None
         for MSA_i,MSA_name in enumerate(params['input_names']):
-            if not MSA_name in MSA_seen.keys():
-                MSA_seen[MSA_name] = True
-            else:
-                raise ValueError ("repeat MSA_name: '"+MSA_name+"'")
+# RESTORE
+#            if not MSA_name in MSA_seen.keys():
+#                MSA_seen[MSA_name] = True
+#            else:
+#                raise ValueError ("repeat MSA_name: '"+MSA_name+"'")
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
@@ -1020,7 +1021,7 @@ class kb_util_dylan:
             # DEBUG
             for row_id in this_row_order:
                 self.log(console,"ROW_ORDER_ID: '"+row_id+"'")
-            for row_id in sorted(this_MSA['alignment']:
+            for row_id in sorted(this_MSA['alignment']):
                 self.log(console,"ALIGNMENT_ID: '"+row_id+"'")
 
             # concat alignments using base genome_id to unify (input rows are probably gene ids)
