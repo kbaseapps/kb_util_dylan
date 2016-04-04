@@ -1011,9 +1011,15 @@ class kb_util_dylan:
             # build row_order
             this_row_order = []
             if 'row_order' in this_MSA.keys():
+                self.log(console,"IN row_order A")  # DEBUG
                 this_row_order = this_MSA['row_order']
             else:
+                self.log(console,"IN row_order B")  # DEBUG
                 this_row_order = sorted(this_MSA['alignment'].keys())
+
+            # DEBUG
+            for row_id in this_row_order:
+                self.log(console,"ROW_ORDER_ID: '"+row_id+"'")
 
             # concat alignments using base genome_id to unify (input rows are probably gene ids)
             this_aln_len = len(this_MSA['alignment'][this_row_order[0]])
