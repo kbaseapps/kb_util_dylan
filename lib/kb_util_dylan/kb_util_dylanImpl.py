@@ -283,6 +283,7 @@ class kb_util_dylan:
                     line = re.sub (" ","",line)
                     line = re.sub ("\t","",line)
                     if not DNA_pattern.match(line):
+                        self.log(console,"BAD record:\n"+line)
                         raise ValueError ("BAD record:\n"+line+"\n")
                     forward_reads_file_handle.write(line.lower()+"\n")
 
@@ -300,6 +301,7 @@ class kb_util_dylan:
                         else:
                             bad_record = "\n".join([split_input_sequence_buf[i],
                                                     split_input_sequence_buf[i+1]])
+                        self.log(console,"BAD record:\n"+bad_record)
                         raise ValueError ("BAD record:\n"+bad_record+"\n")
                     if fastq_format and line.startswith('@'):
                         format_ok = True
@@ -315,6 +317,7 @@ class kb_util_dylan:
                                                     split_input_sequence_buf[i+1],
                                                     split_input_sequence_buf[i+2],
                                                     split_input_sequence_buf[i+3]])
+                            self.log(console,"BAD record:\n"+bad_record)
                             raise ValueError ("BAD record:\n"+bad_record+"\n")
 
 
@@ -967,6 +970,7 @@ class kb_util_dylan:
             if not MSA_name in MSA_seen.keys():
                 MSA_seen[MSA_name] = True
             else:
+                self.log(console,"repeat MSA_name: '"+MSA_name+"'")
                 raise ValueError ("repeat MSA_name: '"+MSA_name+"'")
 
             try:
@@ -1011,17 +1015,18 @@ class kb_util_dylan:
             # build row_order
             this_row_order = []
             if 'row_order' in this_MSA.keys():
-                self.log(console,"IN row_order A")  # DEBUG
+                #self.log(console,"IN row_order A")  # DEBUG
                 this_row_order = this_MSA['row_order']
             else:
-                self.log(console,"IN row_order B")  # DEBUG
+                #self.log(console,"IN row_order B")  # DEBUG
                 this_row_order = sorted(this_MSA['alignment'].keys())
 
             # DEBUG
-            for row_id in this_row_order:
-                self.log(console,"ROW_ORDER_ID: '"+row_id+"'")
-            for row_id in sorted(this_MSA['alignment']):
-                self.log(console,"ALIGNMENT_ID: '"+row_id+"'")
+            #for row_id in this_row_order:
+            #    self.log(console,"ROW_ORDER_ID: '"+row_id+"'")
+            #for row_id in sorted(this_MSA['alignment']):
+            #    self.log(console,"ALIGNMENT_ID: '"+row_id+"'")
+
 
             # concat alignments using base genome_id to unify (input rows are probably gene ids)
             this_aln_len = len(this_MSA['alignment'][this_row_order[0]])
@@ -1042,8 +1047,12 @@ class kb_util_dylan:
                     row_order.append(genome_id)
                     alignment[genome_id] = ''
                     if MSA_i > 0:
+                        self.log("NOT IN OLD MSA: "+genome_id)  # DEBUG
                         discard_set[genome_id] = True
                         alignment[genome_id] += ''.join(['-' for s in range(curr_pos)])
+                else:  # DEBUG
+                    self.log("SEEN IN MSA: "+genome_id)  # DEBUG
+
                 # add new 
                 genome_row_ids_updated[genome_id] = True
                 alignment[genome_id] += this_MSA['alignment'][row_id]
@@ -1054,6 +1063,7 @@ class kb_util_dylan:
                     try:
                         updated = genome_row_ids_updated[genome_id]
                     except:
+                        self.log("NOT IN NEW MSA: "+genome_id)  # DEBUG
                         discard_set[genome_id] = True
                         alignment[genome_id] += ''.join(['-' for s in range(this_aln_len)])
             # update curr_pos
