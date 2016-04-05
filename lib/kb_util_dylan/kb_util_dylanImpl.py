@@ -1111,6 +1111,13 @@ class kb_util_dylan:
         provenance[0]['method'] = 'KButil_Concat_MSAs'
 
 
+        # DEBUG: check alignment and row_order
+        for genome_id in row_order:
+            self.log(console,"ROW_ORDER: "+genome_id)
+        for genome_id in alignment.keys():
+            self.log(console,"ALIGNMENT: "+genome_id+",\t"+alignment[genome_id]
+
+
         # Store output object
         #
         output_MSA = {
