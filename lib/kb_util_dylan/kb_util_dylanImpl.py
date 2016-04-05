@@ -1047,11 +1047,11 @@ class kb_util_dylan:
                     row_order.append(genome_id)
                     alignment[genome_id] = ''
                     if MSA_i > 0:
-                        self.log("NOT IN OLD MSA: "+genome_id)  # DEBUG
+                        self.log(console,"NOT IN OLD MSA: "+genome_id)  # DEBUG
                         discard_set[genome_id] = True
                         alignment[genome_id] += ''.join(['-' for s in range(curr_pos)])
                 else:  # DEBUG
-                    self.log("SEEN IN MSA: "+genome_id)  # DEBUG
+                    self.log(console,"SEEN IN MSA: "+genome_id)  # DEBUG
 
                 # add new 
                 genome_row_ids_updated[genome_id] = True
@@ -1063,7 +1063,7 @@ class kb_util_dylan:
                     try:
                         updated = genome_row_ids_updated[genome_id]
                     except:
-                        self.log("NOT IN NEW MSA: "+genome_id)  # DEBUG
+                        self.log(console,"NOT IN NEW MSA: "+genome_id)  # DEBUG
                         discard_set[genome_id] = True
                         alignment[genome_id] += ''.join(['-' for s in range(this_aln_len)])
             # update curr_pos
