@@ -1080,7 +1080,7 @@ class kb_util_dylan:
             # update curr_pos
             curr_pos += this_aln_len
 
-            report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order))+"[ "+str(this_row_order)+" ]"+"\n"
+            report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order)+" "+str(this_row_order)+"\n"
             self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
             self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
 
@@ -1088,10 +1088,10 @@ class kb_util_dylan:
         for genome_id in row_order:
             try:
                 discard = discard_set[genome_id]
-                self.log(console,'incomplete row: '+genome_id)
+                self.log(console,'incomplete row: '+genome_id+"\n")
                 report += 'incomplete row: '+genome_id
             except:
-                self.log(console,'complete row: '+genome_id)
+                self.log(console,'complete row: '+genome_id+"\n")
                 report += 'complete row: '+genome_id
         
 
@@ -1102,7 +1102,7 @@ class kb_util_dylan:
             for genome_id in row_order:
                 try:
                     discard = discard_set[genome_id]
-                    self.log(console,'discarding row: '+genome_id)
+                    self.log(console,'discarding row: '+genome_id+"\n")
                     report += 'discarding row: '+genome_id
                 except:
                     new_row_order.append(genome_id)
@@ -1112,7 +1112,7 @@ class kb_util_dylan:
 
         # report which rows are retained
         for genome_id in row_order:
-            self.log(console,'output MSA contains row: '+genome_id)
+            self.log(console,'output MSA contains row: '+genome_id+"\n")
             report += 'output MSA contains row: '+genome_id
 
 
