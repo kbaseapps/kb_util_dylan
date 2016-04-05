@@ -1083,6 +1083,15 @@ class kb_util_dylan:
             self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
             self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
 
+
+        # DEBUG: check alignment and row_order
+        for genome_id in row_order:
+            self.log(console,"B4 ROW_ORDER: "+genome_id)
+        for genome_id in alignment.keys():
+            self.log(console,"B4 ALIGNMENT: "+genome_id+",\t"+alignment[genome_id])
+
+
+
         # remove incomplete rows if not adding blanks
         if 'blanks_flag' in params and params['blanks_flag'] != None and params['blanks_flag'] == '0':
             new_row_order = []
@@ -1113,9 +1122,9 @@ class kb_util_dylan:
 
         # DEBUG: check alignment and row_order
         for genome_id in row_order:
-            self.log(console,"ROW_ORDER: "+genome_id)
+            self.log(console,"AFTER ROW_ORDER: "+genome_id)
         for genome_id in alignment.keys():
-            self.log(console,"ALIGNMENT: "+genome_id+",\t"+alignment[genome_id]
+            self.log(console,"AFTER ALIGNMENT: "+genome_id+",\t"+alignment[genome_id])
 
 
         # Store output object
