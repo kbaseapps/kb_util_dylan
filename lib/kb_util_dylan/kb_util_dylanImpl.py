@@ -1086,7 +1086,7 @@ class kb_util_dylan:
 
 
         # remove incomplete rows if not adding blanks
-        if 'blanks_flag' in params and params['blanks_flag'] != None and params['blanks_flag'] == '0':
+        if 'blanks_flag' in params and params['blanks_flag'] != None and params['blanks_flag'] == 0:
             new_row_order = []
             new_alignment = {}
             for genome_id in row_order:
