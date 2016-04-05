@@ -1001,6 +1001,7 @@ class kb_util_dylan:
                 raise ValueError("Bad Type:  Should be MSA instead of '"+type_name+"'")
 
             this_MSA = data
+            this_genomes_seen = {}
 
             # set sequence_type
             try:
@@ -1034,9 +1035,17 @@ class kb_util_dylan:
             for row_id in this_row_order:
                 id_pieces = re.split('\.', row_id)
                 if len(id_pieces) >= 2:
-                    genome_id = ".".join(id_pieces[0:1])  # just want genome_id
+                    genome_id = ".".join(id_pieces[0:2])  # just want genome_id
                 else:
                     genome_id = row_id
+
+                # can't have repeat genome_ids (i.e. no paralogs allowed)
+                try:
+                    genome_id_seen = this_genomes_seen[genome_id]
+                    self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
+                    raise ValueError("only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
+                except:
+                    this_genomes_seen[genome_id] = True
 
                 this_row_len = len(this_MSA['alignment'][row_id])
                 if this_row_len != this_aln_len:
