@@ -1117,7 +1117,8 @@ class kb_util_dylan:
                        'name': params['output_name'],
                        'description': params['desc'],
                        'row_order': row_order,
-                       'alignment': alignment
+                       'alignment': alignment,
+                       'alignment_length': len(alignment[row_order[0]])
                      }
         if sequence_type != None:
             output_MSA['sequence_type'] = sequence_type
