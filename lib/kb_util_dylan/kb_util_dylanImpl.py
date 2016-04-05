@@ -1044,8 +1044,8 @@ class kb_util_dylan:
                     genome_id_seen = this_genomes_seen[genome_id]
                     self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
                     raise ValueError("only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
-                    continue  # DEBUG
-                    #sys.exit(0)  
+                    #continue  # DEBUG
+                    sys.exit(0)  
                 except:
                     this_genomes_seen[genome_id] = True
 
