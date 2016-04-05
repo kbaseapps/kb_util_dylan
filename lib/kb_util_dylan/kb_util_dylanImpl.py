@@ -1080,10 +1080,20 @@ class kb_util_dylan:
             # update curr_pos
             curr_pos += this_aln_len
 
-            report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order))+"\n"
+            report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order))+"[ "+str(this_row_order)+" ]"+"\n"
             self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
             self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
 
+        # report which are incomplete rows (regardless of whether discarding)
+        for genome_id in row_order:
+            try:
+                discard = discard_set[genome_id]
+                self.log(console,'incomplete row: '+genome_id)
+                report += 'incomplete row: '+genome_id
+            except:
+                self.log(console,'complete row: '+genome_id)
+                report += 'complete row: '+genome_id
+        
 
         # remove incomplete rows if not adding blanks
         if 'blanks_flag' in params and params['blanks_flag'] != None and params['blanks_flag'] == 0:
@@ -1092,11 +1102,18 @@ class kb_util_dylan:
             for genome_id in row_order:
                 try:
                     discard = discard_set[genome_id]
+                    self.log(console,'discarding row: '+genome_id)
+                    report += 'discarding row: '+genome_id
                 except:
                     new_row_order.append(genome_id)
                     new_alignment[genome_id] = alignment[genome_id]
             row_order = new_row_order
             alignment = new_alignment
+
+        # report which rows are retained
+        for genome_id in row_order:
+            self.log(console,'output MSA contains row: '+genome_id)
+            report += 'output MSA contains row: '+genome_id
 
 
         # load the method provenance from the context object
