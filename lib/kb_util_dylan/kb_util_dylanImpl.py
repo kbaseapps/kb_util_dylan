@@ -1229,7 +1229,7 @@ class kb_util_dylan:
             self.log(console,"rows in output MSA "+params['output_name']+": "+str(len(row_order)))
             report += 'rows in output MSA '+params['output_name']+': '+str(len(row_order))+"\n"
             reportObj = {
-                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Concat_MSAs'}]
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Concat_MSAs'}],
                 'text_message':report
                 }
         else:
