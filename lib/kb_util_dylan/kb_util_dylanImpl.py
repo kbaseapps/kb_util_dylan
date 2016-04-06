@@ -748,6 +748,7 @@ class kb_util_dylan:
             'text_message':report
         }
         reportName = 'kb_util_dylan_merge_featureset_report_'+str(hex(uuid.getnode()))
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
                 'workspace':params['workspace_name'],
@@ -908,6 +909,7 @@ class kb_util_dylan:
             'text_message':report
         }
         reportName = 'kb_util_dylan_build_genomeset_from_featureset_report_'+str(hex(uuid.getnode()))
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
                 'workspace':params['workspace_name'],
@@ -1200,6 +1202,7 @@ class kb_util_dylan:
             reportObj['objects_created'] = []
 
         reportName = 'kb_util_dylan_concat_msas_report_'+str(hex(uuid.getnode()))
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
                 'workspace':params['workspace_name'],
