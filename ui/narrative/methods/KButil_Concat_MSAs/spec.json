@@ -99,7 +99,7 @@
                     "target_property": "report_ref"
                 },
                 {
-		    "constant_value": "5",
+		    "constant_value": "15",
                     "target_property": "report_window_line_height"
                 }
             ]
