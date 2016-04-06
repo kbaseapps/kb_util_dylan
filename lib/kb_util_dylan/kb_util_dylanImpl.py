@@ -965,6 +965,10 @@ class kb_util_dylan:
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
+        if len(params['input_names']) < 2:
+            self.log(console,"Must provide more than one MSA")
+            self.valid_log(valid_msgs,"Must provide more than one MSA")
+
 
         # Build FeatureSet
         #
@@ -975,6 +979,9 @@ class kb_util_dylan:
         discard_set = {}
         sequence_type = None
         for MSA_i,MSA_name in enumerate(params['input_names']):
+            if len(params['input_names'] < 2):  # too lazy to reindent the block
+                continue
+
             if not MSA_name in MSA_seen.keys():
                 MSA_seen[MSA_name] = True
             else:
