@@ -54,6 +54,13 @@ class kb_util_dylan:
         print(message)
         sys.stdout.flush()
 
+    def valid_log(self, target, message):
+        # we should do something better here...
+        if target is not None:
+            target.append(message)
+        #print(message)
+        #sys.stdout.flush()
+
     def get_single_end_read_library(self, ws_data, ws_info, forward):
         pass
 
@@ -939,6 +946,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Concat_MSAs
         console = []
+        valid_msgs = []
         self.log(console,'Running KButil_Concat_MSAs with params=')
         self.log(console, "\n"+pformat(params))
         report = ''
@@ -971,7 +979,8 @@ class kb_util_dylan:
                 MSA_seen[MSA_name] = True
             else:
                 self.log(console,"repeat MSA_name: '"+MSA_name+"'")
-                raise ValueError ("repeat MSA_name: '"+MSA_name+"'")
+                self.valid_log(valid_msgs,"repeat MSA_name: '"+MSA_name+"'")
+                continue
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
@@ -1009,7 +1018,8 @@ class kb_util_dylan:
                 if sequence_type == None:
                     sequence_type = this_sequence_type
                 elif this_sequence_type != sequence_type:
-                    raise ValueError ("inconsistent sequence type for MSA "+MSA_name+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
+                    self.valid_log(valid_msgs,"inconsistent sequence type for MSA "+MSA_name+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
+                    continue
             except:
                 pass
 
@@ -1043,26 +1053,26 @@ class kb_util_dylan:
                 try:
                     genome_id_seen = this_genomes_seen[genome_id]
                     self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
-                    raise ValueError("only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
-                    #continue  # DEBUG
-                    sys.exit(0)  
+                    self.valid_log(valid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
+                    continue
                 except:
                     this_genomes_seen[genome_id] = True
 
                 this_row_len = len(this_MSA['alignment'][row_id])
                 if this_row_len != this_aln_len:
-                    raise ValueError("inconsistent alignment len in "+MSA_name+": first_row_len="+this_aln_len+" != "+this_row_len+" ("+row_id+")")
+                    self.valid_log(valid_msgs,"inconsistent alignment len in "+MSA_name+": first_row_len="+this_aln_len+" != "+this_row_len+" ("+row_id+")")
+                    continue
 
                 # create new rows
                 if genome_id not in alignment.keys():
                     row_order.append(genome_id)
                     alignment[genome_id] = ''
                     if MSA_i > 0:
-                        self.log(console,"NOT IN OLD MSA: "+genome_id)  # DEBUG
+                        #self.log(console,"NOT IN OLD MSA: "+genome_id)  # DEBUG
                         discard_set[genome_id] = True
                         alignment[genome_id] += ''.join(['-' for s in range(curr_pos)])
-                else:  # DEBUG
-                    self.log(console,"SEEN IN MSA: "+genome_id)  # DEBUG
+                #else:  # DEBUG
+                    #self.log(console,"SEEN IN MSA: "+genome_id)  # DEBUG
 
                 # add new 
                 genome_row_ids_updated[genome_id] = True
@@ -1074,46 +1084,49 @@ class kb_util_dylan:
                     try:
                         updated = genome_row_ids_updated[genome_id]
                     except:
-                        self.log(console,"NOT IN NEW MSA: "+genome_id)  # DEBUG
+                        #self.log(console,"NOT IN NEW MSA: "+genome_id)  # DEBUG
                         discard_set[genome_id] = True
                         alignment[genome_id] += ''.join(['-' for s in range(this_aln_len)])
             # update curr_pos
             curr_pos += this_aln_len
-
-            report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order)+" "+str(this_row_order)+"\n"
-            self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
-            self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
+            
+            # report
+            if len(valid_msgs) == 0:
+                report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order))+" "+str(this_row_order)+"\n"
+                self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
+                self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
 
         # report which are incomplete rows (regardless of whether discarding)
-        for genome_id in row_order:
-            try:
-                discard = discard_set[genome_id]
-                self.log(console,'incomplete row: '+genome_id+"\n")
-                report += 'incomplete row: '+genome_id
-            except:
-                self.log(console,'complete row: '+genome_id+"\n")
-                report += 'complete row: '+genome_id
-        
-
-        # remove incomplete rows if not adding blanks
-        if 'blanks_flag' in params and params['blanks_flag'] != None and params['blanks_flag'] == 0:
-            new_row_order = []
-            new_alignment = {}
+        if len(valid_msgs) == 0:
             for genome_id in row_order:
                 try:
                     discard = discard_set[genome_id]
-                    self.log(console,'discarding row: '+genome_id+"\n")
-                    report += 'discarding row: '+genome_id
+                    self.log(console,'incomplete row: '+genome_id+"\n")
+                    report += 'incomplete row: '+genome_id
                 except:
-                    new_row_order.append(genome_id)
-                    new_alignment[genome_id] = alignment[genome_id]
-            row_order = new_row_order
-            alignment = new_alignment
+                    self.log(console,'complete row: '+genome_id+"\n")
+                    report += 'complete row: '+genome_id
+        
 
-        # report which rows are retained
-        for genome_id in row_order:
-            self.log(console,'output MSA contains row: '+genome_id+"\n")
-            report += 'output MSA contains row: '+genome_id
+            # remove incomplete rows if not adding blanks
+            if 'blanks_flag' in params and params['blanks_flag'] != None and params['blanks_flag'] == 0:
+                new_row_order = []
+                new_alignment = {}
+                for genome_id in row_order:
+                    try:
+                        discard = discard_set[genome_id]
+                        self.log(console,'discarding row: '+genome_id+"\n")
+                        report += 'discarding row: '+genome_id
+                    except:
+                        new_row_order.append(genome_id)
+                        new_alignment[genome_id] = alignment[genome_id]
+                    row_order = new_row_order
+                    alignment = new_alignment
+
+            # report which rows are retained
+            for genome_id in row_order:
+                self.log(console,'output MSA contains row: '+genome_id+"\n")
+                report += 'output MSA contains row: '+genome_id
 
 
         # load the method provenance from the context object
@@ -1139,17 +1152,18 @@ class kb_util_dylan:
 
         # Store output object
         #
-        output_MSA = {
+        if len(valid_msgs) == 0:
+            output_MSA = {
                        'name': params['output_name'],
                        'description': params['desc'],
                        'row_order': row_order,
                        'alignment': alignment,
                        'alignment_length': len(alignment[row_order[0]])
                      }
-        if sequence_type != None:
-            output_MSA['sequence_type'] = sequence_type
+            if sequence_type != None:
+                output_MSA['sequence_type'] = sequence_type
 
-        new_obj_info = ws.save_objects({
+                new_obj_info = ws.save_objects({
                             'workspace': params['workspace_name'],
                             'objects':[{
                                     'type': 'KBaseTrees.MSA',
@@ -1164,13 +1178,17 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        self.log(console,"rows in output MSA "+params['output_name']+": "+str(len(row_order)))
-        report += 'rows in output MSA '+params['output_name']+': '+str(len(row_order))+"\n"
+        if len(valid_msgs) == 0:
+            self.log(console,"rows in output MSA "+params['output_name']+": "+str(len(row_order)))
+            report += 'rows in output MSA '+params['output_name']+': '+str(len(row_order))+"\n"
+        else:
+            report += "\n".join(valid_msgs)
 
         reportObj = {
-            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Concat_MSAs'}],
             'text_message':report
         }
+        if len(valid_msgs) == 0:
+            reportObj['objects_created'] = [{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Concat_MSAs'}],
         reportName = 'kb_util_dylan_concat_msas_report_'+str(hex(uuid.getnode()))
         report_obj_info = ws.save_objects({
 #                'id':info[6],
