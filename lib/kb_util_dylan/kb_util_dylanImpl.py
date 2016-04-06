@@ -1052,15 +1052,15 @@ class kb_util_dylan:
                 # can't have repeat genome_ids (i.e. no paralogs allowed)
                 try:
                     genome_id_seen = this_genomes_seen[genome_id]
-                    self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
-                    self.valid_log(valid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id)
+                    self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
+                    self.valid_log(valid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
                     continue
                 except:
                     this_genomes_seen[genome_id] = True
 
                 this_row_len = len(this_MSA['alignment'][row_id])
                 if this_row_len != this_aln_len:
-                    self.valid_log(valid_msgs,"inconsistent alignment len in "+MSA_name+": first_row_len="+this_aln_len+" != "+this_row_len+" ("+row_id+")")
+                    self.valid_log(valid_msgs,"inconsistent alignment len in "+MSA_name+": first_row_len="+str(this_aln_len)+" != "+str(this_row_len)+" ("+row_id+")")
                     continue
 
                 # create new rows
