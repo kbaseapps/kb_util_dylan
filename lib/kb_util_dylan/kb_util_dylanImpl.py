@@ -1190,7 +1190,7 @@ class kb_util_dylan:
         if len(valid_msgs) == 0:
             reportObj['objects_created'] = [{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Concat_MSAs'}]
         else:
-            reportObj['objects_created'] = None
+            reportObj['objects_created'] = []
 
         reportName = 'kb_util_dylan_concat_msas_report_'+str(hex(uuid.getnode()))
         report_obj_info = ws.save_objects({
