@@ -394,7 +394,7 @@ class kb_util_dylan:
                 'text_message':report
             }
         else:
-            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
             reportObj = {
                 'objects_created':[],
                 'text_message':report
@@ -600,7 +600,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
         else:
-            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
             reportObj = {
                 'objects_created':[],
                 'text_message':report
@@ -768,7 +768,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
         else:
-            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
             reportObj = {
                 'objects_created':[],
                 'text_message':report
@@ -939,7 +939,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
         else:
-            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
             reportObj = {
                 'objects_created':[],
                 'text_message':report
@@ -1233,7 +1233,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
         else:
-            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
             reportObj = {
                 'objects_created':[],
                 'text_message':report
