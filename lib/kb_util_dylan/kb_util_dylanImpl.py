@@ -54,6 +54,7 @@ class kb_util_dylan:
         print(message)
         sys.stdout.flush()
 
+    # target is a list for collecting log messages pertaining to failed validation tests  
     def invalid_log(self, target, message):
         # we should do something better here...
         if target is not None:
