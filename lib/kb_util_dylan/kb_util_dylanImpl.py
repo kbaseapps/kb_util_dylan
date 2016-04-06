@@ -54,7 +54,7 @@ class kb_util_dylan:
         print(message)
         sys.stdout.flush()
 
-    def valid_log(self, target, message):
+    def invalid_log(self, target, message):
         # we should do something better here...
         if target is not None:
             target.append(message)
@@ -228,6 +228,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Insert_SingleEndLibrary
         console = []
+        invalid_msgs = []
         self.log(console,'Running KButil_Insert_SingleEndLibrary with params=')
         self.log(console, "\n"+pformat(params))
         report = ''
@@ -291,7 +292,8 @@ class kb_util_dylan:
                     line = re.sub ("\t","",line)
                     if not DNA_pattern.match(line):
                         self.log(console,"BAD record:\n"+line)
-                        raise ValueError ("BAD record:\n"+line+"\n")
+                        self.invalid_log(invalid_msgs,"BAD record:\n"+line)
+                        break
                     forward_reads_file_handle.write(line.lower()+"\n")
 
         else:
@@ -309,7 +311,7 @@ class kb_util_dylan:
                             bad_record = "\n".join([split_input_sequence_buf[i],
                                                     split_input_sequence_buf[i+1]])
                         self.log(console,"BAD record:\n"+bad_record)
-                        raise ValueError ("BAD record:\n"+bad_record+"\n")
+                        self.invalid_log(invalid_msgs,"BAD record:\n"+bad_record)
                     if fastq_format and line.startswith('@'):
                         format_ok = True
                         seq_len = len(split_input_sequence_buf[i+1])
@@ -325,7 +327,7 @@ class kb_util_dylan:
                                                     split_input_sequence_buf[i+2],
                                                     split_input_sequence_buf[i+3]])
                             self.log(console,"BAD record:\n"+bad_record)
-                            raise ValueError ("BAD record:\n"+bad_record+"\n")
+                            self.invalid_log(invalid_msgs,"BAD record:\n"+bad_record)
 
 
             # write that sucker, removing spaces
@@ -370,10 +372,10 @@ class kb_util_dylan:
 
         # Upload results
         #
-        self.log(console,"UPLOADING RESULTS")  # DEBUG
-
-        sequencing_tech = 'N/A'
-        self.upload_SingleEndLibrary_to_shock_and_ws (ctx,
+        if len(invalid_msgs) == 0:
+            self.log(console,"UPLOADING RESULTS")  # DEBUG
+            sequencing_tech = 'N/A'
+            self.upload_SingleEndLibrary_to_shock_and_ws (ctx,
                                                       console,  # DEBUG
                                                       params['workspace_name'],
                                                       params['output_name'],
@@ -385,12 +387,18 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        report += 'sequences in library:  '+str(seq_cnt)+"\n"
-
-        reportObj = {
-            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Insert_SingleEndLibrary'}],
-            'text_message':report
-        }
+        if len(invalid_msgs) == 0:
+            report += 'sequences in library:  '+str(seq_cnt)+"\n"
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Insert_SingleEndLibrary'}],
+                'text_message':report
+            }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+            }
 
         reportName = 'kbutil_insert_singleendlibrary_report_'+str(hex(uuid.getnode()))
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
@@ -433,6 +441,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_FASTQ_to_FASTA
         console = []
+        invalid_msgs = []
         self.log(console,'Running KButil_FASTQ_to_FASTA with params=')
         self.log(console, "\n"+pformat(params))
         report = ''
@@ -570,9 +579,9 @@ class kb_util_dylan:
 
         # Upload results
         #
-        self.log(console,"UPLOADING RESULTS")  # DEBUG
-
-        self.upload_SingleEndLibrary_to_shock_and_ws (ctx,
+        if len(invalid_msgs) == 0:
+            self.log(console,"UPLOADING RESULTS")  # DEBUG
+            self.upload_SingleEndLibrary_to_shock_and_ws (ctx,
                                                       console,  # DEBUG
                                                       params['workspace_name'],
                                                       params['output_name'],
@@ -584,12 +593,18 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        report += 'sequences in library:  '+str(seq_cnt)+"\n"
-
-        reportObj = {
-            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_FASTQ_to_FASTA'}],
-            'text_message':report
-        }
+        if len(invalid_msgs) == 0:
+            report += 'sequences in library:  '+str(seq_cnt)+"\n"
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_FASTQ_to_FASTA'}],
+                'text_message':report
+                }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
 
         reportName = 'kbutil_fastq_to_fasta_report_'+str(hex(uuid.getnode()))
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
@@ -632,6 +647,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Merge_FeatureSet_Collection
         console = []
+        invalid_msgs = []
         self.log(console,'Running KButil_Merge_FeatureSet_Collection with params=')
         self.log(console, "\n"+pformat(params))
         report = ''
@@ -660,7 +676,9 @@ class kb_util_dylan:
             if not featureSet_name in featureSet_seen.keys():
                 featureSet_seen[featureSet_name] = 1
             else:
-                raise ValueError ("repeat featureSet_name: '"+featureSet_name+"'")
+                self.log("repeat featureSet_name: '"+featureSet_name+"'")
+                self.invalid_log(invalid_msgs,"repeat featureSet_name: '"+featureSet_name+"'")
+                continue
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
@@ -719,13 +737,15 @@ class kb_util_dylan:
 
         # Store output object
         #
-        output_FeatureSet = {
+        if len(invalid_msgs) == 0:
+            self.log(console,"SAVING FEATURESET")  # DEBUG
+            output_FeatureSet = {
                               'description': params['desc'],
                               'element_ordering': element_ordering,
                               'elements': elements
                             }
 
-        new_obj_info = ws.save_objects({
+            new_obj_info = ws.save_objects({
                             'workspace': params['workspace_name'],
                             'objects':[{
                                     'type': 'KBaseCollections.FeatureSet',
@@ -740,13 +760,20 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        self.log(console,"features in output set "+params['output_name']+": "+str(len(element_ordering)))
-        report += 'features in output set '+params['output_name']+': '+str(len(element_ordering))+"\n"
+        if len(invalid_msgs) == 0:
+            self.log(console,"features in output set "+params['output_name']+": "+str(len(element_ordering)))
+            report += 'features in output set '+params['output_name']+': '+str(len(element_ordering))+"\n"
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Merge_FeatureSet_Collection'}],
+                'text_message':report
+                }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
 
-        reportObj = {
-            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Merge_FeatureSet_Collection'}],
-            'text_message':report
-        }
         reportName = 'kb_util_dylan_merge_featureset_report_'+str(hex(uuid.getnode()))
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
@@ -786,6 +813,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Build_GenomeSet_from_FeatureSet
         console = []
+        invalid_msgs = []
         self.log(console,'Running KButil_Build_GenomeSet_from_FeatureSet with params=')
         self.log(console, "\n"+pformat(params))
         report = ''
@@ -881,12 +909,14 @@ class kb_util_dylan:
 
         # Store output object
         #
-        output_GenomeSet = {
+        if len(invalid_msgs) == 0:
+            self.log(console,"SAVING GENOMESET")  # DEBUG
+            output_GenomeSet = {
                               'description': params['desc'],
                               'elements': elements
                             }
 
-        new_obj_info = ws.save_objects({
+            new_obj_info = ws.save_objects({
                             'workspace': params['workspace_name'],
                             'objects':[{
                                     'type': 'KBaseSearch.GenomeSet',
@@ -901,13 +931,20 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        self.log(console,"genomes in output set "+params['output_name']+": "+str(len(elements.keys())))
-        report += 'genomes in output set '+params['output_name']+': '+str(len(elements.keys()))+"\n"
+        if len(invalid_msgs) == 0:
+            self.log(console,"genomes in output set "+params['output_name']+": "+str(len(elements.keys())))
+            report += 'genomes in output set '+params['output_name']+': '+str(len(elements.keys()))+"\n"
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Build_GenomeSet_from_FeatureSet'}],
+                'text_message':report
+                }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
 
-        reportObj = {
-            'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Build_GenomeSet_from_FeatureSet'}],
-            'text_message':report
-        }
         reportName = 'kb_util_dylan_build_genomeset_from_featureset_report_'+str(hex(uuid.getnode()))
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
@@ -948,7 +985,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Concat_MSAs
         console = []
-        valid_msgs = []
+        invalid_msgs = []
         self.log(console,'Running KButil_Concat_MSAs with params=')
         self.log(console, "\n"+pformat(params))
         report = ''
@@ -969,7 +1006,7 @@ class kb_util_dylan:
 
         if len(params['input_names']) < 2:
             self.log(console,"Must provide more than one MSA")
-            self.valid_log(valid_msgs,"Must provide more than one MSA")
+            self.invalid_log(invalid_msgs,"Must provide more than one MSA")
 
 
         # Build FeatureSet
@@ -988,7 +1025,7 @@ class kb_util_dylan:
                 MSA_seen[MSA_name] = True
             else:
                 self.log(console,"repeat MSA_name: '"+MSA_name+"'")
-                self.valid_log(valid_msgs,"repeat MSA_name: '"+MSA_name+"'")
+                self.invalid_log(invalid_msgs,"repeat MSA_name: '"+MSA_name+"'")
                 continue
 
             try:
@@ -1027,7 +1064,7 @@ class kb_util_dylan:
                 if sequence_type == None:
                     sequence_type = this_sequence_type
                 elif this_sequence_type != sequence_type:
-                    self.valid_log(valid_msgs,"inconsistent sequence type for MSA "+MSA_name+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
+                    self.invalid_log(invalid_msgs,"inconsistent sequence type for MSA "+MSA_name+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
                     continue
             except:
                 pass
@@ -1062,14 +1099,14 @@ class kb_util_dylan:
                 try:
                     genome_id_seen = this_genomes_seen[genome_id]
                     self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
-                    self.valid_log(valid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
+                    self.invalid_log(invalid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
                     continue
                 except:
                     this_genomes_seen[genome_id] = True
 
                 this_row_len = len(this_MSA['alignment'][row_id])
                 if this_row_len != this_aln_len:
-                    self.valid_log(valid_msgs,"inconsistent alignment len in "+MSA_name+": first_row_len="+str(this_aln_len)+" != "+str(this_row_len)+" ("+row_id+")")
+                    self.invalid_log(invalid_msgs,"inconsistent alignment len in "+MSA_name+": first_row_len="+str(this_aln_len)+" != "+str(this_row_len)+" ("+row_id+")")
                     continue
 
                 # create new rows
@@ -1100,13 +1137,13 @@ class kb_util_dylan:
             curr_pos += this_aln_len
             
             # report
-            if len(valid_msgs) == 0:
+            if len(invalid_msgs) == 0:
                 report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order))+" "+str(this_row_order)+"\n"
                 self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
                 self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
 
         # report which are incomplete rows (regardless of whether discarding)
-        if len(valid_msgs) == 0:
+        if len(invalid_msgs) == 0:
             for genome_id in row_order:
                 try:
                     discard = discard_set[genome_id]
@@ -1161,7 +1198,8 @@ class kb_util_dylan:
 
         # Store output object
         #
-        if len(valid_msgs) == 0:
+        if len(invalid_msgs) == 0:
+            self.log(console,"SAVING OUTPUT MSA")  # DEBUG
             output_MSA = {
                        'name': params['output_name'],
                        'description': params['desc'],
@@ -1187,19 +1225,19 @@ class kb_util_dylan:
         # build output report object
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
-        if len(valid_msgs) == 0:
+        if len(invalid_msgs) == 0:
             self.log(console,"rows in output MSA "+params['output_name']+": "+str(len(row_order)))
             report += 'rows in output MSA '+params['output_name']+': '+str(len(row_order))+"\n"
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Concat_MSAs'}]
+                'text_message':report
+                }
         else:
-            report += "FAILURE:\n\n"+"\n".join(valid_msgs)
-
-        reportObj = {
-            'text_message':report
-        }
-        if len(valid_msgs) == 0:
-            reportObj['objects_created'] = [{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Concat_MSAs'}]
-        else:
-            reportObj['objects_created'] = []
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)."\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
 
         reportName = 'kb_util_dylan_concat_msas_report_'+str(hex(uuid.getnode()))
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
