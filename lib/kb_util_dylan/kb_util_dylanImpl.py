@@ -1182,7 +1182,7 @@ class kb_util_dylan:
             self.log(console,"rows in output MSA "+params['output_name']+": "+str(len(row_order)))
             report += 'rows in output MSA '+params['output_name']+': '+str(len(row_order))+"\n"
         else:
-            report += "\n".join(valid_msgs)
+            report += "FAILURE:\n\n"+"\n".join(valid_msgs)
 
         reportObj = {
             'text_message':report
