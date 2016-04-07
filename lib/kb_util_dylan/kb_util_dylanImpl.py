@@ -54,14 +54,6 @@ class kb_util_dylan:
         print(message)
         sys.stdout.flush()
 
-    # target is a list for collecting log messages pertaining to failed validation tests  
-    def invalid_log(self, target, message):
-        # we should do something better here...
-        if target is not None:
-            target.append(message)
-        #print(message)
-        #sys.stdout.flush()
-
     def get_single_end_read_library(self, ws_data, ws_info, forward):
         pass
 
@@ -293,7 +285,7 @@ class kb_util_dylan:
                     line = re.sub ("\t","",line)
                     if not DNA_pattern.match(line):
                         self.log(console,"BAD record:\n"+line)
-                        self.invalid_log(invalid_msgs,"BAD record:\n"+line)
+                        self.log(invalid_msgs,"BAD record:\n"+line)
                         break
                     forward_reads_file_handle.write(line.lower()+"\n")
 
@@ -312,7 +304,7 @@ class kb_util_dylan:
                             bad_record = "\n".join([split_input_sequence_buf[i],
                                                     split_input_sequence_buf[i+1]])
                         self.log(console,"BAD record:\n"+bad_record)
-                        self.invalid_log(invalid_msgs,"BAD record:\n"+bad_record)
+                        self.log(invalid_msgs,"BAD record:\n"+bad_record)
                     if fastq_format and line.startswith('@'):
                         format_ok = True
                         seq_len = len(split_input_sequence_buf[i+1])
@@ -328,7 +320,7 @@ class kb_util_dylan:
                                                     split_input_sequence_buf[i+2],
                                                     split_input_sequence_buf[i+3]])
                             self.log(console,"BAD record:\n"+bad_record)
-                            self.invalid_log(invalid_msgs,"BAD record:\n"+bad_record)
+                            self.log(invalid_msgs,"BAD record:\n"+bad_record)
 
 
             # write that sucker, removing spaces
@@ -678,7 +670,7 @@ class kb_util_dylan:
                 featureSet_seen[featureSet_name] = 1
             else:
                 self.log("repeat featureSet_name: '"+featureSet_name+"'")
-                self.invalid_log(invalid_msgs,"repeat featureSet_name: '"+featureSet_name+"'")
+                self.log(invalid_msgs,"repeat featureSet_name: '"+featureSet_name+"'")
                 continue
 
             try:
@@ -1007,7 +999,7 @@ class kb_util_dylan:
 
         if len(params['input_names']) < 2:
             self.log(console,"Must provide more than one MSA")
-            self.invalid_log(invalid_msgs,"Must provide more than one MSA")
+            self.log(invalid_msgs,"Must provide more than one MSA")
 
 
         # Build FeatureSet
@@ -1026,7 +1018,7 @@ class kb_util_dylan:
                 MSA_seen[MSA_name] = True
             else:
                 self.log(console,"repeat MSA_name: '"+MSA_name+"'")
-                self.invalid_log(invalid_msgs,"repeat MSA_name: '"+MSA_name+"'")
+                self.log(invalid_msgs,"repeat MSA_name: '"+MSA_name+"'")
                 continue
 
             try:
@@ -1065,7 +1057,7 @@ class kb_util_dylan:
                 if sequence_type == None:
                     sequence_type = this_sequence_type
                 elif this_sequence_type != sequence_type:
-                    self.invalid_log(invalid_msgs,"inconsistent sequence type for MSA "+MSA_name+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
+                    self.log(invalid_msgs,"inconsistent sequence type for MSA "+MSA_name+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
                     continue
             except:
                 pass
@@ -1100,14 +1092,14 @@ class kb_util_dylan:
                 try:
                     genome_id_seen = this_genomes_seen[genome_id]
                     self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
-                    self.invalid_log(invalid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
+                    self.log(invalid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
                     continue
                 except:
                     this_genomes_seen[genome_id] = True
 
                 this_row_len = len(this_MSA['alignment'][row_id])
                 if this_row_len != this_aln_len:
-                    self.invalid_log(invalid_msgs,"inconsistent alignment len in "+MSA_name+": first_row_len="+str(this_aln_len)+" != "+str(this_row_len)+" ("+row_id+")")
+                    self.log(invalid_msgs,"inconsistent alignment len in "+MSA_name+": first_row_len="+str(this_aln_len)+" != "+str(this_row_len)+" ("+row_id+")")
                     continue
 
                 # create new rows
