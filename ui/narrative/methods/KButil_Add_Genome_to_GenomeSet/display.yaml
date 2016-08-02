@@ -1,0 +1,50 @@
+#
+# define display information
+#
+name: Add Genome to GenomeSet
+tooltip: |
+    Allows user to add a Genome to a GenomeSet (or create a new GenomeSet)
+screenshots: []
+
+icon: kb-orange.png
+
+#
+# define a set of similar methods that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    desc:
+        ui-name : |
+            Description
+        short-hint : |
+            Describe Purpose or Contents of Output GenomeSet
+        placeholder: |
+            Enter Description
+    input_name:
+        ui-name : |
+            Input Genome Name
+        short-hint : |
+            Add a Genome Name here
+    output_name:
+        ui-name : |
+            Output GenomeSet Name
+        short-hint : |
+            Name for the Output GenomeSet Collection
+
+
+description : |
+    <p>This method allows the user to add a Genome to a GenomeSet object.</p>
