@@ -805,6 +805,7 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
+
     def KButil_Build_GenomeSet_from_FeatureSet(self, ctx, params):
         # ctx is the context object
         # return variables are: returnVal
@@ -972,6 +973,206 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_Build_GenomeSet_from_FeatureSet return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+
+    def KButil_Add_Genome_to_GenomeSet(self, ctx, params):
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Add_Genome_to_GenomeSet
+        console = []
+        invalid_msgs = []
+        self.log(console,'Running KButil_Add_Genome_to_GenomeSet with params=')
+        self.log(console, "\n"+pformat(params))
+        report = ''
+#        report = 'Running KButil_Add_Genome_to_GenomeSet with params='
+#        report += "\n"+pformat(params)
+
+
+        #### do some basic checks
+        #
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'desc' not in params:
+            raise ValueError('desc parameter is required')
+        if 'input_name' not in params:
+            raise ValueError('input_name parameter is required')
+        if 'output_name' not in params:
+            raise ValueError('output_name parameter is required')
+
+
+        # Obtain GenomeRef
+        #
+        try:
+            ws = workspaceService(self.workspaceURL, token=ctx['token'])
+            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['input_name']}])
+            data = objects[0]['data']
+            info = objects[0]['info']
+            # Object Info Contents
+            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
+            # 0 - obj_id objid
+            # 1 - obj_name name
+            # 2 - type_string type
+            # 3 - timestamp save_date
+            # 4 - int version
+            # 5 - username saved_by
+            # 6 - ws_id wsid
+            # 7 - ws_name workspace
+            # 8 - string chsum
+            # 9 - int size 
+            # 10 - usermeta meta
+            genome_add_obj = data  # don't need
+            genome_add_ref = info[6] + '/' + info[0] + '/' + info[4]
+            type_name = info[2].split('.')[1].split('-')[0]
+            if type_name != 'Genome':
+                raise ValueError("Bad Type:  Should be Genome instead of '"+type_name+"'")
+        except Exception as e:
+            raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+            #to get the full stack trace: traceback.format_exc()
+
+
+        # Obtain GenomeSet (if it exists)
+        #
+        add_old_GenomeSet = True
+        try:
+            ws = workspaceService(self.workspaceURL, token=ctx['token'])
+            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['output_name']}])
+            data = objects[0]['data']
+            info = objects[0]['info']
+            # Object Info Contents
+            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
+            # 0 - obj_id objid
+            # 1 - obj_name name
+            # 2 - type_string type
+            # 3 - timestamp save_date
+            # 4 - int version
+            # 5 - username saved_by
+            # 6 - ws_id wsid
+            # 7 - ws_name workspace
+            # 8 - string chsum
+            # 9 - int size 
+            # 10 - usermeta meta
+            genomeSet = data
+            type_name = info[2].split('.')[1].split('-')[0]
+            if type_name != 'GenomeSet':
+                raise ValueError("Bad Type:  Should be GenomeSet instead of '"+type_name+"'")
+        except Exception as e:
+            #raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+            #to get the full stack trace: traceback.format_exc()
+            add_old_GenomeSet = False
+
+
+        # Build GenomeSet
+        #
+        elements = {}
+        genome_seen = dict()
+
+        # add new genome
+        elements[genome_add_obj['id']] = dict()
+        elements[genome_add_obj['id']]['ref'] = genome_add_ref
+        genome_seen[genome_add_ref] = True
+
+        # add rest of set
+        if add_old_GenomeSet:
+            for gId in genomeSet['elements'].keys():
+                for genomeRef in genomeSet['elements'][gId]:
+                    try:
+                        already_included = genome_seen[genomeRef]
+                    except:
+                        genome_seen[genomeRef] = True
+
+                        if not gId in elements.keys():
+                            elements[gId] = dict()
+                            elements[gId]['ref'] = genomeRef  # the key line
+                            self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
+            
+
+        # load the method provenance from the context object
+        #
+        self.log(console,"SETTING PROVENANCE")  # DEBUG
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        try:
+            input_ws_objects_defined = provenance[0]['input_ws_objects']
+        except:
+            provenance[0]['input_ws_objects'] = []
+        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
+        provenance[0]['service'] = 'kb_util_dylan'
+        provenance[0]['method'] = 'KButil_Add_Genome_to_GenomeSet'
+
+
+        # Store output object
+        #
+        if len(invalid_msgs) == 0:
+            self.log(console,"SAVING GENOMESET")  # DEBUG
+            output_GenomeSet = {
+                              'description': params['desc'],
+                              'elements': elements
+                            }
+
+            new_obj_info = ws.save_objects({
+                            'workspace': params['workspace_name'],
+                            'objects':[{
+                                    'type': 'KBaseSearch.GenomeSet',
+                                    'data': output_GenomeSet,
+                                    'name': params['output_name'],
+                                    'meta': {},
+                                    'provenance': provenance
+                                }]
+                        })
+
+
+        # build output report object
+        #
+        self.log(console,"BUILDING REPORT")  # DEBUG
+        if len(invalid_msgs) == 0:
+            self.log(console,"genomes in output set "+params['output_name']+": "+str(len(elements.keys())))
+            report += 'genomes in output set '+params['output_name']+': '+str(len(elements.keys()))+"\n"
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Add_Genome_to_GenomeSet'}],
+                'text_message':report
+                }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
+
+        reportName = 'kb_util_dylan_add_genome_to_genomeset_report_'+str(hex(uuid.getnode()))
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
+        report_obj_info = ws.save_objects({
+#                'id':info[6],
+                'workspace':params['workspace_name'],
+                'objects':[
+                    {
+                        'type':'KBaseReport.Report',
+                        'data':reportObj,
+                        'name':reportName,
+                        'meta':{},
+                        'hidden':1,
+                        'provenance':provenance
+                    }
+                ]
+            })[0]
+
+
+        # Build report and return
+        #
+        self.log(console,"BUILDING RETURN OBJECT")
+        returnVal = { 'report_name': reportName,
+                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+                      }
+        self.log(console,"KButil_Add_Genome_to_GenomeSet DONE")
+        #END KButil_Add_Genome_to_GenomeSet
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Add_Genome_to_GenomeSet return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
