@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.JsonClientException;
@@ -22,6 +23,7 @@ import us.kbase.common.service.UnauthorizedException;
  */
 public class KbUtilDylanClient {
     private JsonClientCaller caller;
+    private String serviceVersion = null;
 
 
     /** Constructs a client with a custom URL and no user credentials.
@@ -41,6 +43,19 @@ public class KbUtilDylanClient {
         caller = new JsonClientCaller(url, token);
     }
 
+    /** Constructs a client with a custom URL
+     * and a custom authorization service URL.
+     * @param url the URL of the service.
+     * @param token the user's authorization token.
+     * @param auth the URL of the authorization server.
+     * @throws UnauthorizedException if the token is not valid.
+     * @throws IOException if an IOException occurs when checking the token's
+     * validity.
+     */
+    public KbUtilDylanClient(URL url, AuthToken token, URL auth) throws UnauthorizedException, IOException {
+        caller = new JsonClientCaller(url, token, auth);
+    }
+
     /** Constructs a client with a custom URL.
      * @param url the URL of the service.
      * @param user the user name.
@@ -51,6 +66,20 @@ public class KbUtilDylanClient {
      */
     public KbUtilDylanClient(URL url, String user, String password) throws UnauthorizedException, IOException {
         caller = new JsonClientCaller(url, user, password);
+    }
+
+    /** Constructs a client with a custom URL
+     * and a custom authorization service URL.
+     * @param url the URL of the service.
+     * @param user the user name.
+     * @param password the password for the user name.
+     * @param auth the URL of the authorization server.
+     * @throws UnauthorizedException if the credentials are not valid.
+     * @throws IOException if an IOException occurs when checking the user's
+     * credentials.
+     */
+    public KbUtilDylanClient(URL url, String user, String password, URL auth) throws UnauthorizedException, IOException {
+        caller = new JsonClientCaller(url, user, password, auth);
     }
 
     /** Get the token this client uses to communicate with the server.
@@ -140,6 +169,14 @@ public class KbUtilDylanClient {
         caller.setFileForNextRpcResponse(f);
     }
 
+    public String getServiceVersion() {
+        return this.serviceVersion;
+    }
+
+    public void setServiceVersion(String newValue) {
+        this.serviceVersion = newValue;
+    }
+
     /**
      * <p>Original spec-file function name: KButil_Insert_SingleEndLibrary</p>
      * <pre>
@@ -154,7 +191,7 @@ public class KbUtilDylanClient {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
         TypeReference<List<KButilInsertSingleEndLibraryOutput>> retType = new TypeReference<List<KButilInsertSingleEndLibraryOutput>>() {};
-        List<KButilInsertSingleEndLibraryOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Insert_SingleEndLibrary", args, retType, true, true, jsonRpcContext);
+        List<KButilInsertSingleEndLibraryOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Insert_SingleEndLibrary", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -172,7 +209,7 @@ public class KbUtilDylanClient {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
         TypeReference<List<KButilFASTQToFASTAOutput>> retType = new TypeReference<List<KButilFASTQToFASTAOutput>>() {};
-        List<KButilFASTQToFASTAOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_FASTQ_to_FASTA", args, retType, true, true, jsonRpcContext);
+        List<KButilFASTQToFASTAOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_FASTQ_to_FASTA", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -190,7 +227,7 @@ public class KbUtilDylanClient {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
         TypeReference<List<KButilMergeFeatureSetCollectionOutput>> retType = new TypeReference<List<KButilMergeFeatureSetCollectionOutput>>() {};
-        List<KButilMergeFeatureSetCollectionOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Merge_FeatureSet_Collection", args, retType, true, true, jsonRpcContext);
+        List<KButilMergeFeatureSetCollectionOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Merge_FeatureSet_Collection", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -208,7 +245,25 @@ public class KbUtilDylanClient {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
         TypeReference<List<KButilBuildGenomeSetFromFeatureSetOutput>> retType = new TypeReference<List<KButilBuildGenomeSetFromFeatureSetOutput>>() {};
-        List<KButilBuildGenomeSetFromFeatureSetOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet", args, retType, true, true, jsonRpcContext);
+        List<KButilBuildGenomeSetFromFeatureSetOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: KButil_Add_Genome_to_GenomeSet</p>
+     * <pre>
+     * Method for adding a Genome to a GenomeSet
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilAddGenomeToGenomeSetParams KButilAddGenomeToGenomeSetParams} (original type "KButil_Add_Genome_to_GenomeSet_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilAddGenomeToGenomeSetOutput KButilAddGenomeToGenomeSetOutput} (original type "KButil_Add_Genome_to_GenomeSet_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilAddGenomeToGenomeSetOutput kButilAddGenomeToGenomeSet(KButilAddGenomeToGenomeSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilAddGenomeToGenomeSetOutput>> retType = new TypeReference<List<KButilAddGenomeToGenomeSetOutput>>() {};
+        List<KButilAddGenomeToGenomeSetOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Add_Genome_to_GenomeSet", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
@@ -226,7 +281,14 @@ public class KbUtilDylanClient {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
         TypeReference<List<KButilConcatMSAsOutput>> retType = new TypeReference<List<KButilConcatMSAsOutput>>() {};
-        List<KButilConcatMSAsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Concat_MSAs", args, retType, true, true, jsonRpcContext);
+        List<KButilConcatMSAsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Concat_MSAs", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};
+        List<Map<String, Object>> res = caller.jsonrpcCall("kb_util_dylan.status", args, retType, true, false, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 }

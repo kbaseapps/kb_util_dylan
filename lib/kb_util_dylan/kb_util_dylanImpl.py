@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #BEGIN_HEADER
 import os
 import sys
@@ -45,6 +46,10 @@ class kb_util_dylan:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     #########################################
+    VERSION = "0.0.1"
+    GIT_URL = "https://github.com/dcchivian/kb_util_dylan.git"
+    GIT_COMMIT_HASH = "a1f2eaf5f8d25110d3d65178be5766fd3de67f8a"
+    
     #BEGIN_CLASS_HEADER
     workspaceURL = None
     shockURL = None
@@ -219,8 +224,29 @@ class kb_util_dylan:
 
         #END_CONSTRUCTOR
         pass
+    
 
     def KButil_Insert_SingleEndLibrary(self, ctx, params):
+        """
+        Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
+        :param params: instance of type
+           "KButil_Insert_SingleEndLibrary_Params"
+           (KButil_Insert_SingleEndLibrary Input Params) -> structure:
+           parameter "workspace_name" of type "workspace_name" (** The
+           workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_sequence" of type "sequence", parameter
+           "output_name" of type "data_obj_name"
+        :returns: instance of type "KButil_Insert_SingleEndLibrary_Output"
+           (KButil_Insert_SingleEndLibrary Output) -> structure: parameter
+           "report_name" of type "data_obj_name", parameter "report_ref" of
+           type "data_obj_ref"
+        """
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Insert_SingleEndLibrary
@@ -434,6 +460,24 @@ class kb_util_dylan:
         return [returnVal]
 
     def KButil_FASTQ_to_FASTA(self, ctx, params):
+        """
+        Method for Converting a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary
+        :param params: instance of type "KButil_FASTQ_to_FASTA_Params"
+           (KButil_FASTQ_to_FASTA Input Params) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_name" of type "data_obj_name", parameter
+           "output_name" of type "data_obj_name"
+        :returns: instance of type "KButil_FASTQ_to_FASTA_Output"
+           (KButil_FASTQ_to_FASTA Output) -> structure: parameter
+           "report_name" of type "data_obj_name", parameter "report_ref" of
+           type "data_obj_ref"
+        """
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_FASTQ_to_FASTA
@@ -640,6 +684,27 @@ class kb_util_dylan:
         return [returnVal]
 
     def KButil_Merge_FeatureSet_Collection(self, ctx, params):
+        """
+        Method for merging FeatureSets into a combined FeatureSet
+        :param params: instance of type
+           "KButil_Merge_FeatureSet_Collection_Params"
+           (KButil_Merge_FeatureSet_Collection Input Params) -> structure:
+           parameter "workspace_name" of type "workspace_name" (** The
+           workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_names" of type "data_obj_name", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type
+           "KButil_Merge_FeatureSet_Collection_Output"
+           (KButil_Merge_FeatureSet_Collection Output) -> structure:
+           parameter "report_name" of type "data_obj_name", parameter
+           "report_ref" of type "data_obj_ref"
+        """
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Merge_FeatureSet_Collection
@@ -805,8 +870,28 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-
     def KButil_Build_GenomeSet_from_FeatureSet(self, ctx, params):
+        """
+        Method for obtaining a GenomeSet from a FeatureSet
+        :param params: instance of type
+           "KButil_Build_GenomeSet_from_FeatureSet_Params"
+           (KButil_Build_GenomeSet_from_FeatureSet Input Params) ->
+           structure: parameter "workspace_name" of type "workspace_name" (**
+           The workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_name" of type "data_obj_name", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type
+           "KButil_Build_GenomeSet_from_FeatureSet_Output"
+           (KButil_Build_GenomeSet_from_FeatureSet Output) -> structure:
+           parameter "report_name" of type "data_obj_name", parameter
+           "report_ref" of type "data_obj_ref"
+        """
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Build_GenomeSet_from_FeatureSet
@@ -977,8 +1062,27 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-
     def KButil_Add_Genome_to_GenomeSet(self, ctx, params):
+        """
+        Method for adding a Genome to a GenomeSet
+        :param params: instance of type
+           "KButil_Add_Genome_to_GenomeSet_Params"
+           (KButil_Add_Genome_to_GenomeSet Input Params) -> structure:
+           parameter "workspace_name" of type "workspace_name" (** The
+           workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_name" of type "data_obj_name", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Add_Genome_to_GenomeSet_Output"
+           (KButil_Add_Genome_to_GenomeSet Output) -> structure: parameter
+           "report_name" of type "data_obj_name", parameter "report_ref" of
+           type "data_obj_ref"
+        """
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Add_Genome_to_GenomeSet
@@ -1177,8 +1281,26 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-
     def KButil_Concat_MSAs(self, ctx, params):
+        """
+        Method for Concatenating MSAs into a combined MSA
+        :param params: instance of type "KButil_Concat_MSAs_Params"
+           (KButil_Concat_MSAs Input Params) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_names" of type "data_obj_name", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String,
+           parameter "blanks_flag" of Long
+        :returns: instance of type "KButil_Concat_MSAs_Output"
+           (KButil_Concat_MSAs Output) -> structure: parameter "report_name"
+           of type "data_obj_name", parameter "report_ref" of type
+           "data_obj_ref"
+        """
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Concat_MSAs
@@ -1469,4 +1591,11 @@ class kb_util_dylan:
             raise ValueError('Method KButil_Concat_MSAs return value ' +
                              'returnVal is not type dict as required.')
         # return the results
+        return [returnVal]
+
+    def status(self, ctx):
+        #BEGIN_STATUS
+        returnVal = {'state': "OK", 'message': "", 'version': self.VERSION, 
+                     'git_url': self.GIT_URL, 'git_commit_hash': self.GIT_COMMIT_HASH}
+        #END_STATUS
         return [returnVal]
