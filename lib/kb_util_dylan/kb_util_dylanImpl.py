@@ -1127,9 +1127,9 @@ class kb_util_dylan:
             # 8 - string chsum
             # 9 - int size 
             # 10 - usermeta meta
-            genome_add_obj = data  # don't need
-            genome_add_ref = info[6] + '/' + info[0] + '/' + info[4]
-            type_name = info[2].split('.')[1].split('-')[0]
+            genome_add_obj = data
+            genome_add_ref = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
+            type_name = str(info[2]).split('.')[1].split('-')[0]
             if type_name != 'Genome':
                 raise ValueError("Bad Type:  Should be Genome instead of '"+type_name+"'")
         except Exception as e:
