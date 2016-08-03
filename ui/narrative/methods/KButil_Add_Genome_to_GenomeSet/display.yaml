@@ -36,14 +36,14 @@ parameters :
             Enter Description
     input_name:
         ui-name : |
-            Input Genome Name
+            Add Genome
         short-hint : |
-            Add a Genome Name here
+            Genome to add to GenomeSet
     output_name:
         ui-name : |
-            Output GenomeSet Name
+            GenomeSet
         short-hint : |
-            Name for the Output GenomeSet Collection
+            Name for the GenomeSet Collection
 
 
 description : |
