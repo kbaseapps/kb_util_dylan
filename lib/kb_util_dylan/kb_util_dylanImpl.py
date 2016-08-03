@@ -1201,9 +1201,8 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         try:
-            prov_zero_defined = provenance[0]
+            prov_defined = provenance[0]['input_ws_objects']
         except:
-            provenance[0] = {}
             provenance[0]['input_ws_objects'] = []
         provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
         provenance[0]['service'] = 'kb_util_dylan'
