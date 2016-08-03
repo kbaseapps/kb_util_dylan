@@ -1203,6 +1203,7 @@ class kb_util_dylan:
         try:
             prov_zero_defined = provenance[0]
         except:
+            provenance[0] = {}
             provenance[0]['input_ws_objects'] = []
         provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
         provenance[0]['service'] = 'kb_util_dylan'
