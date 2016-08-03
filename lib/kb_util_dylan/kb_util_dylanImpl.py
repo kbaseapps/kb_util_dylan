@@ -1174,7 +1174,7 @@ class kb_util_dylan:
         genome_seen = dict()
 
         # add new genome
-        gId = genome_add_obj['id']
+        gId = genomeObj['id']
         elements[gId] = dict()
         elements[gId]['ref'] = genomeRef
         genome_seen[genomeRef] = True
