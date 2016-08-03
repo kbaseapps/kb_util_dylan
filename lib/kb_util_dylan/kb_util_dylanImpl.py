@@ -1127,8 +1127,8 @@ class kb_util_dylan:
             # 8 - string chsum
             # 9 - int size 
             # 10 - usermeta meta
-            genome_add_obj = data
-            genome_add_ref = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
+            genomeObj = data
+            genomeRef = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
             type_name = info[2].split('.')[1].split('-')[0]
             if type_name != 'Genome':
                 raise ValueError("Bad Type:  Should be Genome instead of '"+type_name+"'")
@@ -1174,23 +1174,25 @@ class kb_util_dylan:
         genome_seen = dict()
 
         # add new genome
-        elements[genome_add_obj['id']] = dict()
-        elements[genome_add_obj['id']]['ref'] = genome_add_ref
-        genome_seen[genome_add_ref] = True
+        gId = genome_add_obj['id']
+        elements[gId] = dict()
+        elements[gId]['ref'] = genomeRef
+        genome_seen[genomeRef] = True
+        self.log(console,"adding new element "+gId+" : "+genomeRef)  # DEBUG
 
         # add rest of set
         if add_old_GenomeSet:
             for gId in genomeSet['elements'].keys():
-                for genomeRef in genomeSet['elements'][gId]:
-                    try:
-                        already_included = genome_seen[genomeRef]
-                    except:
-                        genome_seen[genomeRef] = True
+                genomeRef = genomeSet['elements'][gId]['ref']
+                try:
+                    already_included = genome_seen[genomeRef]
+                except:
+                    genome_seen[genomeRef] = True
 
-                        if not gId in elements.keys():
-                            elements[gId] = dict()
-                            elements[gId]['ref'] = genomeRef  # the key line
-                            self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
+                    if not gId in elements.keys():
+                        elements[gId] = dict()
+                        elements[gId]['ref'] = genomeRef  # the key line
+                        self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
             
 
         # load the method provenance from the context object
