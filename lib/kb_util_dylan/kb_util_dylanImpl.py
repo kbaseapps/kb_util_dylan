@@ -939,7 +939,7 @@ class kb_util_dylan:
                 if type_name != 'Genome' and type_name != 'GenomeAnnotation':
                     raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"' for ref: '"+genomeRef+"'")
                     
-                genome_id = genomeObj['id']
+                genome_id = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
                 if not genome_id in elements.keys():
                     elements[genome_id] = dict()
                 elements[genome_id]['ref'] = genomeRef  # the key line
@@ -1132,7 +1132,7 @@ class kb_util_dylan:
                     if type_name != 'Genome' and type_name != 'GenomeAnnotaton':
                         raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"' for ref: '"+genomeRef+"'")
                     
-                    genome_id = genomeObj['id']
+                    genome_id = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
                     if not genome_id in elements.keys():
                         elements[genome_id] = dict()
                     elements[genome_id]['ref'] = genomeRef  # the key line
@@ -1336,7 +1336,7 @@ class kb_util_dylan:
         genome_seen = dict()
 
         # add new genome
-        gId = genomeObj['id']
+        gId = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
         elements[gId] = dict()
         elements[gId]['ref'] = genomeRef
         genome_seen[genomeRef] = True
