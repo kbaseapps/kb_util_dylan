@@ -29,7 +29,6 @@ module kb_util_dylan {
         data_obj_name  output_name;
     } KButil_Insert_SingleEndLibrary_Params;
 
-
     /* KButil_Insert_SingleEndLibrary Output
     */
     typedef structure {
@@ -51,7 +50,6 @@ module kb_util_dylan {
 	data_obj_name  input_name;
         data_obj_name  output_name;
     } KButil_FASTQ_to_FASTA_Params;
-
 
     /* KButil_FASTQ_to_FASTA Output
     */
@@ -76,13 +74,29 @@ module kb_util_dylan {
 	string         desc;
     } KButil_Merge_FeatureSet_Collection_Params;
 
-
     /* KButil_Merge_FeatureSet_Collection Output
     */
     typedef structure {
 	data_obj_name report_name;
 	data_obj_ref  report_ref;
     } KButil_Merge_FeatureSet_Collection_Output;
+
+
+    /* KButil_Build_GenomeSet Input Params
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_name  input_names;
+        data_obj_name  output_name;
+	string         desc;
+    } KButil_Build_GenomeSet_Params;
+
+    /* KButil_Build_GenomeSet Output
+    */
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Build_GenomeSet_Output;
 
 
     /* KButil_Build_GenomeSet_from_FeatureSet Input Params
@@ -93,7 +107,6 @@ module kb_util_dylan {
         data_obj_name  output_name;
 	string         desc;
     } KButil_Build_GenomeSet_from_FeatureSet_Params;
-
 
     /* KButil_Build_GenomeSet_from_FeatureSet Output
     */
@@ -111,7 +124,6 @@ module kb_util_dylan {
         data_obj_name  output_name;
 	string         desc;
     } KButil_Add_Genome_to_GenomeSet_Params;
-
 
     /* KButil_Add_Genome_to_GenomeSet Output
     */
@@ -149,9 +161,14 @@ module kb_util_dylan {
     funcdef KButil_FASTQ_to_FASTA (KButil_FASTQ_to_FASTA_Params params)  returns (KButil_FASTQ_to_FASTA_Output) authentication required;
 
 
-    /*  Method for merging FeatureSets into a combined FeatureSet
+    /*  Method for creating a GenomeSet
     */
-    funcdef KButil_Merge_FeatureSet_Collection (KButil_Merge_FeatureSet_Collection_Params params)  returns (KButil_Merge_FeatureSet_Collection_Output) authentication required;
+    funcdef KButil_Build_GenomeSet (KButil_Build_GenomeSet_Params params)  returns (KButil_Build_GenomeSet_Output) authentication required;
+
+
+    /*  Method for obtaining a GenomeSet from a FeatureSet
+    */
+    funcdef KButil_Build_GenomeSet_from_FeatureSet (KButil_Build_GenomeSet_from_FeatureSet_Params params)  returns (KButil_Build_GenomeSet_from_FeatureSet_Output) authentication required;
 
 
     /*  Method for obtaining a GenomeSet from a FeatureSet
