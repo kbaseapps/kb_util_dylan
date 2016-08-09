@@ -1,0 +1,50 @@
+#
+# define display information
+#
+name: Merge FeatureSets
+tooltip: |
+    Allows user to merge multiple FeatureSets
+screenshots: []
+
+icon: kb-orange.png
+
+#
+# define a set of similar methods that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    desc:
+        ui-name : |
+            Description
+        short-hint : |
+            Describe Purpose or Contents of Output FeatureSet
+        placeholder: |
+            Enter Description
+    input_names:
+        ui-name : |
+            Input FeatureSet Names
+        short-hint : |
+            Add a list of FeatureSet Names here
+    output_name:
+        ui-name : |
+            Output FeatureSet Name
+        short-hint : |
+            Name for the Output FeatureSet Collection
+
+
+description : |
+    <p>This method allows the user to merge several FeatureSets into one FeatureSet.</p>
