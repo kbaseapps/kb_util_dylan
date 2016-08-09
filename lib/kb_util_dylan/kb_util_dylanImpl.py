@@ -1129,8 +1129,8 @@ class kb_util_dylan:
                         type_name = info[2].split('.')[1].split('-')[0]
                     except Exception as e:
                         raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
-                    if type_name != 'Genome':
-                        raise ValueError("Bad Type:  Should be Genome instead of '"+type_name+"' for ref: '"+genomeRef+"'")
+                    if type_name != 'Genome' and type_name != 'GenomeAnnotaton':
+                        raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"' for ref: '"+genomeRef+"'")
                     
                     genome_id = genomeObj['id']
                     if not genome_id in elements.keys():
@@ -1292,8 +1292,8 @@ class kb_util_dylan:
             genomeObj = data
             genomeRef = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
             type_name = info[2].split('.')[1].split('-')[0]
-            if type_name != 'Genome':
-                raise ValueError("Bad Type:  Should be Genome instead of '"+type_name+"'")
+            if type_name != 'Genome' and type != 'GenomeAnnotation':
+                raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"'")
         except Exception as e:
             raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
             #to get the full stack trace: traceback.format_exc()
