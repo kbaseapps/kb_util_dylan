@@ -161,14 +161,14 @@ module kb_util_dylan {
     funcdef KButil_FASTQ_to_FASTA (KButil_FASTQ_to_FASTA_Params params)  returns (KButil_FASTQ_to_FASTA_Output) authentication required;
 
 
+    /*  Method for merging FeatureSets
+    */
+    funcdef KButil_Merge_FeatureSet_Collection (KButil_Merge_FeatureSet_Collection_Params params)  returns (KButil_Merge_FeatureSet_Collection_Output) authentication required;
+
+
     /*  Method for creating a GenomeSet
     */
     funcdef KButil_Build_GenomeSet (KButil_Build_GenomeSet_Params params)  returns (KButil_Build_GenomeSet_Output) authentication required;
-
-
-    /*  Method for obtaining a GenomeSet from a FeatureSet
-    */
-    funcdef KButil_Build_GenomeSet_from_FeatureSet (KButil_Build_GenomeSet_from_FeatureSet_Params params)  returns (KButil_Build_GenomeSet_from_FeatureSet_Output) authentication required;
 
 
     /*  Method for obtaining a GenomeSet from a FeatureSet
