@@ -340,6 +340,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Merge_FeatureSet_Collection',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Merge_FeatureSet_Collection'] = 'required'
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Build_GenomeSet,
+                             name='kb_util_dylan.KButil_Build_GenomeSet',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Build_GenomeSet'] = 'required'
         self.rpc_service.add(impl_kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet,
                              name='kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet',
                              types=[dict])

@@ -30,7 +30,7 @@
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types": [ "KBaseCollections.FeatureSet" ]
+                "valid_ws_types": [ "KBaseGenomes.Genome", "KBaseGenomeAnnotations.GenomeAnnotation ]
             }
         },
         {
@@ -41,7 +41,7 @@
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types": [ "KBaseCollections.FeatureSet" ],
+                "valid_ws_types": [ "KBaseCollections.GenomeSet" ],
 		"is_output_name": true
             }
         }

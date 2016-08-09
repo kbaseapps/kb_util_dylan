@@ -83,7 +83,7 @@ class kb_util_dylan(object):
 
     def KButil_Merge_FeatureSet_Collection(self, params, context=None):
         """
-        Method for merging FeatureSets into a combined FeatureSet
+        Method for merging FeatureSets
         :param params: instance of type
            "KButil_Merge_FeatureSet_Collection_Params"
            (KButil_Merge_FeatureSet_Collection Input Params) -> structure:
@@ -105,6 +105,29 @@ class kb_util_dylan(object):
         """
         return self._client.call_method(
             'kb_util_dylan.KButil_Merge_FeatureSet_Collection',
+            [params], self._service_ver, context)
+
+    def KButil_Build_GenomeSet(self, params, context=None):
+        """
+        Method for creating a GenomeSet
+        :param params: instance of type "KButil_Build_GenomeSet_Params"
+           (KButil_Build_GenomeSet Input Params) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_names" of type "data_obj_name", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Build_GenomeSet_Output"
+           (KButil_Build_GenomeSet Output) -> structure: parameter
+           "report_name" of type "data_obj_name", parameter "report_ref" of
+           type "data_obj_ref"
+        """
+        return self._client.call_method(
+            'kb_util_dylan.KButil_Build_GenomeSet',
             [params], self._service_ver, context)
 
     def KButil_Build_GenomeSet_from_FeatureSet(self, params, context=None):

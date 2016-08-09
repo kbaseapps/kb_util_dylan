@@ -216,7 +216,7 @@ public class KbUtilDylanClient {
     /**
      * <p>Original spec-file function name: KButil_Merge_FeatureSet_Collection</p>
      * <pre>
-     * Method for merging FeatureSets into a combined FeatureSet
+     * Method for merging FeatureSets
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilMergeFeatureSetCollectionParams KButilMergeFeatureSetCollectionParams} (original type "KButil_Merge_FeatureSet_Collection_Params")
      * @return   instance of type {@link us.kbase.kbutildylan.KButilMergeFeatureSetCollectionOutput KButilMergeFeatureSetCollectionOutput} (original type "KButil_Merge_FeatureSet_Collection_Output")
@@ -228,6 +228,24 @@ public class KbUtilDylanClient {
         args.add(params);
         TypeReference<List<KButilMergeFeatureSetCollectionOutput>> retType = new TypeReference<List<KButilMergeFeatureSetCollectionOutput>>() {};
         List<KButilMergeFeatureSetCollectionOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Merge_FeatureSet_Collection", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: KButil_Build_GenomeSet</p>
+     * <pre>
+     * Method for creating a GenomeSet
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilBuildGenomeSetParams KButilBuildGenomeSetParams} (original type "KButil_Build_GenomeSet_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilBuildGenomeSetOutput KButilBuildGenomeSetOutput} (original type "KButil_Build_GenomeSet_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilBuildGenomeSetOutput kButilBuildGenomeSet(KButilBuildGenomeSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilBuildGenomeSetOutput>> retType = new TypeReference<List<KButilBuildGenomeSetOutput>>() {};
+        List<KButilBuildGenomeSetOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Build_GenomeSet", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
