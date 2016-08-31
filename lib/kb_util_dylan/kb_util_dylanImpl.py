@@ -48,7 +48,7 @@ class kb_util_dylan:
     #########################################
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/dcchivian/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "eb96f82401fea69839a56f5de4845d515c6dbc22"
+    GIT_COMMIT_HASH = "8f83b692861896b4511c907885b25c7bca95a1ae"
     
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -871,6 +871,37 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
+    def KButil_Merge_GenomeSets(self, ctx, params):
+        """
+        Method for merging GenomeSets
+        :param params: instance of type "KButil_Merge_GenomeSets_Params"
+           (KButil_Merge_GenomeSets Input Params) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_names" of type "data_obj_name", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Merge_GenomeSets_Output"
+           (KButil_Merge_GenomeSets Output) -> structure: parameter
+           "report_name" of type "data_obj_name", parameter "report_ref" of
+           type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Merge_GenomeSets
+        #END KButil_Merge_GenomeSets
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Merge_GenomeSets return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
     def KButil_Build_GenomeSet(self, ctx, params):
         """
         Method for creating a GenomeSet
@@ -1224,12 +1255,12 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-    def KButil_Add_Genome_to_GenomeSet(self, ctx, params):
+    def KButil_Add_Genomes_to_GenomeSet(self, ctx, params):
         """
         Method for adding a Genome to a GenomeSet
         :param params: instance of type
-           "KButil_Add_Genome_to_GenomeSet_Params"
-           (KButil_Add_Genome_to_GenomeSet Input Params) -> structure:
+           "KButil_Add_Genomes_to_GenomeSet_Params"
+           (KButil_Add_Genomes_to_GenomeSet Input Params) -> structure:
            parameter "workspace_name" of type "workspace_name" (** The
            workspace object refs are of form: ** **    objects =
            ws.get_objects([{'ref':
@@ -1238,22 +1269,23 @@ class kb_util_dylan:
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_name" of type "data_obj_name", parameter
+           parameter "input_genome_names" of type "data_obj_name", parameter
+           "input_genomeset_name" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
-        :returns: instance of type "KButil_Add_Genome_to_GenomeSet_Output"
-           (KButil_Add_Genome_to_GenomeSet Output) -> structure: parameter
+        :returns: instance of type "KButil_Add_Genomes_to_GenomeSet_Output"
+           (KButil_Add_Genomes_to_GenomeSet Output) -> structure: parameter
            "report_name" of type "data_obj_name", parameter "report_ref" of
            type "data_obj_ref"
         """
         # ctx is the context object
         # return variables are: returnVal
-        #BEGIN KButil_Add_Genome_to_GenomeSet
+        #BEGIN KButil_Add_Genomes_to_GenomeSet
         console = []
         invalid_msgs = []
-        self.log(console,'Running KButil_Add_Genome_to_GenomeSet with params=')
+        self.log(console,'Running KButil_Add_Genomes_to_GenomeSet with params=')
         self.log(console, "\n"+pformat(params))
         report = ''
-#        report = 'Running KButil_Add_Genome_to_GenomeSet with params='
+#        report = 'Running KButil_Add_Genomes_to_GenomeSet with params='
 #        report += "\n"+pformat(params)
 
 
@@ -1370,7 +1402,7 @@ class kb_util_dylan:
             provenance[0]['input_ws_objects'] = []
         provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
         provenance[0]['service'] = 'kb_util_dylan'
-        provenance[0]['method'] = 'KButil_Add_Genome_to_GenomeSet'
+        provenance[0]['method'] = 'KButil_Add_Genomes_to_GenomeSet'
 
 
         # Store output object
@@ -1401,7 +1433,7 @@ class kb_util_dylan:
             self.log(console,"genomes in output set "+params['output_name']+": "+str(len(elements.keys())))
             report += 'genomes in output set '+params['output_name']+': '+str(len(elements.keys()))+"\n"
             reportObj = {
-                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Add_Genome_to_GenomeSet'}],
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Add_Genomes_to_GenomeSet'}],
                 'text_message':report
                 }
         else:
@@ -1411,7 +1443,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kb_util_dylan_add_genome_to_genomeset_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_add_genomes_to_genomeset_report_'+str(hex(uuid.getnode()))
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
@@ -1435,12 +1467,12 @@ class kb_util_dylan:
         returnVal = { 'report_name': reportName,
                       'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
                       }
-        self.log(console,"KButil_Add_Genome_to_GenomeSet DONE")
-        #END KButil_Add_Genome_to_GenomeSet
+        self.log(console,"KButil_Add_Genomes_to_GenomeSet DONE")
+        #END KButil_Add_Genomes_to_GenomeSet
 
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
-            raise ValueError('Method KButil_Add_Genome_to_GenomeSet return value ' +
+            raise ValueError('Method KButil_Add_Genomes_to_GenomeSet return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]

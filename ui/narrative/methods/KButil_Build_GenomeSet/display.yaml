@@ -36,7 +36,7 @@ parameters :
             Enter Description
     input_names:
         ui-name : |
-            Input Genome Names
+            Genome Names
         short-hint : |
             Add a list of Genome Names here
     output_name:

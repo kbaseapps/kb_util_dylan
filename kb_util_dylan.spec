@@ -82,6 +82,23 @@ module kb_util_dylan {
     } KButil_Merge_FeatureSet_Collection_Output;
 
 
+    /* KButil_Merge_GenomeSets Input Params
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_name  input_names;
+        data_obj_name  output_name;
+	string         desc;
+    } KButil_Merge_GenomeSets_Params;
+
+    /* KButil_Merge_GenomeSets Output
+    */
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Merge_GenomeSets_Output;
+
+
     /* KButil_Build_GenomeSet Input Params
     */
     typedef structure {
@@ -116,21 +133,22 @@ module kb_util_dylan {
     } KButil_Build_GenomeSet_from_FeatureSet_Output;
 
 
-    /* KButil_Add_Genome_to_GenomeSet Input Params
+    /* KButil_Add_Genomes_to_GenomeSet Input Params
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_name;
+	data_obj_name  input_genome_names;
+        data_obj_name  input_genomeset_name;
         data_obj_name  output_name;
 	string         desc;
-    } KButil_Add_Genome_to_GenomeSet_Params;
+    } KButil_Add_Genomes_to_GenomeSet_Params;
 
-    /* KButil_Add_Genome_to_GenomeSet Output
+    /* KButil_Add_Genomes_to_GenomeSet Output
     */
     typedef structure {
 	data_obj_name report_name;
 	data_obj_ref  report_ref;
-    } KButil_Add_Genome_to_GenomeSet_Output;
+    } KButil_Add_Genomes_to_GenomeSet_Output;
 
 
     /* KButil_Concat_MSAs Input Params
@@ -166,6 +184,11 @@ module kb_util_dylan {
     funcdef KButil_Merge_FeatureSet_Collection (KButil_Merge_FeatureSet_Collection_Params params)  returns (KButil_Merge_FeatureSet_Collection_Output) authentication required;
 
 
+    /*  Method for merging GenomeSets
+    */
+    funcdef KButil_Merge_GenomeSets (KButil_Merge_GenomeSets_Params params)  returns (KButil_Merge_GenomeSets_Output) authentication required;
+
+
     /*  Method for creating a GenomeSet
     */
     funcdef KButil_Build_GenomeSet (KButil_Build_GenomeSet_Params params)  returns (KButil_Build_GenomeSet_Output) authentication required;
@@ -178,7 +201,7 @@ module kb_util_dylan {
 
     /*  Method for adding a Genome to a GenomeSet
     */
-    funcdef KButil_Add_Genome_to_GenomeSet (KButil_Add_Genome_to_GenomeSet_Params params)  returns (KButil_Add_Genome_to_GenomeSet_Output) authentication required;
+    funcdef KButil_Add_Genomes_to_GenomeSet (KButil_Add_Genomes_to_GenomeSet_Params params)  returns (KButil_Add_Genomes_to_GenomeSet_Output) authentication required;
 
 
     /*  Method for Concatenating MSAs into a combined MSA

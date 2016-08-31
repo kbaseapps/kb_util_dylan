@@ -421,6 +421,110 @@ Method for merging FeatureSets
  
 
 
+=head2 KButil_Merge_GenomeSets
+
+  $return = $obj->KButil_Merge_GenomeSets($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a kb_util_dylan.KButil_Merge_GenomeSets_Params
+$return is a kb_util_dylan.KButil_Merge_GenomeSets_Output
+KButil_Merge_GenomeSets_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_names has a value which is a kb_util_dylan.data_obj_name
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+workspace_name is a string
+data_obj_name is a string
+KButil_Merge_GenomeSets_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+data_obj_ref is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a kb_util_dylan.KButil_Merge_GenomeSets_Params
+$return is a kb_util_dylan.KButil_Merge_GenomeSets_Output
+KButil_Merge_GenomeSets_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_names has a value which is a kb_util_dylan.data_obj_name
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+workspace_name is a string
+data_obj_name is a string
+KButil_Merge_GenomeSets_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+data_obj_ref is a string
+
+
+=end text
+
+=item Description
+
+Method for merging GenomeSets
+
+=back
+
+=cut
+
+ sub KButil_Merge_GenomeSets
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function KButil_Merge_GenomeSets (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to KButil_Merge_GenomeSets:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'KButil_Merge_GenomeSets');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "kb_util_dylan.KButil_Merge_GenomeSets",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'KButil_Merge_GenomeSets',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Merge_GenomeSets",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'KButil_Merge_GenomeSets',
+				       );
+    }
+}
+ 
+
+
 =head2 KButil_Build_GenomeSet
 
   $return = $obj->KButil_Build_GenomeSet($params)
@@ -629,9 +733,9 @@ Method for obtaining a GenomeSet from a FeatureSet
  
 
 
-=head2 KButil_Add_Genome_to_GenomeSet
+=head2 KButil_Add_Genomes_to_GenomeSet
 
-  $return = $obj->KButil_Add_Genome_to_GenomeSet($params)
+  $return = $obj->KButil_Add_Genomes_to_GenomeSet($params)
 
 =over 4
 
@@ -640,16 +744,17 @@ Method for obtaining a GenomeSet from a FeatureSet
 =begin html
 
 <pre>
-$params is a kb_util_dylan.KButil_Add_Genome_to_GenomeSet_Params
-$return is a kb_util_dylan.KButil_Add_Genome_to_GenomeSet_Output
-KButil_Add_Genome_to_GenomeSet_Params is a reference to a hash where the following keys are defined:
+$params is a kb_util_dylan.KButil_Add_Genomes_to_GenomeSet_Params
+$return is a kb_util_dylan.KButil_Add_Genomes_to_GenomeSet_Output
+KButil_Add_Genomes_to_GenomeSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_name has a value which is a kb_util_dylan.data_obj_name
+	input_genome_names has a value which is a kb_util_dylan.data_obj_name
+	input_genomeset_name has a value which is a kb_util_dylan.data_obj_name
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
 data_obj_name is a string
-KButil_Add_Genome_to_GenomeSet_Output is a reference to a hash where the following keys are defined:
+KButil_Add_Genomes_to_GenomeSet_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
 data_obj_ref is a string
@@ -660,16 +765,17 @@ data_obj_ref is a string
 
 =begin text
 
-$params is a kb_util_dylan.KButil_Add_Genome_to_GenomeSet_Params
-$return is a kb_util_dylan.KButil_Add_Genome_to_GenomeSet_Output
-KButil_Add_Genome_to_GenomeSet_Params is a reference to a hash where the following keys are defined:
+$params is a kb_util_dylan.KButil_Add_Genomes_to_GenomeSet_Params
+$return is a kb_util_dylan.KButil_Add_Genomes_to_GenomeSet_Output
+KButil_Add_Genomes_to_GenomeSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_name has a value which is a kb_util_dylan.data_obj_name
+	input_genome_names has a value which is a kb_util_dylan.data_obj_name
+	input_genomeset_name has a value which is a kb_util_dylan.data_obj_name
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
 data_obj_name is a string
-KButil_Add_Genome_to_GenomeSet_Output is a reference to a hash where the following keys are defined:
+KButil_Add_Genomes_to_GenomeSet_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
 data_obj_ref is a string
@@ -685,7 +791,7 @@ Method for adding a Genome to a GenomeSet
 
 =cut
 
- sub KButil_Add_Genome_to_GenomeSet
+ sub KButil_Add_Genomes_to_GenomeSet
 {
     my($self, @args) = @_;
 
@@ -694,7 +800,7 @@ Method for adding a Genome to a GenomeSet
     if ((my $n = @args) != 1)
     {
 	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
-							       "Invalid argument count for function KButil_Add_Genome_to_GenomeSet (received $n, expecting 1)");
+							       "Invalid argument count for function KButil_Add_Genomes_to_GenomeSet (received $n, expecting 1)");
     }
     {
 	my($params) = @args;
@@ -702,31 +808,31 @@ Method for adding a Genome to a GenomeSet
 	my @_bad_arguments;
         (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
         if (@_bad_arguments) {
-	    my $msg = "Invalid arguments passed to KButil_Add_Genome_to_GenomeSet:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    my $msg = "Invalid arguments passed to KButil_Add_Genomes_to_GenomeSet:\n" . join("", map { "\t$_\n" } @_bad_arguments);
 	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
-								   method_name => 'KButil_Add_Genome_to_GenomeSet');
+								   method_name => 'KButil_Add_Genomes_to_GenomeSet');
 	}
     }
 
     my $url = $self->{url};
     my $result = $self->{client}->call($url, $self->{headers}, {
-	    method => "kb_util_dylan.KButil_Add_Genome_to_GenomeSet",
+	    method => "kb_util_dylan.KButil_Add_Genomes_to_GenomeSet",
 	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
 	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
 					       code => $result->content->{error}->{code},
-					       method_name => 'KButil_Add_Genome_to_GenomeSet',
+					       method_name => 'KButil_Add_Genomes_to_GenomeSet',
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
 	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
-        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Add_Genome_to_GenomeSet",
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Add_Genomes_to_GenomeSet",
 					    status_line => $self->{client}->status_line,
-					    method_name => 'KButil_Add_Genome_to_GenomeSet',
+					    method_name => 'KButil_Add_Genomes_to_GenomeSet',
 				       );
     }
 }
@@ -1271,6 +1377,84 @@ report_ref has a value which is a kb_util_dylan.data_obj_ref
 
 
 
+=head2 KButil_Merge_GenomeSets_Params
+
+=over 4
+
+
+
+=item Description
+
+KButil_Merge_GenomeSets Input Params
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_names has a value which is a kb_util_dylan.data_obj_name
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_names has a value which is a kb_util_dylan.data_obj_name
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Merge_GenomeSets_Output
+
+=over 4
+
+
+
+=item Description
+
+KButil_Merge_GenomeSets Output
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=back
+
+
+
 =head2 KButil_Build_GenomeSet_Params
 
 =over 4
@@ -1427,7 +1611,7 @@ report_ref has a value which is a kb_util_dylan.data_obj_ref
 
 
 
-=head2 KButil_Add_Genome_to_GenomeSet_Params
+=head2 KButil_Add_Genomes_to_GenomeSet_Params
 
 =over 4
 
@@ -1435,7 +1619,7 @@ report_ref has a value which is a kb_util_dylan.data_obj_ref
 
 =item Description
 
-KButil_Add_Genome_to_GenomeSet Input Params
+KButil_Add_Genomes_to_GenomeSet Input Params
 
 
 =item Definition
@@ -1445,7 +1629,8 @@ KButil_Add_Genome_to_GenomeSet Input Params
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_name has a value which is a kb_util_dylan.data_obj_name
+input_genome_names has a value which is a kb_util_dylan.data_obj_name
+input_genomeset_name has a value which is a kb_util_dylan.data_obj_name
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1457,7 +1642,8 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_name has a value which is a kb_util_dylan.data_obj_name
+input_genome_names has a value which is a kb_util_dylan.data_obj_name
+input_genomeset_name has a value which is a kb_util_dylan.data_obj_name
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1468,7 +1654,7 @@ desc has a value which is a string
 
 
 
-=head2 KButil_Add_Genome_to_GenomeSet_Output
+=head2 KButil_Add_Genomes_to_GenomeSet_Output
 
 =over 4
 
@@ -1476,7 +1662,7 @@ desc has a value which is a string
 
 =item Description
 
-KButil_Add_Genome_to_GenomeSet Output
+KButil_Add_Genomes_to_GenomeSet Output
 
 
 =item Definition

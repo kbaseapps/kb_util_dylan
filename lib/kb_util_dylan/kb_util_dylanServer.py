@@ -340,6 +340,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Merge_FeatureSet_Collection',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Merge_FeatureSet_Collection'] = 'required'
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Merge_GenomeSets,
+                             name='kb_util_dylan.KButil_Merge_GenomeSets',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Merge_GenomeSets'] = 'required'
         self.rpc_service.add(impl_kb_util_dylan.KButil_Build_GenomeSet,
                              name='kb_util_dylan.KButil_Build_GenomeSet',
                              types=[dict])
@@ -348,10 +352,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet'] = 'required'
-        self.rpc_service.add(impl_kb_util_dylan.KButil_Add_Genome_to_GenomeSet,
-                             name='kb_util_dylan.KButil_Add_Genome_to_GenomeSet',
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Add_Genomes_to_GenomeSet,
+                             name='kb_util_dylan.KButil_Add_Genomes_to_GenomeSet',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Add_Genome_to_GenomeSet'] = 'required'
+        self.method_authentication['kb_util_dylan.KButil_Add_Genomes_to_GenomeSet'] = 'required'
         self.rpc_service.add(impl_kb_util_dylan.KButil_Concat_MSAs,
                              name='kb_util_dylan.KButil_Concat_MSAs',
                              types=[dict])

@@ -232,6 +232,24 @@ public class KbUtilDylanClient {
     }
 
     /**
+     * <p>Original spec-file function name: KButil_Merge_GenomeSets</p>
+     * <pre>
+     * Method for merging GenomeSets
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilMergeGenomeSetsParams KButilMergeGenomeSetsParams} (original type "KButil_Merge_GenomeSets_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilMergeGenomeSetsOutput KButilMergeGenomeSetsOutput} (original type "KButil_Merge_GenomeSets_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilMergeGenomeSetsOutput kButilMergeGenomeSets(KButilMergeGenomeSetsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilMergeGenomeSetsOutput>> retType = new TypeReference<List<KButilMergeGenomeSetsOutput>>() {};
+        List<KButilMergeGenomeSetsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Merge_GenomeSets", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
      * <p>Original spec-file function name: KButil_Build_GenomeSet</p>
      * <pre>
      * Method for creating a GenomeSet
@@ -268,20 +286,20 @@ public class KbUtilDylanClient {
     }
 
     /**
-     * <p>Original spec-file function name: KButil_Add_Genome_to_GenomeSet</p>
+     * <p>Original spec-file function name: KButil_Add_Genomes_to_GenomeSet</p>
      * <pre>
      * Method for adding a Genome to a GenomeSet
      * </pre>
-     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilAddGenomeToGenomeSetParams KButilAddGenomeToGenomeSetParams} (original type "KButil_Add_Genome_to_GenomeSet_Params")
-     * @return   instance of type {@link us.kbase.kbutildylan.KButilAddGenomeToGenomeSetOutput KButilAddGenomeToGenomeSetOutput} (original type "KButil_Add_Genome_to_GenomeSet_Output")
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilAddGenomesToGenomeSetParams KButilAddGenomesToGenomeSetParams} (original type "KButil_Add_Genomes_to_GenomeSet_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilAddGenomesToGenomeSetOutput KButilAddGenomesToGenomeSetOutput} (original type "KButil_Add_Genomes_to_GenomeSet_Output")
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public KButilAddGenomeToGenomeSetOutput kButilAddGenomeToGenomeSet(KButilAddGenomeToGenomeSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public KButilAddGenomesToGenomeSetOutput kButilAddGenomesToGenomeSet(KButilAddGenomesToGenomeSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<KButilAddGenomeToGenomeSetOutput>> retType = new TypeReference<List<KButilAddGenomeToGenomeSetOutput>>() {};
-        List<KButilAddGenomeToGenomeSetOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Add_Genome_to_GenomeSet", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        TypeReference<List<KButilAddGenomesToGenomeSetOutput>> retType = new TypeReference<List<KButilAddGenomesToGenomeSetOutput>>() {};
+        List<KButilAddGenomesToGenomeSetOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Add_Genomes_to_GenomeSet", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
