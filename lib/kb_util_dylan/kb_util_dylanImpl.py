@@ -893,6 +893,139 @@ class kb_util_dylan:
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Merge_GenomeSets
+        console = []
+        invalid_msgs = []
+        self.log(console,'Running KButil_Merge_GenomeSets with params=')
+        self.log(console, "\n"+pformat(params))
+        report = ''
+#        report = 'Running KButil_Merge_GenomeSets with params='
+#        report += "\n"+pformat(params)
+
+
+        #### do some basic checks
+        #
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'desc' not in params:
+            raise ValueError('desc parameter is required')
+        if 'input_names' not in params:
+            raise ValueError('input_names parameter is required')
+        if 'output_name' not in params:
+            raise ValueError('output_name parameter is required')
+
+
+        # Build GenomeSet
+        #
+        elements = dict()
+
+
+        # Add Genomes from GenomeSets
+        #
+        for input_genomeset_name in params['input_names']:
+
+            try:
+                ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+input_genomeset_name}])
+                genomeSet = objects[0]['data']
+                info = objects[0]['info']
+                
+                type_name = info[2].split('.')[1].split('-')[0]
+                if type_name != 'GenomeSet':
+                    raise ValueError("Bad Type:  Should be GenomeSet instead of '"+type_name+"'")
+            except Exception as e:
+                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                #to get the full stack trace: traceback.format_exc()
+
+            for gId in genomeSet['elements'].keys():
+                genomeRef = genomeSet['elements'][gId]['ref']
+                try:
+                    already_included = elements[gId]
+                except:
+                    elements[gId] = dict()
+                    elements[gId]['ref'] = genomeRef  # the key line
+                    self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
+            
+
+        # load the method provenance from the context object
+        #
+        self.log(console,"SETTING PROVENANCE")  # DEBUG
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        try:
+            prov_defined = provenance[0]['input_ws_objects']
+        except:
+            provenance[0]['input_ws_objects'] = []
+        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_genome_names'])
+        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_genomeset_name'])
+        provenance[0]['service'] = 'kb_util_dylan'
+        provenance[0]['method'] = 'KButil_Merge_GenomeSets'
+
+
+        # Store output object
+        #
+        if len(invalid_msgs) == 0:
+            self.log(console,"SAVING GENOMESET")  # DEBUG
+            output_GenomeSet = {
+                              'description': params['desc'],
+                              'elements': elements
+                            }
+
+            new_obj_info = ws.save_objects({
+                            'workspace': params['workspace_name'],
+                            'objects':[{
+                                    'type': 'KBaseSearch.GenomeSet',
+                                    'data': output_GenomeSet,
+                                    'name': params['output_name'],
+                                    'meta': {},
+                                    'provenance': provenance
+                                }]
+                        })
+
+
+        # build output report object
+        #
+        self.log(console,"BUILDING REPORT")  # DEBUG
+        if len(invalid_msgs) == 0:
+            self.log(console,"genomes in output set "+params['output_name']+": "+str(len(elements.keys())))
+            report += 'genomes in output set '+params['output_name']+': '+str(len(elements.keys()))+"\n"
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Merge_GenomeSets'}],
+                'text_message':report
+                }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
+
+        reportName = 'kb_util_dylan_merge_genomesets_report_'+str(hex(uuid.getnode()))
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
+        report_obj_info = ws.save_objects({
+#                'id':info[6],
+                'workspace':params['workspace_name'],
+                'objects':[
+                    {
+                        'type':'KBaseReport.Report',
+                        'data':reportObj,
+                        'name':reportName,
+                        'meta':{},
+                        'hidden':1,
+                        'provenance':provenance
+                    }
+                ]
+            })[0]
+
+
+        # Build report and return
+        #
+        self.log(console,"BUILDING RETURN OBJECT")
+        returnVal = { 'report_name': reportName,
+                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+                      }
+        self.log(console,"KButil_Merge_GenomeSets DONE")
         #END KButil_Merge_GenomeSets
 
         # At some point might do deeper type checking...
@@ -1309,10 +1442,8 @@ class kb_util_dylan:
         genome_seen = dict()
 
         # add new genome
-#        gId = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
         for genome_name in params['input_genome_names']:
-            # Obtain GenomeRef
-            #
+
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
                 objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['genome_name']}])
