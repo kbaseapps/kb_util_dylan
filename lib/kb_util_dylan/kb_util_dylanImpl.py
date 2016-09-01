@@ -1295,98 +1295,72 @@ class kb_util_dylan:
             raise ValueError('workspace_name parameter is required')
         if 'desc' not in params:
             raise ValueError('desc parameter is required')
-        if 'input_name' not in params:
-            raise ValueError('input_name parameter is required')
+        if 'input_genome_names' not in params:
+            raise ValueError('input_genome_names parameter is required')
+        if 'input_genomeset_name' not in params:
+            raise ValueError('input_genomeset_name parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
 
-        # Obtain GenomeRef
-        #
-        try:
-            ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['input_name']}])
-            data = objects[0]['data']
-            info = objects[0]['info']
-            # Object Info Contents
-            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
-            # 0 - obj_id objid
-            # 1 - obj_name name
-            # 2 - type_string type
-            # 3 - timestamp save_date
-            # 4 - int version
-            # 5 - username saved_by
-            # 6 - ws_id wsid
-            # 7 - ws_name workspace
-            # 8 - string chsum
-            # 9 - int size 
-            # 10 - usermeta meta
-            genomeObj = data
-            genomeRef = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
-            type_name = info[2].split('.')[1].split('-')[0]
-            if type_name != 'Genome' and type != 'GenomeAnnotation':
-                raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"'")
-        except Exception as e:
-            raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
-            #to get the full stack trace: traceback.format_exc()
-
-
-        # Obtain GenomeSet (if it exists)
-        #
-        add_old_GenomeSet = True
-        try:
-            ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['output_name']}])
-            data = objects[0]['data']
-            info = objects[0]['info']
-            # Object Info Contents
-            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
-            # 0 - obj_id objid
-            # 1 - obj_name name
-            # 2 - type_string type
-            # 3 - timestamp save_date
-            # 4 - int version
-            # 5 - username saved_by
-            # 6 - ws_id wsid
-            # 7 - ws_name workspace
-            # 8 - string chsum
-            # 9 - int size 
-            # 10 - usermeta meta
-            genomeSet = data
-            type_name = info[2].split('.')[1].split('-')[0]
-            if type_name != 'GenomeSet':
-                raise ValueError("Bad Type:  Should be GenomeSet instead of '"+type_name+"'")
-        except Exception as e:
-            #raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
-            #to get the full stack trace: traceback.format_exc()
-            add_old_GenomeSet = False
-
-
         # Build GenomeSet
         #
-        elements = {}
+        elements = dict()
         genome_seen = dict()
 
         # add new genome
-        gId = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
-        elements[gId] = dict()
-        elements[gId]['ref'] = genomeRef
-        genome_seen[genomeRef] = True
-        self.log(console,"adding new element "+gId+" : "+genomeRef)  # DEBUG
+#        gId = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
+        for genome_name in params['input_genome_names']:
+            # Obtain GenomeRef
+            #
+            try:
+                ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['genome_name']}])
+                genomeObj = objects[0]['data']
+                info = objects[0]['info']
 
-        # add rest of set
-        if add_old_GenomeSet:
+                genomeRef = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
+                type_name = info[2].split('.')[1].split('-')[0]
+                if type_name != 'Genome' and type != 'GenomeAnnotation':
+                    raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"'")
+
+            except Exception as e:
+                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                #to get the full stack trace: traceback.format_exc()
+            
+            gId = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
+            try:
+                already_included = elements[gId]
+            except:
+                elements[gId] = dict()
+                elements[gId]['ref'] = genomeRef  # the key line
+                self.log(console,"adding new element "+gId+" : "+genomeRef)  # DEBUG
+
+
+        # add rest of old GenomeSet
+        #
+        if 'input_genomeset_name' in params and params['input_genomeset_name'] != None:
+            try:
+                ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['input_genomeset_name']}])
+                genomeSet = objects[0]['data']
+                info = objects[0]['info']
+                
+                type_name = info[2].split('.')[1].split('-')[0]
+                if type_name != 'GenomeSet':
+                    raise ValueError("Bad Type:  Should be GenomeSet instead of '"+type_name+"'")
+            except Exception as e:
+                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                #to get the full stack trace: traceback.format_exc()
+
             for gId in genomeSet['elements'].keys():
                 genomeRef = genomeSet['elements'][gId]['ref']
                 try:
-                    already_included = genome_seen[genomeRef]
+                    already_included = elements[gId]
                 except:
-                    genome_seen[genomeRef] = True
-
-                    if not gId in elements.keys():
-                        elements[gId] = dict()
-                        elements[gId]['ref'] = genomeRef  # the key line
-                        self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
+                    elements[gId] = dict()
+                    elements[gId]['ref'] = genomeRef  # the key line
+                    self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
             
 
         # load the method provenance from the context object
@@ -1400,7 +1374,8 @@ class kb_util_dylan:
             prov_defined = provenance[0]['input_ws_objects']
         except:
             provenance[0]['input_ws_objects'] = []
-        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
+        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_genome_names'])
+        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_genomeset_name'])
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Add_Genomes_to_GenomeSet'
 
