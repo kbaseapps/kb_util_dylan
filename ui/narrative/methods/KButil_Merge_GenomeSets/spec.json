@@ -51,7 +51,7 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "KButil_Add_Genome_to_GenomeSet",
+            "method": "KButil_Merge_GenomeSets",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
