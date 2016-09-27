@@ -47,8 +47,8 @@ class kb_util_dylan:
     # the latter method is running.
     #########################################
     VERSION = "0.0.1"
-    GIT_URL = "https://github.com/dcchivian/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "8f83b692861896b4511c907885b25c7bca95a1ae"
+    GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
+    GIT_COMMIT_HASH = "7c9e3290913ce8b7a47b0e71f638fa7f4ea74eb8"
     
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -226,12 +226,11 @@ class kb_util_dylan:
         pass
     
 
-    def KButil_Insert_SingleEndLibrary(self, ctx, params):
+    def KButil_FASTQ_to_FASTA(self, ctx, params):
         """
-        Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
-        :param params: instance of type
-           "KButil_Insert_SingleEndLibrary_Params"
-           (KButil_Insert_SingleEndLibrary Input Params) -> structure:
+        :param params: instance of type "KButil_FASTQ_to_FASTA_Params"
+           (KButil_FASTQ_to_FASTA() ** ** Method for Converting a FASTQ
+           SingleEndLibrary to a FASTA SingleEndLibrary) -> structure:
            parameter "workspace_name" of type "workspace_name" (** The
            workspace object refs are of form: ** **    objects =
            ws.get_objects([{'ref':
@@ -240,244 +239,11 @@ class kb_util_dylan:
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_sequence" of type "sequence", parameter
-           "output_name" of type "data_obj_name"
-        :returns: instance of type "KButil_Insert_SingleEndLibrary_Output"
-           (KButil_Insert_SingleEndLibrary Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
-        """
-        # ctx is the context object
-        # return variables are: returnVal
-        #BEGIN KButil_Insert_SingleEndLibrary
-        console = []
-        invalid_msgs = []
-        self.log(console,'Running KButil_Insert_SingleEndLibrary with params=')
-        self.log(console, "\n"+pformat(params))
-        report = ''
-#        report = 'Running KButil_Insert_SingleEndLibrary with params='
-#        report += "\n"+pformat(params)  # DEBUG
-
-
-        #### do some basic checks
-        #
-        if 'workspace_name' not in params:
-            raise ValueError('workspace_name parameter is required')
-        if 'input_sequence' not in params:
-            raise ValueError('input_sequence parameter is required')
-        if 'output_name' not in params:
-            raise ValueError('output_name parameter is required')
-
-
-        #### Create the file to upload
-        ##
-        input_file_name = params['output_name']
-        forward_reads_file_path = os.path.join(self.scratch,input_file_name)
-        forward_reads_file_handle = open(forward_reads_file_path, 'w', 0)
-        self.log(console, 'writing query reads file: '+str(forward_reads_file_path))
-
-        seq_cnt = 0
-        fastq_format = False
-        input_sequence_buf = params['input_sequence']
-        input_sequence_buf = input_sequence_buf.strip()
-        if input_sequence_buf.startswith('@'):
-            fastq_format = True
-#        self.log(console,"INPUT_SEQ BEFORE: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
-        input_sequence_buf = re.sub ('&apos;', "'", input_sequence_buf)
-        input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#39;',  "'", input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#34;',  '"', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&lt;;',  '<', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#60;',  '<', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&gt;',   '>', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#62;',  '>', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#36;',  '$', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#37;',  '%', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#47;',  '/', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#63;',  '?', input_sequence_buf)
-##        input_sequence_buf = re.sub ('&#92;',  chr(92), input_sequence_buf)  # FIX LATER
-#        input_sequence_buf = re.sub ('&#96;',  '`', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#124;', '|', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&amp;', '&', input_sequence_buf)
-#        input_sequence_buf = re.sub ('&#38;', '&', input_sequence_buf)
-#        self.log(console,"INPUT_SEQ AFTER: '''\n"+input_sequence_buf+"\n'''")  # DEBUG
-
-        DNA_pattern = re.compile("^[acgtuACGTU ]+$")
-        space_pattern = re.compile("^[ \t]*$")
-        split_input_sequence_buf = input_sequence_buf.split("\n")
-
-        # no header rows, just sequence
-        if not input_sequence_buf.startswith('>') and not input_sequence_buf.startswith('@'):
-            seq_cnt = 1
-            forward_reads_file_handle.write('>'+params['output_name']+"\n")
-            for line in split_input_sequence_buf:
-                if not space_pattern.match(line):
-                    line = re.sub (" ","",line)
-                    line = re.sub ("\t","",line)
-                    if not DNA_pattern.match(line):
-                        self.log(console,"BAD record:\n"+line)
-                        self.log(invalid_msgs,"BAD record:\n"+line)
-                        break
-                    forward_reads_file_handle.write(line.lower()+"\n")
-
-        else:
-            # format checks
-            for i,line in enumerate(split_input_sequence_buf):
-                if line.startswith('>') or line.startswith('@'):
-                    seq_cnt += 1
-                    if not DNA_pattern.match(split_input_sequence_buf[i+1]):
-                        if fastq_format:
-                            bad_record = "\n".join([split_input_sequence_buf[i],
-                                                    split_input_sequence_buf[i+1],
-                                                    split_input_sequence_buf[i+2],
-                                                    split_input_sequence_buf[i+3]])
-                        else:
-                            bad_record = "\n".join([split_input_sequence_buf[i],
-                                                    split_input_sequence_buf[i+1]])
-                        self.log(console,"BAD record:\n"+bad_record)
-                        self.log(invalid_msgs,"BAD record:\n"+bad_record)
-                    if fastq_format and line.startswith('@'):
-                        format_ok = True
-                        seq_len = len(split_input_sequence_buf[i+1])
-                        if not seq_len > 0:
-                            format_ok = False
-                        if not split_input_sequence_buf[i+2].startswith('+'):
-                            format_ok = False
-                        if not seq_len == len(split_input_sequence_buf[i+3]):
-                            format_ok = False
-                        if not format_ok:
-                            bad_record = "\n".join([split_input_sequence_buf[i],
-                                                    split_input_sequence_buf[i+1],
-                                                    split_input_sequence_buf[i+2],
-                                                    split_input_sequence_buf[i+3]])
-                            self.log(console,"BAD record:\n"+bad_record)
-                            self.log(invalid_msgs,"BAD record:\n"+bad_record)
-
-
-            # write that sucker, removing spaces
-            #
-            #forward_reads_file_handle.write(input_sequence_buf)        input_sequence_buf = re.sub ('&quot;', '"', input_sequence_buf)
-            for i,line in enumerate(split_input_sequence_buf):
-                if line.startswith('>'):
-                    record_buf = []
-                    record_buf.append(line)
-                    for j in range(i+1,len(split_input_sequence_buf)):
-                        if split_input_sequence_buf[j].startswith('>'):
-                            break
-                        seq_line = re.sub (" ","",split_input_sequence_buf[j])
-                        seq_line = re.sub ("\t","",seq_line)
-                        seq_line = seq_line.lower()
-                        record_buf.append(seq_line)
-                    record = "\n".join(record_buf)+"\n"
-                    forward_reads_file_handle.write(record)
-                elif line.startswith('@'):
-                    seq_line = re.sub (" ","",split_input_sequence_buf[i+1])
-                    seq_line = re.sub ("\t","",seq_line)
-                    seq_line = seq_line.lower()
-                    qual_line = re.sub (" ","",split_input_sequence_buf[i+3])
-                    qual_line = re.sub ("\t","",qual_line)
-                    record = "\n".join([line, seq_line, split_input_sequence_buf[i+2], qual_line])+"\n"
-                    forward_reads_file_handle.write(record)
-
-        forward_reads_file_handle.close()
-
-
-        # load the method provenance from the context object
-        #
-        self.log(console,"SETTING PROVENANCE")  # DEBUG
-        provenance = [{}]
-        if 'provenance' in ctx:
-            provenance = ctx['provenance']
-        # add additional info to provenance here, in this case the input data object reference
-        provenance[0]['input_ws_objects'] = []
-        provenance[0]['service'] = 'kb_util_dylan'
-        provenance[0]['method'] = 'KButil_Insert_SingleEndLibrary'
-
-
-        # Upload results
-        #
-        if len(invalid_msgs) == 0:
-            self.log(console,"UPLOADING RESULTS")  # DEBUG
-            sequencing_tech = 'N/A'
-            self.upload_SingleEndLibrary_to_shock_and_ws (ctx,
-                                                      console,  # DEBUG
-                                                      params['workspace_name'],
-                                                      params['output_name'],
-                                                      forward_reads_file_path,
-                                                      provenance,
-                                                      sequencing_tech
-                                                      )
-
-        # build output report object
-        #
-        self.log(console,"BUILDING REPORT")  # DEBUG
-        if len(invalid_msgs) == 0:
-            report += 'sequences in library:  '+str(seq_cnt)+"\n"
-            reportObj = {
-                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Insert_SingleEndLibrary'}],
-                'text_message':report
-            }
-        else:
-            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
-            reportObj = {
-                'objects_created':[],
-                'text_message':report
-            }
-
-        reportName = 'kbutil_insert_singleendlibrary_report_'+str(hex(uuid.getnode()))
-        ws = workspaceService(self.workspaceURL, token=ctx['token'])
-        report_obj_info = ws.save_objects({
-#                'id':info[6],
-                'workspace':params['workspace_name'],
-                'objects':[
-                    {
-                        'type':'KBaseReport.Report',
-                        'data':reportObj,
-                        'name':reportName,
-                        'meta':{},
-                        'hidden':1,
-                        'provenance':provenance
-                    }
-                ]
-            })[0]
-
-        self.log(console,"BUILDING RETURN OBJECT")
-#        returnVal = { 'output_report_name': reportName,
-#                      'output_report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
-#                      'output_filtered_ref': params['workspace_name']+'/'+params['output_filtered_name']
-#                      }
-        returnVal = { 'report_name': reportName,
-                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
-                      }
-        self.log(console,"KButil_Insert_SingleEndLibrary DONE")
-
-        #END KButil_Insert_SingleEndLibrary
-
-        # At some point might do deeper type checking...
-        if not isinstance(returnVal, dict):
-            raise ValueError('Method KButil_Insert_SingleEndLibrary return value ' +
-                             'returnVal is not type dict as required.')
-        # return the results
-        return [returnVal]
-
-    def KButil_FASTQ_to_FASTA(self, ctx, params):
-        """
-        Method for Converting a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary
-        :param params: instance of type "KButil_FASTQ_to_FASTA_Params"
-           (KButil_FASTQ_to_FASTA Input Params) -> structure: parameter
-           "workspace_name" of type "workspace_name" (** The workspace object
-           refs are of form: ** **    objects = ws.get_objects([{'ref':
-           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
-           the entire name combining the workspace id and the object name **
-           "id" is a numerical identifier of the workspace or object, and
-           should just be used for workspace ** "name" is a string identifier
-           of a workspace or object.  This is received from Narrative.),
            parameter "input_name" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name"
-        :returns: instance of type "KButil_FASTQ_to_FASTA_Output"
-           (KButil_FASTQ_to_FASTA Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
+        :returns: instance of type "KButil_FASTQ_to_FASTA_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
         """
         # ctx is the context object
         # return variables are: returnVal
@@ -686,13 +452,12 @@ class kb_util_dylan:
 
     def KButil_Merge_FeatureSet_Collection(self, ctx, params):
         """
-        Method for merging FeatureSets
         :param params: instance of type
            "KButil_Merge_FeatureSet_Collection_Params"
-           (KButil_Merge_FeatureSet_Collection Input Params) -> structure:
-           parameter "workspace_name" of type "workspace_name" (** The
-           workspace object refs are of form: ** **    objects =
-           ws.get_objects([{'ref':
+           (KButil_Merge_FeatureSet_Collection() ** **  Method for merging
+           FeatureSets) -> structure: parameter "workspace_name" of type
+           "workspace_name" (** The workspace object refs are of form: ** ** 
+           objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -701,8 +466,7 @@ class kb_util_dylan:
            parameter "input_names" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type
-           "KButil_Merge_FeatureSet_Collection_Output"
-           (KButil_Merge_FeatureSet_Collection Output) -> structure:
+           "KButil_Merge_FeatureSet_Collection_Output" -> structure:
            parameter "report_name" of type "data_obj_name", parameter
            "report_ref" of type "data_obj_ref"
         """
@@ -873,11 +637,11 @@ class kb_util_dylan:
 
     def KButil_Merge_GenomeSets(self, ctx, params):
         """
-        Method for merging GenomeSets
         :param params: instance of type "KButil_Merge_GenomeSets_Params"
-           (KButil_Merge_GenomeSets Input Params) -> structure: parameter
-           "workspace_name" of type "workspace_name" (** The workspace object
-           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           (KButil_Merge_GenomeSets() ** **  Method for merging GenomeSets)
+           -> structure: parameter "workspace_name" of type "workspace_name"
+           (** The workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -885,10 +649,9 @@ class kb_util_dylan:
            of a workspace or object.  This is received from Narrative.),
            parameter "input_names" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
-        :returns: instance of type "KButil_Merge_GenomeSets_Output"
-           (KButil_Merge_GenomeSets Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
+        :returns: instance of type "KButil_Merge_GenomeSets_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
         """
         # ctx is the context object
         # return variables are: returnVal
@@ -1037,11 +800,11 @@ class kb_util_dylan:
 
     def KButil_Build_GenomeSet(self, ctx, params):
         """
-        Method for creating a GenomeSet
         :param params: instance of type "KButil_Build_GenomeSet_Params"
-           (KButil_Build_GenomeSet Input Params) -> structure: parameter
-           "workspace_name" of type "workspace_name" (** The workspace object
-           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           (KButil_Build_GenomeSet() ** **  Method for creating a GenomeSet)
+           -> structure: parameter "workspace_name" of type "workspace_name"
+           (** The workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -1049,10 +812,9 @@ class kb_util_dylan:
            of a workspace or object.  This is received from Narrative.),
            parameter "input_names" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
-        :returns: instance of type "KButil_Build_GenomeSet_Output"
-           (KButil_Build_GenomeSet Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
+        :returns: instance of type "KButil_Build_GenomeSet_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
         """
         # ctx is the context object
         # return variables are: returnVal
@@ -1198,13 +960,12 @@ class kb_util_dylan:
 
     def KButil_Build_GenomeSet_from_FeatureSet(self, ctx, params):
         """
-        Method for obtaining a GenomeSet from a FeatureSet
         :param params: instance of type
            "KButil_Build_GenomeSet_from_FeatureSet_Params"
-           (KButil_Build_GenomeSet_from_FeatureSet Input Params) ->
-           structure: parameter "workspace_name" of type "workspace_name" (**
-           The workspace object refs are of form: ** **    objects =
-           ws.get_objects([{'ref':
+           (KButil_Build_GenomeSet_from_FeatureSet() ** **  Method for
+           obtaining a GenomeSet from a FeatureSet) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -1213,8 +974,7 @@ class kb_util_dylan:
            parameter "input_name" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type
-           "KButil_Build_GenomeSet_from_FeatureSet_Output"
-           (KButil_Build_GenomeSet_from_FeatureSet Output) -> structure:
+           "KButil_Build_GenomeSet_from_FeatureSet_Output" -> structure:
            parameter "report_name" of type "data_obj_name", parameter
            "report_ref" of type "data_obj_ref"
         """
@@ -1390,13 +1150,12 @@ class kb_util_dylan:
 
     def KButil_Add_Genomes_to_GenomeSet(self, ctx, params):
         """
-        Method for adding a Genome to a GenomeSet
         :param params: instance of type
            "KButil_Add_Genomes_to_GenomeSet_Params"
-           (KButil_Add_Genomes_to_GenomeSet Input Params) -> structure:
-           parameter "workspace_name" of type "workspace_name" (** The
-           workspace object refs are of form: ** **    objects =
-           ws.get_objects([{'ref':
+           (KButil_Add_Genomes_to_GenomeSet() ** **  Method for adding a
+           Genome to a GenomeSet) -> structure: parameter "workspace_name" of
+           type "workspace_name" (** The workspace object refs are of form:
+           ** **    objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -1406,9 +1165,8 @@ class kb_util_dylan:
            "input_genomeset_name" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type "KButil_Add_Genomes_to_GenomeSet_Output"
-           (KButil_Add_Genomes_to_GenomeSet Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
+           -> structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
         """
         # ctx is the context object
         # return variables are: returnVal
@@ -1585,11 +1343,11 @@ class kb_util_dylan:
 
     def KButil_Concat_MSAs(self, ctx, params):
         """
-        Method for Concatenating MSAs into a combined MSA
         :param params: instance of type "KButil_Concat_MSAs_Params"
-           (KButil_Concat_MSAs Input Params) -> structure: parameter
-           "workspace_name" of type "workspace_name" (** The workspace object
-           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           (KButil_Concat_MSAs() ** **  Method for Concatenating MSAs into a
+           combined MSA) -> structure: parameter "workspace_name" of type
+           "workspace_name" (** The workspace object refs are of form: ** ** 
+           objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -1598,10 +1356,9 @@ class kb_util_dylan:
            parameter "input_names" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String,
            parameter "blanks_flag" of Long
-        :returns: instance of type "KButil_Concat_MSAs_Output"
-           (KButil_Concat_MSAs Output) -> structure: parameter "report_name"
-           of type "data_obj_name", parameter "report_ref" of type
-           "data_obj_ref"
+        :returns: instance of type "KButil_Concat_MSAs_Output" -> structure:
+           parameter "report_name" of type "data_obj_name", parameter
+           "report_ref" of type "data_obj_ref"
         """
         # ctx is the context object
         # return variables are: returnVal

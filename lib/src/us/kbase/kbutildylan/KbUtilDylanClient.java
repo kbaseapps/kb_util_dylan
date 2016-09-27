@@ -178,27 +178,8 @@ public class KbUtilDylanClient {
     }
 
     /**
-     * <p>Original spec-file function name: KButil_Insert_SingleEndLibrary</p>
-     * <pre>
-     * Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
-     * </pre>
-     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilInsertSingleEndLibraryParams KButilInsertSingleEndLibraryParams} (original type "KButil_Insert_SingleEndLibrary_Params")
-     * @return   instance of type {@link us.kbase.kbutildylan.KButilInsertSingleEndLibraryOutput KButilInsertSingleEndLibraryOutput} (original type "KButil_Insert_SingleEndLibrary_Output")
-     * @throws IOException if an IO exception occurs
-     * @throws JsonClientException if a JSON RPC exception occurs
-     */
-    public KButilInsertSingleEndLibraryOutput kButilInsertSingleEndLibrary(KButilInsertSingleEndLibraryParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
-        List<Object> args = new ArrayList<Object>();
-        args.add(params);
-        TypeReference<List<KButilInsertSingleEndLibraryOutput>> retType = new TypeReference<List<KButilInsertSingleEndLibraryOutput>>() {};
-        List<KButilInsertSingleEndLibraryOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Insert_SingleEndLibrary", args, retType, true, true, jsonRpcContext, this.serviceVersion);
-        return res.get(0);
-    }
-
-    /**
      * <p>Original spec-file function name: KButil_FASTQ_to_FASTA</p>
      * <pre>
-     * Method for Converting a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilFASTQToFASTAParams KButilFASTQToFASTAParams} (original type "KButil_FASTQ_to_FASTA_Params")
      * @return   instance of type {@link us.kbase.kbutildylan.KButilFASTQToFASTAOutput KButilFASTQToFASTAOutput} (original type "KButil_FASTQ_to_FASTA_Output")
@@ -216,7 +197,6 @@ public class KbUtilDylanClient {
     /**
      * <p>Original spec-file function name: KButil_Merge_FeatureSet_Collection</p>
      * <pre>
-     * Method for merging FeatureSets
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilMergeFeatureSetCollectionParams KButilMergeFeatureSetCollectionParams} (original type "KButil_Merge_FeatureSet_Collection_Params")
      * @return   instance of type {@link us.kbase.kbutildylan.KButilMergeFeatureSetCollectionOutput KButilMergeFeatureSetCollectionOutput} (original type "KButil_Merge_FeatureSet_Collection_Output")
@@ -234,7 +214,6 @@ public class KbUtilDylanClient {
     /**
      * <p>Original spec-file function name: KButil_Merge_GenomeSets</p>
      * <pre>
-     * Method for merging GenomeSets
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilMergeGenomeSetsParams KButilMergeGenomeSetsParams} (original type "KButil_Merge_GenomeSets_Params")
      * @return   instance of type {@link us.kbase.kbutildylan.KButilMergeGenomeSetsOutput KButilMergeGenomeSetsOutput} (original type "KButil_Merge_GenomeSets_Output")
@@ -252,7 +231,6 @@ public class KbUtilDylanClient {
     /**
      * <p>Original spec-file function name: KButil_Build_GenomeSet</p>
      * <pre>
-     * Method for creating a GenomeSet
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilBuildGenomeSetParams KButilBuildGenomeSetParams} (original type "KButil_Build_GenomeSet_Params")
      * @return   instance of type {@link us.kbase.kbutildylan.KButilBuildGenomeSetOutput KButilBuildGenomeSetOutput} (original type "KButil_Build_GenomeSet_Output")
@@ -270,7 +248,6 @@ public class KbUtilDylanClient {
     /**
      * <p>Original spec-file function name: KButil_Build_GenomeSet_from_FeatureSet</p>
      * <pre>
-     * Method for obtaining a GenomeSet from a FeatureSet
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilBuildGenomeSetFromFeatureSetParams KButilBuildGenomeSetFromFeatureSetParams} (original type "KButil_Build_GenomeSet_from_FeatureSet_Params")
      * @return   instance of type {@link us.kbase.kbutildylan.KButilBuildGenomeSetFromFeatureSetOutput KButilBuildGenomeSetFromFeatureSetOutput} (original type "KButil_Build_GenomeSet_from_FeatureSet_Output")
@@ -288,7 +265,6 @@ public class KbUtilDylanClient {
     /**
      * <p>Original spec-file function name: KButil_Add_Genomes_to_GenomeSet</p>
      * <pre>
-     * Method for adding a Genome to a GenomeSet
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilAddGenomesToGenomeSetParams KButilAddGenomesToGenomeSetParams} (original type "KButil_Add_Genomes_to_GenomeSet_Params")
      * @return   instance of type {@link us.kbase.kbutildylan.KButilAddGenomesToGenomeSetOutput KButilAddGenomesToGenomeSetOutput} (original type "KButil_Add_Genomes_to_GenomeSet_Output")
@@ -306,7 +282,6 @@ public class KbUtilDylanClient {
     /**
      * <p>Original spec-file function name: KButil_Concat_MSAs</p>
      * <pre>
-     * Method for Concatenating MSAs into a combined MSA
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilConcatMSAsParams KButilConcatMSAsParams} (original type "KButil_Concat_MSAs_Params")
      * @return   instance of type {@link us.kbase.kbutildylan.KButilConcatMSAsOutput KButilConcatMSAsOutput} (original type "KButil_Concat_MSAs_Output")

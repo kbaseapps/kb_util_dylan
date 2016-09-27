@@ -328,10 +328,6 @@ class Application(object):
         self.serverlog.set_log_level(6)
         self.rpc_service = JSONRPCServiceCustom()
         self.method_authentication = dict()
-        self.rpc_service.add(impl_kb_util_dylan.KButil_Insert_SingleEndLibrary,
-                             name='kb_util_dylan.KButil_Insert_SingleEndLibrary',
-                             types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Insert_SingleEndLibrary'] = 'required'
         self.rpc_service.add(impl_kb_util_dylan.KButil_FASTQ_to_FASTA,
                              name='kb_util_dylan.KButil_FASTQ_to_FASTA',
                              types=[dict])

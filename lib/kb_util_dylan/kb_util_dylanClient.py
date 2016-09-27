@@ -33,38 +33,14 @@ class kb_util_dylan(object):
             trust_all_ssl_certificates=trust_all_ssl_certificates,
             auth_svc=auth_svc)
 
-    def KButil_Insert_SingleEndLibrary(self, params, context=None):
+    def KButil_FASTQ_to_FASTA(self, params, context=None):
         """
-        Method for Inserting a textarea field with FASTA or FASTQ into a SingleEndLibrary object and importing into SHOCK and WS
-        :param params: instance of type
-           "KButil_Insert_SingleEndLibrary_Params"
-           (KButil_Insert_SingleEndLibrary Input Params) -> structure:
+        :param params: instance of type "KButil_FASTQ_to_FASTA_Params"
+           (KButil_FASTQ_to_FASTA() ** ** Method for Converting a FASTQ
+           SingleEndLibrary to a FASTA SingleEndLibrary) -> structure:
            parameter "workspace_name" of type "workspace_name" (** The
            workspace object refs are of form: ** **    objects =
            ws.get_objects([{'ref':
-           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
-           the entire name combining the workspace id and the object name **
-           "id" is a numerical identifier of the workspace or object, and
-           should just be used for workspace ** "name" is a string identifier
-           of a workspace or object.  This is received from Narrative.),
-           parameter "input_sequence" of type "sequence", parameter
-           "output_name" of type "data_obj_name"
-        :returns: instance of type "KButil_Insert_SingleEndLibrary_Output"
-           (KButil_Insert_SingleEndLibrary Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
-        """
-        return self._client.call_method(
-            'kb_util_dylan.KButil_Insert_SingleEndLibrary',
-            [params], self._service_ver, context)
-
-    def KButil_FASTQ_to_FASTA(self, params, context=None):
-        """
-        Method for Converting a FASTQ SingleEndLibrary to a FASTA SingleEndLibrary
-        :param params: instance of type "KButil_FASTQ_to_FASTA_Params"
-           (KButil_FASTQ_to_FASTA Input Params) -> structure: parameter
-           "workspace_name" of type "workspace_name" (** The workspace object
-           refs are of form: ** **    objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -72,10 +48,9 @@ class kb_util_dylan(object):
            of a workspace or object.  This is received from Narrative.),
            parameter "input_name" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name"
-        :returns: instance of type "KButil_FASTQ_to_FASTA_Output"
-           (KButil_FASTQ_to_FASTA Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
+        :returns: instance of type "KButil_FASTQ_to_FASTA_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
         """
         return self._client.call_method(
             'kb_util_dylan.KButil_FASTQ_to_FASTA',
@@ -83,13 +58,12 @@ class kb_util_dylan(object):
 
     def KButil_Merge_FeatureSet_Collection(self, params, context=None):
         """
-        Method for merging FeatureSets
         :param params: instance of type
            "KButil_Merge_FeatureSet_Collection_Params"
-           (KButil_Merge_FeatureSet_Collection Input Params) -> structure:
-           parameter "workspace_name" of type "workspace_name" (** The
-           workspace object refs are of form: ** **    objects =
-           ws.get_objects([{'ref':
+           (KButil_Merge_FeatureSet_Collection() ** **  Method for merging
+           FeatureSets) -> structure: parameter "workspace_name" of type
+           "workspace_name" (** The workspace object refs are of form: ** ** 
+           objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -98,8 +72,7 @@ class kb_util_dylan(object):
            parameter "input_names" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type
-           "KButil_Merge_FeatureSet_Collection_Output"
-           (KButil_Merge_FeatureSet_Collection Output) -> structure:
+           "KButil_Merge_FeatureSet_Collection_Output" -> structure:
            parameter "report_name" of type "data_obj_name", parameter
            "report_ref" of type "data_obj_ref"
         """
@@ -109,11 +82,11 @@ class kb_util_dylan(object):
 
     def KButil_Merge_GenomeSets(self, params, context=None):
         """
-        Method for merging GenomeSets
         :param params: instance of type "KButil_Merge_GenomeSets_Params"
-           (KButil_Merge_GenomeSets Input Params) -> structure: parameter
-           "workspace_name" of type "workspace_name" (** The workspace object
-           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           (KButil_Merge_GenomeSets() ** **  Method for merging GenomeSets)
+           -> structure: parameter "workspace_name" of type "workspace_name"
+           (** The workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -121,10 +94,9 @@ class kb_util_dylan(object):
            of a workspace or object.  This is received from Narrative.),
            parameter "input_names" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
-        :returns: instance of type "KButil_Merge_GenomeSets_Output"
-           (KButil_Merge_GenomeSets Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
+        :returns: instance of type "KButil_Merge_GenomeSets_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
         """
         return self._client.call_method(
             'kb_util_dylan.KButil_Merge_GenomeSets',
@@ -132,11 +104,11 @@ class kb_util_dylan(object):
 
     def KButil_Build_GenomeSet(self, params, context=None):
         """
-        Method for creating a GenomeSet
         :param params: instance of type "KButil_Build_GenomeSet_Params"
-           (KButil_Build_GenomeSet Input Params) -> structure: parameter
-           "workspace_name" of type "workspace_name" (** The workspace object
-           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           (KButil_Build_GenomeSet() ** **  Method for creating a GenomeSet)
+           -> structure: parameter "workspace_name" of type "workspace_name"
+           (** The workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -144,10 +116,9 @@ class kb_util_dylan(object):
            of a workspace or object.  This is received from Narrative.),
            parameter "input_names" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
-        :returns: instance of type "KButil_Build_GenomeSet_Output"
-           (KButil_Build_GenomeSet Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
+        :returns: instance of type "KButil_Build_GenomeSet_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
         """
         return self._client.call_method(
             'kb_util_dylan.KButil_Build_GenomeSet',
@@ -155,13 +126,12 @@ class kb_util_dylan(object):
 
     def KButil_Build_GenomeSet_from_FeatureSet(self, params, context=None):
         """
-        Method for obtaining a GenomeSet from a FeatureSet
         :param params: instance of type
            "KButil_Build_GenomeSet_from_FeatureSet_Params"
-           (KButil_Build_GenomeSet_from_FeatureSet Input Params) ->
-           structure: parameter "workspace_name" of type "workspace_name" (**
-           The workspace object refs are of form: ** **    objects =
-           ws.get_objects([{'ref':
+           (KButil_Build_GenomeSet_from_FeatureSet() ** **  Method for
+           obtaining a GenomeSet from a FeatureSet) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -170,8 +140,7 @@ class kb_util_dylan(object):
            parameter "input_name" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type
-           "KButil_Build_GenomeSet_from_FeatureSet_Output"
-           (KButil_Build_GenomeSet_from_FeatureSet Output) -> structure:
+           "KButil_Build_GenomeSet_from_FeatureSet_Output" -> structure:
            parameter "report_name" of type "data_obj_name", parameter
            "report_ref" of type "data_obj_ref"
         """
@@ -181,13 +150,12 @@ class kb_util_dylan(object):
 
     def KButil_Add_Genomes_to_GenomeSet(self, params, context=None):
         """
-        Method for adding a Genome to a GenomeSet
         :param params: instance of type
            "KButil_Add_Genomes_to_GenomeSet_Params"
-           (KButil_Add_Genomes_to_GenomeSet Input Params) -> structure:
-           parameter "workspace_name" of type "workspace_name" (** The
-           workspace object refs are of form: ** **    objects =
-           ws.get_objects([{'ref':
+           (KButil_Add_Genomes_to_GenomeSet() ** **  Method for adding a
+           Genome to a GenomeSet) -> structure: parameter "workspace_name" of
+           type "workspace_name" (** The workspace object refs are of form:
+           ** **    objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -197,9 +165,8 @@ class kb_util_dylan(object):
            "input_genomeset_name" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type "KButil_Add_Genomes_to_GenomeSet_Output"
-           (KButil_Add_Genomes_to_GenomeSet Output) -> structure: parameter
-           "report_name" of type "data_obj_name", parameter "report_ref" of
-           type "data_obj_ref"
+           -> structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
         """
         return self._client.call_method(
             'kb_util_dylan.KButil_Add_Genomes_to_GenomeSet',
@@ -207,11 +174,11 @@ class kb_util_dylan(object):
 
     def KButil_Concat_MSAs(self, params, context=None):
         """
-        Method for Concatenating MSAs into a combined MSA
         :param params: instance of type "KButil_Concat_MSAs_Params"
-           (KButil_Concat_MSAs Input Params) -> structure: parameter
-           "workspace_name" of type "workspace_name" (** The workspace object
-           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           (KButil_Concat_MSAs() ** **  Method for Concatenating MSAs into a
+           combined MSA) -> structure: parameter "workspace_name" of type
+           "workspace_name" (** The workspace object refs are of form: ** ** 
+           objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
            the entire name combining the workspace id and the object name **
            "id" is a numerical identifier of the workspace or object, and
@@ -220,10 +187,9 @@ class kb_util_dylan(object):
            parameter "input_names" of type "data_obj_name", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String,
            parameter "blanks_flag" of Long
-        :returns: instance of type "KButil_Concat_MSAs_Output"
-           (KButil_Concat_MSAs Output) -> structure: parameter "report_name"
-           of type "data_obj_name", parameter "report_ref" of type
-           "data_obj_ref"
+        :returns: instance of type "KButil_Concat_MSAs_Output" -> structure:
+           parameter "report_name" of type "data_obj_name", parameter
+           "report_ref" of type "data_obj_ref"
         """
         return self._client.call_method(
             'kb_util_dylan.KButil_Concat_MSAs',
