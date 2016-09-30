@@ -1721,7 +1721,7 @@ class kb_util_dylan:
 
                 label = info[1]  # object name
                 items.append({'ref':readsRef,'label':label})
-                self.log(console,"adding element "+label+" : "+readsRef)  # DEBUG
+                self.log(console,"adding item "+label+" : "+readsRef)  # DEBUG
 
 
         # load the method provenance from the context object
@@ -1763,8 +1763,8 @@ class kb_util_dylan:
         #
         self.log(console,"BUILDING REPORT")  # DEBUG
         if len(invalid_msgs) == 0:
-            self.log(console,"read libraries in output set "+params['output_name']+": "+str(len(elements.keys())))
-            report += 'read libraries in output set '+params['output_name']+': '+str(len(elements.keys()))+"\n"
+            self.log(console,"read libraries in output set "+params['output_name']+": "+str(len(items)))
+            report += 'read libraries in output set '+params['output_name']+': '+str(len(items))+"\n"
             reportObj = {
                 'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Build_ReadsSet'}],
                 'text_message':report
