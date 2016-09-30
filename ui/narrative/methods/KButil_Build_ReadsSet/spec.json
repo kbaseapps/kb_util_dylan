@@ -5,21 +5,32 @@
     ],
     "contact": "help@kbase.us",
     "visible": true,
-    "categories": ["active","util","sequence"],
+    "categories": ["active","util","reads"],
     "widgets": {
         "input": null,
         "output": "kbaseReportView"
     },
     "parameters": [ 
         {
-            "id": "input_sequence",
-            "optional": true,
+            "id": "desc",
+            "optional": false,
             "advanced": false,
             "allow_multiple": false,
             "default_values": [ "" ],
-            "field_type": "textarea",
-            "textarea_options" : {
-                 "n_rows" : 20
+            "field_type": "text",
+            "text_options": {
+		"is_output_name": false
+            }
+        },
+        {
+            "id": "input_names",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": true,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+                "valid_ws_types": [ "KBaseAssembly.SingleEndLibrary","KBaseFile.SingleEndLibrary","KBaseAssembly.PairedEndLibrary","KBaseFile.PairedEndLibrary" ]
             }
         },
         {
@@ -30,8 +41,8 @@
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types": [ "KBaseFile.SingleEndLibrary","KBaseAssembly.SingleEndLibrary" ],
-		"is_output_name": true		  
+                "valid_ws_types": [ "KBaseSets.ReadsSet" ],
+		"is_output_name": true
             }
         }
     ],
@@ -39,15 +50,19 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "KButil_Insert_SingleEndLibrary",
+            "method": "KButil_Build_ReadsSet",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
                     "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "input_sequence",
-                    "target_property": "input_sequence"
+                    "input_parameter": "desc",
+                    "target_property": "desc"
+                },
+                {
+                    "input_parameter": "input_names",
+                    "target_property": "input_names"
                 },
                 {
                     "input_parameter": "output_name",
@@ -68,7 +83,7 @@
                     "target_property": "report_ref"
                 },
                 {
-		    "constant_value": "1",
+		    "constant_value": "5",
                     "target_property": "report_window_line_height"
                 }
             ]

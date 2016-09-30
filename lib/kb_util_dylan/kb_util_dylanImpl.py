@@ -48,7 +48,7 @@ class kb_util_dylan:
     #########################################
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "7c9e3290913ce8b7a47b0e71f638fa7f4ea74eb8"
+    GIT_COMMIT_HASH = "d8ad169c1757437e456bbd9ca6dd5ed2d2aa08df"
     
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -1648,6 +1648,164 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_Concat_MSAs return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Build_ReadsSet(self, ctx, params):
+        """
+        :param params: instance of type "KButil_Build_ReadsSet_Params"
+           (KButil_Build_ReadsSet() ** **  Method for creating a ReadsSet) ->
+           structure: parameter "workspace_name" of type "workspace_name" (**
+           The workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_names" of type "data_obj_name", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Build_ReadsSet_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Build_ReadsSet
+        console = []
+        invalid_msgs = []
+        self.log(console,'Running KButil_Build_ReadsSet with params=')
+        self.log(console, "\n"+pformat(params))
+        report = ''
+#        report = 'Running KButil_Build_ReadsSet with params='
+#        report += "\n"+pformat(params)
+
+
+        #### do some basic checks
+        #
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'desc' not in params:
+            raise ValueError('desc parameter is required')
+        if 'input_names' not in params:
+            raise ValueError('input_names parameter is required')
+        if 'output_name' not in params:
+            raise ValueError('output_name parameter is required')
+
+
+        # Build ReadsSet
+        #
+        items = []
+        reads_seen = dict()
+        
+        for reads_name in params['input_names']:
+            readsRef = params['workspace_name'] + '/' + reads_name
+
+            try:
+                already_included = reads_seen[readsRef]
+            except:
+                reads_seen[readsRef] = True
+
+                try:
+                    ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                    objects = ws.get_objects([{'ref': readsRef}])
+                    data = objects[0]['data']
+                    info = objects[0]['info']
+                    readsObj = data
+                    type_name = info[2].split('.')[1].split('-')[0]
+                except Exception as e:
+                    raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                if type_name != 'PairedEndLibrary' and type_name != 'SingleEndLibrary':
+                    raise ValueError("Bad Type:  Should be SingleEndLibrary or PairedEndLibrary instead of '"+type_name+"' for ref: '"+readsRef+"'")
+
+                label = info[1]  # object name
+                items.append({'ref':readsRef,'label':label})
+                self.log(console,"adding element "+label+" : "+readsRef)  # DEBUG
+
+
+        # load the method provenance from the context object
+        #
+        self.log(console,"SETTING PROVENANCE")  # DEBUG
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects'] = []
+        for reads_name in params['input_names']:
+            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+reads_name)
+        provenance[0]['service'] = 'kb_util_dylan'
+        provenance[0]['method'] = 'KButil_Build_ReadsSet'
+
+
+        # Store output object
+        #
+        if len(invalid_msgs) == 0:
+            self.log(console,"SAVING READSSET")  # DEBUG
+            output_readsSet = {
+                              'description': params['desc'],
+                              'items': items
+                            }
+
+            new_obj_info = ws.save_objects({
+                            'workspace': params['workspace_name'],
+                            'objects':[{
+                                    'type': 'KBaseSets.ReadsSet',
+                                    'data': output_readsSet,
+                                    'name': params['output_name'],
+                                    'meta': {},
+                                    'provenance': provenance
+                                }]
+                        })
+
+
+        # build output report object
+        #
+        self.log(console,"BUILDING REPORT")  # DEBUG
+        if len(invalid_msgs) == 0:
+            self.log(console,"read libraries in output set "+params['output_name']+": "+str(len(elements.keys())))
+            report += 'read libraries in output set '+params['output_name']+': '+str(len(elements.keys()))+"\n"
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Build_ReadsSet'}],
+                'text_message':report
+                }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
+
+        reportName = 'kb_util_dylan_build_readsset_report_'+str(hex(uuid.getnode()))
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
+        report_obj_info = ws.save_objects({
+#                'id':info[6],
+                'workspace':params['workspace_name'],
+                'objects':[
+                    {
+                        'type':'KBaseReport.Report',
+                        'data':reportObj,
+                        'name':reportName,
+                        'meta':{},
+                        'hidden':1,
+                        'provenance':provenance
+                    }
+                ]
+            })[0]
+
+
+        # Build report and return
+        #
+        self.log(console,"BUILDING RETURN OBJECT")
+        returnVal = { 'report_name': reportName,
+                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+                      }
+        self.log(console,"KButil_Build_ReadsSet DONE")
+        #END KButil_Build_ReadsSet
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Build_ReadsSet return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
