@@ -38,7 +38,7 @@ parameters :
         ui-name : |
             Reads Names
         short-hint : |
-            Add a list of Reads Names here
+            Add a list of Reads Library Names here (SingleEndLibrary or PairedEndLibrary)
     output_name:
         ui-name : |
             Output ReadsSet Name
