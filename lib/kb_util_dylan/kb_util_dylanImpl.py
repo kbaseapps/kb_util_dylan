@@ -1698,6 +1698,7 @@ class kb_util_dylan:
         #
         items = []
         reads_seen = dict()
+        first_type = None
         
         for reads_name in params['input_names']:
             readsRef = params['workspace_name'] + '/' + reads_name
@@ -1716,8 +1717,14 @@ class kb_util_dylan:
                     type_name = info[2].split('.')[1].split('-')[0]
                 except Exception as e:
                     raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+
+                if first_type == None:
+                    first_type = type_name
+
                 if type_name != 'PairedEndLibrary' and type_name != 'SingleEndLibrary':
                     raise ValueError("Bad Type:  Should be SingleEndLibrary or PairedEndLibrary instead of '"+type_name+"' for ref: '"+readsRef+"'")
+                elif type_name != first_type:
+                    raise ValueError("Inconsistent Library Types:  Should all be SingleEndLibrary or PairedEndLibrary")
 
                 label = info[1]  # object name
                 items.append({'ref':readsRef,'label':label})
