@@ -414,7 +414,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kbutil_fastq_to_fasta_report_'+str(hex(uuid.getnode()))
+        reportName = 'kbutil_fastq_to_fasta_report_'+str(uuid.uuid4())
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
@@ -601,7 +601,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kb_util_dylan_merge_featureset_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_merge_featureset_report_'+str(uuid.uuid4())
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
@@ -764,7 +764,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kb_util_dylan_merge_genomesets_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_merge_genomesets_report_'+str(uuid.uuid4())
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
@@ -924,7 +924,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kb_util_dylan_build_genomeset_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_build_genomeset_report_'+str(uuid.uuid4())
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
@@ -1114,7 +1114,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kb_util_dylan_build_genomeset_from_featureset_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_build_genomeset_from_featureset_report_'+str(uuid.uuid4())
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
@@ -1307,7 +1307,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kb_util_dylan_add_genomes_to_genomeset_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_add_genomes_to_genomeset_report_'+str(uuid.uuid4())
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
@@ -1618,7 +1618,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kb_util_dylan_concat_msas_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_concat_msas_report_'+str(uuid.uuid4())
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
@@ -1783,7 +1783,7 @@ class kb_util_dylan:
                 'text_message':report
                 }
 
-        reportName = 'kb_util_dylan_build_readsset_report_'+str(hex(uuid.getnode()))
+        reportName = 'kb_util_dylan_build_readsset_report_'+str(uuid.uuid4())
         ws = workspaceService(self.workspaceURL, token=ctx['token'])
         report_obj_info = ws.save_objects({
 #                'id':info[6],
