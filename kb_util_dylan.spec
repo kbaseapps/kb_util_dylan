@@ -189,23 +189,23 @@ module kb_util_dylan {
     funcdef KButil_Concat_MSAs (KButil_Concat_MSAs_Params params)  returns (KButil_Concat_MSAs_Output) authentication required;
 
 
-    /* KButil_Build_ReadsSet()
+    /* KButil_Split_Reads()
     **
-    **  Method for creating a ReadsSet
+    **  Method for spliting a ReadsLibrary into evenly sized ReadsLibraries
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_names;
-        data_obj_name  output_name;
+	data_obj_name  input_name;  /* Reads Libraries */
+        data_obj_name  output_name;  /* ReadsSet */
 	string         desc;
-    } KButil_Build_ReadsSet_Params;
+    } KButil_Split_Reads_Params;
 
     typedef structure {
 	data_obj_name report_name;
 	data_obj_ref  report_ref;
-    } KButil_Build_ReadsSet_Output;
+    } KButil_Split_Reads_Output;
 
-    funcdef KButil_Build_ReadsSet (KButil_Build_ReadsSet_Params params)  returns (KButil_Build_ReadsSet_Output) authentication required;
+    funcdef KButil_Split_Reads (KButil_Split_Reads_Params params)  returns (KButil_Split_Reads_Output) authentication required;
 
 };
 

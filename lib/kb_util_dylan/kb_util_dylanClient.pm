@@ -841,9 +841,9 @@ data_obj_ref is a string
  
 
 
-=head2 KButil_Build_ReadsSet
+=head2 KButil_Split_Reads
 
-  $return = $obj->KButil_Build_ReadsSet($params)
+  $return = $obj->KButil_Split_Reads($params)
 
 =over 4
 
@@ -852,16 +852,16 @@ data_obj_ref is a string
 =begin html
 
 <pre>
-$params is a kb_util_dylan.KButil_Build_ReadsSet_Params
-$return is a kb_util_dylan.KButil_Build_ReadsSet_Output
-KButil_Build_ReadsSet_Params is a reference to a hash where the following keys are defined:
+$params is a kb_util_dylan.KButil_Split_Reads_Params
+$return is a kb_util_dylan.KButil_Split_Reads_Output
+KButil_Split_Reads_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_names has a value which is a kb_util_dylan.data_obj_name
+	input_name has a value which is a kb_util_dylan.data_obj_name
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
 data_obj_name is a string
-KButil_Build_ReadsSet_Output is a reference to a hash where the following keys are defined:
+KButil_Split_Reads_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
 data_obj_ref is a string
@@ -872,16 +872,16 @@ data_obj_ref is a string
 
 =begin text
 
-$params is a kb_util_dylan.KButil_Build_ReadsSet_Params
-$return is a kb_util_dylan.KButil_Build_ReadsSet_Output
-KButil_Build_ReadsSet_Params is a reference to a hash where the following keys are defined:
+$params is a kb_util_dylan.KButil_Split_Reads_Params
+$return is a kb_util_dylan.KButil_Split_Reads_Output
+KButil_Split_Reads_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_names has a value which is a kb_util_dylan.data_obj_name
+	input_name has a value which is a kb_util_dylan.data_obj_name
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
 data_obj_name is a string
-KButil_Build_ReadsSet_Output is a reference to a hash where the following keys are defined:
+KButil_Split_Reads_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
 data_obj_ref is a string
@@ -897,7 +897,7 @@ data_obj_ref is a string
 
 =cut
 
- sub KButil_Build_ReadsSet
+ sub KButil_Split_Reads
 {
     my($self, @args) = @_;
 
@@ -906,7 +906,7 @@ data_obj_ref is a string
     if ((my $n = @args) != 1)
     {
 	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
-							       "Invalid argument count for function KButil_Build_ReadsSet (received $n, expecting 1)");
+							       "Invalid argument count for function KButil_Split_Reads (received $n, expecting 1)");
     }
     {
 	my($params) = @args;
@@ -914,31 +914,31 @@ data_obj_ref is a string
 	my @_bad_arguments;
         (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
         if (@_bad_arguments) {
-	    my $msg = "Invalid arguments passed to KButil_Build_ReadsSet:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    my $msg = "Invalid arguments passed to KButil_Split_Reads:\n" . join("", map { "\t$_\n" } @_bad_arguments);
 	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
-								   method_name => 'KButil_Build_ReadsSet');
+								   method_name => 'KButil_Split_Reads');
 	}
     }
 
     my $url = $self->{url};
     my $result = $self->{client}->call($url, $self->{headers}, {
-	    method => "kb_util_dylan.KButil_Build_ReadsSet",
+	    method => "kb_util_dylan.KButil_Split_Reads",
 	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
 	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
 					       code => $result->content->{error}->{code},
-					       method_name => 'KButil_Build_ReadsSet',
+					       method_name => 'KButil_Split_Reads',
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
 	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
-        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Build_ReadsSet",
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Split_Reads",
 					    status_line => $self->{client}->status_line,
-					    method_name => 'KButil_Build_ReadsSet',
+					    method_name => 'KButil_Split_Reads',
 				       );
     }
 }
@@ -986,16 +986,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'KButil_Build_ReadsSet',
+                method_name => 'KButil_Split_Reads',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method KButil_Build_ReadsSet",
+            error => "Error invoking method KButil_Split_Reads",
             status_line => $self->{client}->status_line,
-            method_name => 'KButil_Build_ReadsSet',
+            method_name => 'KButil_Split_Reads',
         );
     }
 }
@@ -1674,7 +1674,7 @@ report_ref has a value which is a kb_util_dylan.data_obj_ref
 
 
 
-=head2 KButil_Build_ReadsSet_Params
+=head2 KButil_Split_Reads_Params
 
 =over 4
 
@@ -1682,9 +1682,9 @@ report_ref has a value which is a kb_util_dylan.data_obj_ref
 
 =item Description
 
-KButil_Build_ReadsSet()
+KButil_Split_Reads()
 **
-**  Method for creating a ReadsSet
+**  Method for spliting a ReadsLibrary into evenly sized ReadsLibraries
 
 
 =item Definition
@@ -1694,7 +1694,7 @@ KButil_Build_ReadsSet()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_names has a value which is a kb_util_dylan.data_obj_name
+input_name has a value which is a kb_util_dylan.data_obj_name
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1706,7 +1706,7 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_names has a value which is a kb_util_dylan.data_obj_name
+input_name has a value which is a kb_util_dylan.data_obj_name
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1717,7 +1717,7 @@ desc has a value which is a string
 
 
 
-=head2 KButil_Build_ReadsSet_Output
+=head2 KButil_Split_Reads_Output
 
 =over 4
 
