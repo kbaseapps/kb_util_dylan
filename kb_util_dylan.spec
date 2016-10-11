@@ -197,6 +197,7 @@ module kb_util_dylan {
         workspace_name workspace_name;
 	data_obj_name  input_name;  /* Reads Libraries */
         data_obj_name  output_name;  /* ReadsSet */
+	int            split_num;
 	string         desc;
     } KButil_Split_Reads_Params;
 

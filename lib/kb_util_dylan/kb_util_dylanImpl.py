@@ -22,6 +22,11 @@ from biokbase.workspace.client import Workspace as workspaceService
 from requests_toolbelt import MultipartEncoder  # added
 from biokbase.AbstractHandle.Client import AbstractHandle as HandleService  # added
 
+# SDK Utils
+from ReadsUtils.ReadsUtilsClient import ReadsUtils
+from SetAPI.SetAPIClient import SetAPI
+from KBaseReport.KBaseReportClient import KBaseReport
+
 # silence whining
 import requests
 requests.packages.urllib3.disable_warnings()
@@ -1652,7 +1657,7 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-    def KButil_Split_Reads(self, ctx, params):
+    def KButil_Split_Reads(self, ctx, input_params):
         """
         :param params: instance of type "KButil_Split_Reads_Params"
            (KButil_Split_Reads() ** **  Method for spliting a ReadsLibrary
@@ -1673,6 +1678,334 @@ class kb_util_dylan:
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Split_Reads
+        console = []
+        self.log(console, 'Running KButil_Split_Reads() with parameters: ')
+        self.log(console, "\n"+pformat(input_params))
+        
+        token = ctx['token']
+        wsClient = workspaceService(self.workspaceURL, token=token)
+        headers = {'Authorization': 'OAuth '+token}
+        env = os.environ.copy()
+        env['KB_AUTH_TOKEN'] = token
+        
+        SERVICE_VER = 'dev'  # DEBUG
+
+        # param checks
+        required_params = ['input_name', 
+                           'output_name'
+                           ]
+        for required_param in required_params:
+            if required_param not in input_params or input_params[required_param] == None:
+                raise ValueError ("Must define required param: '"+required_param+"'")
+            
+        # and param defaults
+#        defaults = { 'quality_encoding':           'phred33',
+#                   }
+#        for arg in defaults.keys():
+#            if arg not in input_params or input_params[arg] == None or input_params[arg] == '':
+#                input_params[arg] = defaults[arg]
+
+        # load provenance
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        provenance[0]['input_ws_objects']=[str(input_params['workspace_name'])+'/'+str(input_params['input_name'])]
+
+
+        # Determine whether read library is of correct type
+        #
+        try:
+            # object_info tuple
+            [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+            
+            input_reads_ref = str(input_params['workspace_name'])+'/'+str(input_params['input_name'])
+            input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':input_reads_ref}]})[0]
+            input_reads_obj_type = input_reads_obj_info[TYPE_I]
+            #input_reads_obj_version = input_reads_obj_info[VERSION_I]  # this is object version, not type version
+
+        except Exception as e:
+            raise ValueError('Unable to get read library object from workspace: (' + str(input_params['input_reads_ref']) +')' + str(e))
+
+        input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+
+        acceptable_types = ["KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary"]
+        if input_reads_obj_type not in acceptable_types:
+            raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+
+
+        # Download Reads
+        #
+        try:
+            readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
+            
+            readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [input_reads_ref],
+                                                             'interleaved': 'false'
+                                                             })
+        except Exception as e:
+            raise ValueError('Unable to get read library object from workspace: (' + str(input_reads_ref) +")\n" + str(e))
+
+
+        # Paired End
+        #
+        if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+
+            # Download reads Libs to FASTQ files
+            input_fwd_file_path = readsLibrary['files'][input_params['input_reads_ref']]['files']['fwd']
+            input_rev_file_path = readsLibrary['files'][input_params['input_reads_ref']]['files']['rev']
+            sequencing_tech     = readsLibrary['files'][input_params['input_reads_ref']]['sequencing_tech']
+
+
+            
+
+            #
+            # HERE
+            #
+            
+
+
+            # Run Trimmomatic
+            #
+            self.log(console, 'Starting Trimmomatic')
+            input_fwd_file_path = re.sub ("\.fastq$", "", input_fwd_file_path)
+            input_fwd_file_path = re.sub ("\.FASTQ$", "", input_fwd_file_path)
+            input_rev_file_path = re.sub ("\.fastq$", "", input_rev_file_path)
+            input_rev_file_path = re.sub ("\.FASTQ$", "", input_rev_file_path)
+            output_fwd_paired_file_path   = input_fwd_file_path+"_trimm_fwd_paired.fastq"
+            output_fwd_unpaired_file_path = input_fwd_file_path+"_trimm_fwd_unpaired.fastq"
+            output_rev_paired_file_path   = input_rev_file_path+"_trimm_rev_paired.fastq"
+            output_rev_unpaired_file_path = input_rev_file_path+"_trimm_rev_unpaired.fastq"
+            input_fwd_file_path           = input_fwd_file_path+".fastq"
+            input_rev_file_path           = input_rev_file_path+".fastq"
+            
+
+
+
+
+
+            report += "\n".join(outputlines)
+            #report += "cmdstring: " + cmdstring + " stdout: " + stdout + " stderr " + stderr
+
+            #get read counts
+            match = re.search(r'Input Read Pairs: (\d+).*?Both Surviving: (\d+).*?Forward Only Surviving: (\d+).*?Reverse Only Surviving: (\d+).*?Dropped: (\d+)', report)
+            input_read_count = match.group(1)
+            read_count_paired = match.group(2)
+            read_count_forward_only = match.group(3)
+            read_count_reverse_only = match.group(4)
+            read_count_dropped = match.group(5)
+
+            report = "\n".join( ('Input Read Pairs: '+ input_read_count, 
+                'Both Surviving: '+ read_count_paired, 
+                'Forward Only Surviving: '+ read_count_forward_only,
+                'Reverse Only Surviving: '+ read_count_reverse_only,
+                'Dropped: '+ read_count_dropped) )
+
+            # upload paired reads
+            if not os.path.isfile (output_fwd_paired_file_path) \
+                or os.path.getsize (output_fwd_paired_file_path) == 0 \
+                or not os.path.isfile (output_rev_paired_file_path) \
+                or os.path.getsize (output_rev_paired_file_path) == 0:
+
+                retVal['output_filtered_ref'] = None
+            else:
+                output_obj_name = input_params['output_reads_name']+'_paired'
+                self.log(console, 'Uploading trimmed paired reads: '+output_obj_name)
+                retVal['output_filtered_ref'] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['output_ws']),
+                                                                                  'name': output_obj_name,
+                                                                                  'sequencing_tech': sequencing_tech,
+                                                                                  'fwd_file': output_fwd_paired_file_path,
+                                                                                  'rev_file': output_rev_paired_file_path
+                                                                                  })['obj_ref']
+
+
+            # upload reads forward unpaired
+            if not os.path.isfile (output_fwd_unpaired_file_path) \
+                or os.path.getsize (output_fwd_unpaired_file_path) == 0:
+
+                retVal['output_unpaired_fwd_ref'] = None
+            else:
+                output_obj_name = input_params['output_reads_name']+'_unpaired_fwd'
+                self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
+                retVal['output_unpaired_fwd_ref'] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['output_ws']),
+                                                                                      'name': output_obj_name,
+                                                                                      'sequencing_tech': sequencing_tech,
+                                                                                      'fwd_file': output_fwd_unpaired_file_path
+                                                                                      })['obj_ref']
+
+
+
+            # upload reads reverse unpaired
+            if not os.path.isfile (output_rev_unpaired_file_path) \
+                or os.path.getsize (output_rev_unpaired_file_path) == 0:
+
+                retVal['output_unpaired_rev_ref'] = None
+            else:
+                output_obj_name = input_params['output_reads_name']+'_unpaired_rev'
+                self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
+                retVal['output_unpaired_rev_ref'] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['output_ws']),
+                                                                                      'name': output_obj_name,
+                                                                                      'sequencing_tech': sequencing_tech,
+                                                                                      'fwd_file': output_rev_unpaired_file_path
+                                                                                      })['obj_ref']
+
+
+        # SingleEndLibrary
+        #
+        else:
+            self.log(console, "Downloading Single End reads file...")
+
+            # Download reads Libs to FASTQ files
+            input_fwd_file_path = readsLibrary['files'][input_params['input_reads_ref']]['files']['fwd']
+            sequencing_tech     = readsLibrary['files'][input_params['input_reads_ref']]['sequencing_tech']
+
+
+            # Run Trimmomatic
+            #
+            self.log(console, 'Starting Trimmomatic')
+            input_fwd_file_path = re.sub ("\.fastq$", "", input_fwd_file_path)
+            input_fwd_file_path = re.sub ("\.FASTQ$", "", input_fwd_file_path)
+            output_fwd_file_path = input_fwd_file_path+"_trimm_fwd.fastq"
+            input_fwd_file_path  = input_fwd_file_path+".fastq"
+
+            cmdstring = " ".join( (self.TRIMMOMATIC, trimmomatic_options,
+                            input_fwd_file_path,
+                            output_fwd_file_path,
+                            trimmomatic_params) )
+
+            cmdProcess = subprocess.Popen(cmdstring, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+
+            #report += "cmdstring: " + cmdstring
+
+            outputlines = []
+
+            while True:
+                line = cmdProcess.stdout.readline()
+                outputlines.append(line)
+                if not line: break
+                self.log(console, line.replace('\n', ''))
+
+            report += "\n".join(outputlines)
+
+            # get read count
+            match = re.search(r'Surviving: (\d+)', report)
+            readcount = match.group(1)
+
+            # upload reads
+            if not os.path.isfile (output_fwd_file_path) \
+                or os.path.getsize (output_fwd_file_path) == 0:
+
+                retVal['output_filtered_ref'] = None
+            else:
+                output_obj_name = input_params['output_reads_name']
+                self.log(console, 'Uploading trimmed reads: '+output_obj_name)
+                retVal['output_filtered_ref'] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['output_ws']),
+                                                                                  'name': output_obj_name,
+                                                                                  'sequencing_tech': sequencing_tech,
+                                                                                  'fwd_file': output_fwd_file_path
+                                                                                  })['obj_ref']
+
+
+        # return created objects
+        #
+        output = { 'report': report,
+                   'output_filtered_ref': retVal['output_filtered_ref'],
+                   'output_unpaired_fwd_ref': retVal['output_unpaired_fwd_ref'],
+                   'output_unpaired_rev_ref': retVal['output_unpaired_rev_ref']
+                 }
+
+
+        #
+        # ReadsSet stuff
+        #
+
+
+
+
+
+            # save trimmed readsSet
+            some_trimmed_output_created = False
+            items = []
+            for i,lib_ref in enumerate(trimmed_readsSet_refs):
+                if lib_ref == None:
+                    items.append(None)
+                else:
+                    some_trimmed_output_created = True
+                    try:
+                        label = input_readsSet_obj['data']['items'][i]['label']
+                    except:
+                        NAME_I = 1
+                        label = wsClient.get_object_info_new ({'objects':[{'ref':lib_ref}]})[0][NAME_I]
+                    label = label + "_Trimm_paired"
+
+                    items.append({'ref': lib_ref,
+                                  'label': label
+                                  #'data_attachment': ,
+                                  #'info':
+                                      })
+            if some_trimmed_output_created:
+                if input_params['read_type'] == 'SE':
+                    reads_desc_ext = " Trimmomatic trimmed SingleEndLibrary"
+                    reads_name_ext = "_trimm"
+                else:
+                    reads_desc_ext = " Trimmomatic trimmed paired reads"
+                    reads_name_ext = "_trimm_paired"
+                output_readsSet_obj = { 'description': input_readsSet_obj['data']['description']+reads_desc_ext,
+                                        'items': items
+                                        }
+                output_readsSet_name = str(input_params['output_reads_name'])+reads_name_ext
+                trimmed_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': input_params['output_ws'],
+                                                                         'output_object_name': output_readsSet_name,
+                                                                         'data': output_readsSet_obj
+                                                                         })['set_ref']
+            else:
+                raise ValueError ("No trimmed output created")
+
+
+
+            # create return output object
+            output = { 'report': report,
+                       'output_filtered_ref': trimmed_readsSet_ref,
+                       'output_unpaired_fwd_ref': unpaired_fwd_readsSet_ref,
+                       'output_unpaired_rev_ref': unpaired_rev_readsSet_ref
+                     }
+
+
+
+
+
+        # build report
+        #
+        reportObj = {'objects_created':[], 
+                     'text_message':''}
+
+        # text report
+        try:
+            reportObj['text_message'] = trimmomatic_retVal['report']
+        except:
+            raise ValueError ("no report generated by execTrimmomatic()")
+
+
+        # trimmed object
+        if trimmomatic_retVal['output_filtered_ref'] != None:
+            try:
+                # DEBUG
+                #self.log(console,"OBJECT CREATED: '"+str(trimmomatic_retVal['output_filtered_ref'])+"'")
+
+                reportObj['objects_created'].append({'ref':trimmomatic_retVal['output_filtered_ref'],
+                                                     'description':'Trimmed Reads'})
+            except:
+                raise ValueError ("failure saving trimmed output")
+        else:
+            raise ValueError ("no trimmed output generated by execTrimmomatic()")
+
+
+        # save report object
+        #
+        report = KBaseReport(self.callbackURL, token=ctx['token'], service_ver=SERVICE_VER)
+        report_info = report.create({'report':reportObj, 'workspace_name':input_params['input_ws']})
+
+        output = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
+
+
         #END KButil_Split_Reads
 
         # At some point might do deeper type checking...
