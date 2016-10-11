@@ -53,7 +53,7 @@ class kb_util_dylan:
     #########################################
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "8848999399d78f32524f5d7b063c66f55440f789"
+    GIT_COMMIT_HASH = "268802f9ed7060a0136335df682a636c7b351b80"
     
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -1657,7 +1657,7 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-    def KButil_Split_Reads(self, ctx, input_params):
+    def KButil_Split_Reads(self, ctx, params):
         """
         :param params: instance of type "KButil_Split_Reads_Params"
            (KButil_Split_Reads() ** **  Method for spliting a ReadsLibrary
@@ -1670,7 +1670,8 @@ class kb_util_dylan:
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
            parameter "input_name" of type "data_obj_name", parameter
-           "output_name" of type "data_obj_name", parameter "desc" of String
+           "output_name" of type "data_obj_name", parameter "split_num" of
+           Long, parameter "desc" of String
         :returns: instance of type "KButil_Split_Reads_Output" -> structure:
            parameter "report_name" of type "data_obj_name", parameter
            "report_ref" of type "data_obj_ref"

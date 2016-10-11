@@ -208,7 +208,8 @@ class kb_util_dylan(object):
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
            parameter "input_name" of type "data_obj_name", parameter
-           "output_name" of type "data_obj_name", parameter "desc" of String
+           "output_name" of type "data_obj_name", parameter "split_num" of
+           Long, parameter "desc" of String
         :returns: instance of type "KButil_Split_Reads_Output" -> structure:
            parameter "report_name" of type "data_obj_name", parameter
            "report_ref" of type "data_obj_ref"

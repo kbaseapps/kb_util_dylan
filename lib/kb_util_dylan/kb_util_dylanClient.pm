@@ -858,6 +858,7 @@ KButil_Split_Reads_Params is a reference to a hash where the following keys are 
 	workspace_name has a value which is a kb_util_dylan.workspace_name
 	input_name has a value which is a kb_util_dylan.data_obj_name
 	output_name has a value which is a kb_util_dylan.data_obj_name
+	split_num has a value which is an int
 	desc has a value which is a string
 workspace_name is a string
 data_obj_name is a string
@@ -878,6 +879,7 @@ KButil_Split_Reads_Params is a reference to a hash where the following keys are 
 	workspace_name has a value which is a kb_util_dylan.workspace_name
 	input_name has a value which is a kb_util_dylan.data_obj_name
 	output_name has a value which is a kb_util_dylan.data_obj_name
+	split_num has a value which is an int
 	desc has a value which is a string
 workspace_name is a string
 data_obj_name is a string
@@ -1696,6 +1698,7 @@ a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
 input_name has a value which is a kb_util_dylan.data_obj_name
 output_name has a value which is a kb_util_dylan.data_obj_name
+split_num has a value which is an int
 desc has a value which is a string
 
 </pre>
@@ -1708,6 +1711,7 @@ a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
 input_name has a value which is a kb_util_dylan.data_obj_name
 output_name has a value which is a kb_util_dylan.data_obj_name
+split_num has a value which is an int
 desc has a value which is a string
 
 
