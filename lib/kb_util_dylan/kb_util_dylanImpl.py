@@ -1700,11 +1700,11 @@ class kb_util_dylan:
                 raise ValueError ("Must define required param: '"+required_param+"'")
             
         # and param defaults
-#        defaults = { 'quality_encoding':           'phred33',
-#                   }
-#        for arg in defaults.keys():
-#            if arg not in input_params or input_params[arg] == None or input_params[arg] == '':
-#                input_params[arg] = defaults[arg]
+        defaults = { 'split_num': 10
+                   }
+        for arg in defaults.keys():
+            if arg not in input_params or input_params[arg] == None or input_params[arg] == '':
+                input_params[arg] = defaults[arg]
 
         # load provenance
         provenance = [{}]
@@ -1751,252 +1751,288 @@ class kb_util_dylan:
         if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
 
             # Download reads Libs to FASTQ files
-            input_fwd_file_path = readsLibrary['files'][input_params['input_reads_ref']]['files']['fwd']
-            input_rev_file_path = readsLibrary['files'][input_params['input_reads_ref']]['files']['rev']
-            sequencing_tech     = readsLibrary['files'][input_params['input_reads_ref']]['sequencing_tech']
+            input_fwd_file_path = readsLibrary['files'][input_reads_ref]['files']['fwd']
+            input_rev_file_path = readsLibrary['files'][input_reads_ref]['files']['rev']
+            sequencing_tech     = readsLibrary['files'][input_reads_ref]['sequencing_tech']
+
+            # file paths
+            input_fwd_path = re.sub ("\.fastq$", "", input_fwd_file_path)
+            input_fwd_path = re.sub ("\.FASTQ$", "", input_fwd_path)
+            input_rev_path = re.sub ("\.fastq$", "", input_rev_file_path)
+            input_rev_path = re.sub ("\.FASTQ$", "", input_rev_path)
+            output_fwd_paired_file_path_base   = input_fwd_path+"_fwd_paired"
+            output_rev_paired_file_path_base   = input_rev_path+"_rev_paired"
+            output_fwd_unpaired_file_path = input_fwd_path+"_fwd_unpaired.fastq"
+            output_rev_unpaired_file_path = input_rev_path+"_rev_unpaired.fastq"
+            # set up for file io
+            total_paired_reads = 0
+            total_paired_reads_by_set = []
+            total_unpaired_fwd_reads = 0
+            total_unpaired_rev_reads = 0
+            fwd_ids = dict()
+            paired_lib_i = dict()
+            unpaired_buf_size = 0
+            paired_buf_size = 1000000
+
+            # read fwd file to get fwd ids
+            with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                for line in input_reads_file_handle:
+                    if line.startswith('@'):
+                        read_id = re.sub ("[ \t]+.*", "", line)
+                        fwd_ids[read_id] = True
+
+            # determine paired and unpaired rev, split paired rev, write unpaired rev, and store lib_i for paired
+            paired_output_reads_file_handles = []
+            for lib_i in range(input_params['split_num']):
+                paired_output_reads_file_handles[lib_i] = open (output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
+                total_paired_reads_by_set[lib_i] = 0
+
+            rec_buf = []
+            unpaired_rev_buf = []
+            last_read_id = None
+            paired_cnt = 0
+            capture_type_paired = False
+
+            with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
+                for line in input_reads_file_handle:
+                    if line.startswith('@'):
+                        if last_read_id != None:
+                            if capture_type_paired:
+                                lib_i = paired_cnt % input_params['split_num']
+                                total_paired_reads_by_set[lib_i] += 1
+                                paired_lib_i[last_read_id] = lib_i
+                                paired_output_reads_file_handles[lib_i].writelines(rec_buf)
+                                paired_cnt += 1
+                            else:
+                                unpaired_rev_buf.extend(rec_buf)
+                            rec_buf = []
+                        last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
+                        try:
+                            found = fwd_ids[read_id]
+                            total_paired_reads += 1
+                            capture_type_paired = True
+                        except:
+                            total_unpaired_rev_reads += 1
+                            capture_type_paired = False
+                    rec_buf.append(line)
+
+            for output_handle in paired_output_reads_file_handles:
+                output_handle.close()
+
+            output_reads_file_handle = open (output_rev_unpaired_file_path, 'w', 0)
+            output_reads_file_handle.writelines(unpaired_rev_buf)
+            output_reads_file_handle.close()
 
 
-            
+            # split fwd paired and write unpaired fwd
+            paired_output_reads_file_handles = []
+            for lib_i in range(input_params['split_num']):
+                paired_output_reads_file_handles[lib_i] = open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
 
+            rec_buf = []
+            unpaired_fwd_buf = []
+            last_read_id = None
+            paired_cnt = 0
+            capture_type_paired = False
+
+            with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                for line in input_reads_file_handle:
+                    if line.startswith('@'):
+                        if last_read_id != None:
+                            if capture_type_paired:
+                                lib_i = paired_lib_i[last_read_id]
+                                paired_output_reads_file_handles[lib_i].writelines(rec_buf)
+                                paired_cnt += 1
+                            else:
+                                unpaired_fwd_buf.extend(rec_buf)
+                            rec_buf = []
+                        last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
+                        try:
+                            found = paired_lib_i[read_id]
+                            capture_type_paired = True
+                        except:
+                            total_unpaired_fwd_reads += 1
+                            capture_type_paired = False
+                    rec_buf.append(line)
+
+            for output_handle in paired_output_reads_file_handles:
+                output_handle.close()
+
+            output_reads_file_handle = open (output_fwd_unpaired_file_path, 'w', 0)
+            output_reads_file_handle.writelines(unpaired_fwd_buf)
+            output_reads_file_handle.close()
+
+
+            # store report
             #
-            # HERE
-            #
-            
+            report += "TOTAL PAIRED READS: "+total_paired_reads+"\n"
+            report += "TOTAL UNPAIRED FWD READS: " +total_unpaired_fwd_reads+"\n"
+            report += "TOTAL UNPAIRED REV READS: " +total_unpaired_rev_reads+"\n"
+            report += "\n"
+            for lib_i in range(input_params['split_num']):
+                report += "PAIRED READS IN SET "+str(lib_i)": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
-
-            # Run Trimmomatic
-            #
-            self.log(console, 'Starting Trimmomatic')
-            input_fwd_file_path = re.sub ("\.fastq$", "", input_fwd_file_path)
-            input_fwd_file_path = re.sub ("\.FASTQ$", "", input_fwd_file_path)
-            input_rev_file_path = re.sub ("\.fastq$", "", input_rev_file_path)
-            input_rev_file_path = re.sub ("\.FASTQ$", "", input_rev_file_path)
-            output_fwd_paired_file_path   = input_fwd_file_path+"_trimm_fwd_paired.fastq"
-            output_fwd_unpaired_file_path = input_fwd_file_path+"_trimm_fwd_unpaired.fastq"
-            output_rev_paired_file_path   = input_rev_file_path+"_trimm_rev_paired.fastq"
-            output_rev_unpaired_file_path = input_rev_file_path+"_trimm_rev_unpaired.fastq"
-            input_fwd_file_path           = input_fwd_file_path+".fastq"
-            input_rev_file_path           = input_rev_file_path+".fastq"
-            
-
-
-
-
-
-            report += "\n".join(outputlines)
-            #report += "cmdstring: " + cmdstring + " stdout: " + stdout + " stderr " + stderr
-
-            #get read counts
-            match = re.search(r'Input Read Pairs: (\d+).*?Both Surviving: (\d+).*?Forward Only Surviving: (\d+).*?Reverse Only Surviving: (\d+).*?Dropped: (\d+)', report)
-            input_read_count = match.group(1)
-            read_count_paired = match.group(2)
-            read_count_forward_only = match.group(3)
-            read_count_reverse_only = match.group(4)
-            read_count_dropped = match.group(5)
-
-            report = "\n".join( ('Input Read Pairs: '+ input_read_count, 
-                'Both Surviving: '+ read_count_paired, 
-                'Forward Only Surviving: '+ read_count_forward_only,
-                'Reverse Only Surviving: '+ read_count_reverse_only,
-                'Dropped: '+ read_count_dropped) )
 
             # upload paired reads
-            if not os.path.isfile (output_fwd_paired_file_path) \
-                or os.path.getsize (output_fwd_paired_file_path) == 0 \
-                or not os.path.isfile (output_rev_paired_file_path) \
-                or os.path.getsize (output_rev_paired_file_path) == 0:
-
-                retVal['output_filtered_ref'] = None
-            else:
-                output_obj_name = input_params['output_reads_name']+'_paired'
-                self.log(console, 'Uploading trimmed paired reads: '+output_obj_name)
-                retVal['output_filtered_ref'] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['output_ws']),
-                                                                                  'name': output_obj_name,
-                                                                                  'sequencing_tech': sequencing_tech,
-                                                                                  'fwd_file': output_fwd_paired_file_path,
-                                                                                  'rev_file': output_rev_paired_file_path
-                                                                                  })['obj_ref']
-
+            #
+            paired_obj_refs = []
+            for lib_i in range(input_params['split_num']):
+                output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
+                output_rev_paired_file_path = output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq"
+                if not os.path.isfile (output_fwd_paired_file_path) \
+                     or os.path.getsize (output_fwd_paired_file_path) == 0 \
+                   or not os.path.isfile (output_rev_paired_file_path) \
+                     or os.path.getsize (output_rev_paired_file_path) == 0:
+                    
+                    raise ValueError ("failed to create paired output")
+                else:
+                    output_obj_name = input_params['output_name']+'_paired'+str(lib_i)
+                    self.log(console, 'Uploading paired reads: '+output_obj_name)
+                    paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['workspace_name']),
+                                                                                      'name': output_obj_name,
+                                                                                      'sequencing_tech': sequencing_tech,
+                                                                                      'fwd_file': output_fwd_paired_file_path,
+                                                                                      'rev_file': output_rev_paired_file_path
+                                                                                      })['obj_ref']
+                    
 
             # upload reads forward unpaired
-            if not os.path.isfile (output_fwd_unpaired_file_path) \
-                or os.path.getsize (output_fwd_unpaired_file_path) == 0:
+            unpaired_fwd_ref = None
+            if os.path.isfile (output_fwd_unpaired_file_path) \
+                and os.path.getsize (output_fwd_unpaired_file_path) != 0:
 
-                retVal['output_unpaired_fwd_ref'] = None
-            else:
                 output_obj_name = input_params['output_reads_name']+'_unpaired_fwd'
                 self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
-                retVal['output_unpaired_fwd_ref'] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['output_ws']),
-                                                                                      'name': output_obj_name,
-                                                                                      'sequencing_tech': sequencing_tech,
-                                                                                      'fwd_file': output_fwd_unpaired_file_path
-                                                                                      })['obj_ref']
-
-
+                unpaired_fwd_ref = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['workspace_name']),
+                                                                     'name': output_obj_name,
+                                                                     'sequencing_tech': sequencing_tech,
+                                                                     'fwd_file': output_fwd_unpaired_file_path
+                                                                     })['obj_ref']
+                
 
             # upload reads reverse unpaired
-            if not os.path.isfile (output_rev_unpaired_file_path) \
-                or os.path.getsize (output_rev_unpaired_file_path) == 0:
+            unpaired_rev_ref = None
+            if os.path.isfile (output_rev_unpaired_file_path) \
+                and os.path.getsize (output_rev_unpaired_file_path) != 0:
 
-                retVal['output_unpaired_rev_ref'] = None
-            else:
                 output_obj_name = input_params['output_reads_name']+'_unpaired_rev'
                 self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
-                retVal['output_unpaired_rev_ref'] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['output_ws']),
-                                                                                      'name': output_obj_name,
-                                                                                      'sequencing_tech': sequencing_tech,
-                                                                                      'fwd_file': output_rev_unpaired_file_path
-                                                                                      })['obj_ref']
-
+                unpaired_rev_ref = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['workspace_name']),
+                                                                     'name': output_obj_name,
+                                                                     'sequencing_tech': sequencing_tech,
+                                                                     'fwd_file': output_rev_unpaired_file_path
+                                                                     })['obj_ref']
+                
 
         # SingleEndLibrary
         #
-        else:
+        elif input_reads_obj_type == "KBaseFile.SingleEndLibrary":
             self.log(console, "Downloading Single End reads file...")
 
             # Download reads Libs to FASTQ files
-            input_fwd_file_path = readsLibrary['files'][input_params['input_reads_ref']]['files']['fwd']
-            sequencing_tech     = readsLibrary['files'][input_params['input_reads_ref']]['sequencing_tech']
+            input_fwd_file_path = readsLibrary['files'][input_reads_ref]['files']['fwd']
+            sequencing_tech     = readsLibrary['files'][input_reads_ref]['sequencing_tech']
+
+            # file paths
+            input_fwd_path = re.sub ("\.fastq$", "", input_fwd_file_path)
+            input_fwd_path = re.sub ("\.FASTQ$", "", input_fwd_path)
+            output_fwd_paired_file_path_base   = input_fwd_path+"_fwd_paired"
+
+            # set up for file io
+            total_paired_reads = 0
+            total_paired_reads_by_set = []
+            paired_buf_size = 1000000
+
+            # split fwd paired
+            paired_output_reads_file_handles = []
+            for lib_i in range(input_params['split_num']):
+                paired_output_reads_file_handles[lib_i] = open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
+                total_paired_reads_by_set[lib_i] = 0
+
+            rec_buf = []
+            last_read_id = None
+            paired_cnt = 0
+
+            with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                for line in input_reads_file_handle:
+                    if line.startswith('@'):
+                        if last_read_id != None:
+                            lib_i = paired_cnt % input_params['split_num']
+                            total_paired_reads_by_set[lib_i] += 1
+                            paired_output_reads_file_handles[lib_i].writelines(rec_buf)
+                            paired_cnt += 1
+                            rec_buf = []
+                        last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
+                    rec_buf.append(line)
+
+            for output_handle in paired_output_reads_file_handles:
+                output_handle.close()
 
 
-            # Run Trimmomatic
+            # store report
             #
-            self.log(console, 'Starting Trimmomatic')
-            input_fwd_file_path = re.sub ("\.fastq$", "", input_fwd_file_path)
-            input_fwd_file_path = re.sub ("\.FASTQ$", "", input_fwd_file_path)
-            output_fwd_file_path = input_fwd_file_path+"_trimm_fwd.fastq"
-            input_fwd_file_path  = input_fwd_file_path+".fastq"
-
-            cmdstring = " ".join( (self.TRIMMOMATIC, trimmomatic_options,
-                            input_fwd_file_path,
-                            output_fwd_file_path,
-                            trimmomatic_params) )
-
-            cmdProcess = subprocess.Popen(cmdstring, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
-
-            #report += "cmdstring: " + cmdstring
-
-            outputlines = []
-
-            while True:
-                line = cmdProcess.stdout.readline()
-                outputlines.append(line)
-                if not line: break
-                self.log(console, line.replace('\n', ''))
-
-            report += "\n".join(outputlines)
-
-            # get read count
-            match = re.search(r'Surviving: (\d+)', report)
-            readcount = match.group(1)
-
-            # upload reads
-            if not os.path.isfile (output_fwd_file_path) \
-                or os.path.getsize (output_fwd_file_path) == 0:
-
-                retVal['output_filtered_ref'] = None
-            else:
-                output_obj_name = input_params['output_reads_name']
-                self.log(console, 'Uploading trimmed reads: '+output_obj_name)
-                retVal['output_filtered_ref'] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['output_ws']),
-                                                                                  'name': output_obj_name,
-                                                                                  'sequencing_tech': sequencing_tech,
-                                                                                  'fwd_file': output_fwd_file_path
-                                                                                  })['obj_ref']
+            for lib_i in range(input_params['split_num']):
+                report += "PAIRED READS IN SET "+str(lib_i)": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
 
-        # return created objects
-        #
-        output = { 'report': report,
-                   'output_filtered_ref': retVal['output_filtered_ref'],
-                   'output_unpaired_fwd_ref': retVal['output_unpaired_fwd_ref'],
-                   'output_unpaired_rev_ref': retVal['output_unpaired_rev_ref']
-                 }
-
-
-        #
-        # ReadsSet stuff
-        #
-
-
-
-
-
-            # save trimmed readsSet
-            some_trimmed_output_created = False
-            items = []
-            for i,lib_ref in enumerate(trimmed_readsSet_refs):
-                if lib_ref == None:
-                    items.append(None)
+            # upload paired reads
+            #
+            paired_obj_refs = []
+            for lib_i in range(input_params['split_num']):
+                output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
+                if not os.path.isfile (output_fwd_paired_file_path) \
+                        or os.path.getsize (output_fwd_paired_file_path) == 0:
+                    
+                    raise ValueError ("failed to create paired output")
                 else:
-                    some_trimmed_output_created = True
-                    try:
-                        label = input_readsSet_obj['data']['items'][i]['label']
-                    except:
-                        NAME_I = 1
-                        label = wsClient.get_object_info_new ({'objects':[{'ref':lib_ref}]})[0][NAME_I]
-                    label = label + "_Trimm_paired"
-
-                    items.append({'ref': lib_ref,
-                                  'label': label
-                                  #'data_attachment': ,
-                                  #'info':
-                                      })
-            if some_trimmed_output_created:
-                if input_params['read_type'] == 'SE':
-                    reads_desc_ext = " Trimmomatic trimmed SingleEndLibrary"
-                    reads_name_ext = "_trimm"
-                else:
-                    reads_desc_ext = " Trimmomatic trimmed paired reads"
-                    reads_name_ext = "_trimm_paired"
-                output_readsSet_obj = { 'description': input_readsSet_obj['data']['description']+reads_desc_ext,
-                                        'items': items
-                                        }
-                output_readsSet_name = str(input_params['output_reads_name'])+reads_name_ext
-                trimmed_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': input_params['output_ws'],
-                                                                         'output_object_name': output_readsSet_name,
-                                                                         'data': output_readsSet_obj
-                                                                         })['set_ref']
-            else:
-                raise ValueError ("No trimmed output created")
+                    output_obj_name = input_params['output_name']+'-'+str(lib_i)
+                    self.log(console, 'Uploading paired reads: '+output_obj_name)
+                    paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['workspace_name']),
+                                                                               'name': output_obj_name,
+                                                                               'sequencing_tech': sequencing_tech,
+                                                                               'fwd_file': output_fwd_paired_file_path
+                                                                               })['obj_ref']
+                    
+        else:
+            raise ValueError ("unknown ReadLibrary type as input: "+str(input_reads_obj_type)
 
 
-
-            # create return output object
-            output = { 'report': report,
-                       'output_filtered_ref': trimmed_readsSet_ref,
-                       'output_unpaired_fwd_ref': unpaired_fwd_readsSet_ref,
-                       'output_unpaired_rev_ref': unpaired_rev_readsSet_ref
-                     }
-
-
-
-
+        # save output readsSet
+        #
+        items = []
+        for lib_i,lib_ref in enumerate(paired_obj_refs):
+            label = input_params['output_name']+'-'+str(lib_i)
+            items.append({'ref': lib_ref,
+                          'label': label
+                          #'data_attachment': ,
+                          #'info':
+                              })
+        description = input_params['desc']
+        output_readsSet_obj = { 'description': input_params['desc'],
+                                'items': items
+                                }
+        output_readsSet_name = str(input_params['output_name'])
+        readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': input_params['workspace_name'],
+                                                         'output_object_name': output_readsSet_name,
+                                                         'data': output_readsSet_obj
+                                                         })['set_ref']
+                              
 
         # build report
         #
         reportObj = {'objects_created':[], 
-                     'text_message':''}
+                     'text_message': report}
 
-        # text report
-        try:
-            reportObj['text_message'] = trimmomatic_retVal['report']
-        except:
-            raise ValueError ("no report generated by execTrimmomatic()")
+        reportObj['objects_created'].append({'ref':readSet_ref,
+                                             'description':input_params['desc']})
 
+        if unpaired_fwd_ref != None:
+        reportObj['objects_created'].append({'ref':unpaired_fwd_ref,
+                                             'description':input_params['desc']+" unpaired fwd reads"})
 
-        # trimmed object
-        if trimmomatic_retVal['output_filtered_ref'] != None:
-            try:
-                # DEBUG
-                #self.log(console,"OBJECT CREATED: '"+str(trimmomatic_retVal['output_filtered_ref'])+"'")
-
-                reportObj['objects_created'].append({'ref':trimmomatic_retVal['output_filtered_ref'],
-                                                     'description':'Trimmed Reads'})
-            except:
-                raise ValueError ("failure saving trimmed output")
-        else:
-            raise ValueError ("no trimmed output generated by execTrimmomatic()")
+        if unpaired_rev_ref != None:
+        reportObj['objects_created'].append({'ref':unpaired_rev_ref,
+                                             'description':input_params['desc']+" unpaired rev reads"})
 
 
         # save report object
