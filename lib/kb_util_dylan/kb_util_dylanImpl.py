@@ -1657,7 +1657,7 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-    def KButil_Split_Reads(self, ctx, params):
+    def KButil_Split_Reads(self, ctx, input_params):
         """
         :param params: instance of type "KButil_Split_Reads_Params"
            (KButil_Split_Reads() ** **  Method for spliting a ReadsLibrary
