@@ -1781,7 +1781,8 @@ class kb_util_dylan:
                         read_id = re.sub ("[ \t]+.*", "", line)
                         fwd_ids[read_id] = True
 
-            # determine paired and unpaired rev, split paired rev, write unpaired rev, and store lib_i for paired
+            # determine paired and unpaired rev, split paired rev
+            #   write unpaired rev, and store lib_i for paired
             paired_output_reads_file_handles = []
             for lib_i in range(input_params['split_num']):
                 paired_output_reads_file_handles[lib_i] = open (output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
