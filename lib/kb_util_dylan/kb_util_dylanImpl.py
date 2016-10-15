@@ -1657,7 +1657,7 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-    def KButil_Split_Reads(self, ctx, input_params):
+    def KButil_Split_Reads(self, ctx, params):
         """
         :param params: instance of type "KButil_Split_Reads_Params"
            (KButil_Split_Reads() ** **  Method for spliting a ReadsLibrary
@@ -1681,7 +1681,7 @@ class kb_util_dylan:
         #BEGIN KButil_Split_Reads
         console = []
         self.log(console, 'Running KButil_Split_Reads() with parameters: ')
-        self.log(console, "\n"+pformat(input_params))
+        self.log(console, "\n"+pformat(params))
         
         token = ctx['token']
         wsClient = workspaceService(self.workspaceURL, token=token)
@@ -1696,21 +1696,21 @@ class kb_util_dylan:
                            'output_name'
                            ]
         for required_param in required_params:
-            if required_param not in input_params or input_params[required_param] == None:
+            if required_param not in params or params[required_param] == None:
                 raise ValueError ("Must define required param: '"+required_param+"'")
             
         # and param defaults
         defaults = { 'split_num': 10
                    }
         for arg in defaults.keys():
-            if arg not in input_params or input_params[arg] == None or input_params[arg] == '':
-                input_params[arg] = defaults[arg]
+            if arg not in params or params[arg] == None or params[arg] == '':
+                params[arg] = defaults[arg]
 
         # load provenance
         provenance = [{}]
         if 'provenance' in ctx:
             provenance = ctx['provenance']
-        provenance[0]['input_ws_objects']=[str(input_params['workspace_name'])+'/'+str(input_params['input_name'])]
+        provenance[0]['input_ws_objects']=[str(params['workspace_name'])+'/'+str(params['input_name'])]
 
 
         # Determine whether read library is of correct type
@@ -1719,13 +1719,13 @@ class kb_util_dylan:
             # object_info tuple
             [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
             
-            input_reads_ref = str(input_params['workspace_name'])+'/'+str(input_params['input_name'])
+            input_reads_ref = str(params['workspace_name'])+'/'+str(params['input_name'])
             input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':input_reads_ref}]})[0]
             input_reads_obj_type = input_reads_obj_info[TYPE_I]
             #input_reads_obj_version = input_reads_obj_info[VERSION_I]  # this is object version, not type version
 
         except Exception as e:
-            raise ValueError('Unable to get read library object from workspace: (' + str(input_params['input_reads_ref']) +')' + str(e))
+            raise ValueError('Unable to get read library object from workspace: (' + str(params['input_reads_ref']) +')' + str(e))
 
         input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
 
@@ -1784,7 +1784,7 @@ class kb_util_dylan:
             # determine paired and unpaired rev, split paired rev
             #   write unpaired rev, and store lib_i for paired
             paired_output_reads_file_handles = []
-            for lib_i in range(input_params['split_num']):
+            for lib_i in range(params['split_num']):
                 paired_output_reads_file_handles[lib_i] = open (output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
                 total_paired_reads_by_set[lib_i] = 0
 
@@ -1799,7 +1799,7 @@ class kb_util_dylan:
                     if line.startswith('@'):
                         if last_read_id != None:
                             if capture_type_paired:
-                                lib_i = paired_cnt % input_params['split_num']
+                                lib_i = paired_cnt % params['split_num']
                                 total_paired_reads_by_set[lib_i] += 1
                                 paired_lib_i[last_read_id] = lib_i
                                 paired_output_reads_file_handles[lib_i].writelines(rec_buf)
@@ -1827,7 +1827,7 @@ class kb_util_dylan:
 
             # split fwd paired and write unpaired fwd
             paired_output_reads_file_handles = []
-            for lib_i in range(input_params['split_num']):
+            for lib_i in range(params['split_num']):
                 paired_output_reads_file_handles[lib_i] = open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
 
             rec_buf = []
@@ -1870,14 +1870,14 @@ class kb_util_dylan:
             report += "TOTAL UNPAIRED FWD READS: " +total_unpaired_fwd_reads+"\n"
             report += "TOTAL UNPAIRED REV READS: " +total_unpaired_rev_reads+"\n"
             report += "\n"
-            for lib_i in range(input_params['split_num']):
+            for lib_i in range(params['split_num']):
                 report += "PAIRED READS IN SET "+str(lib_i)+": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
 
             # upload paired reads
             #
             paired_obj_refs = []
-            for lib_i in range(input_params['split_num']):
+            for lib_i in range(params['split_num']):
                 output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 output_rev_paired_file_path = output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 if not os.path.isfile (output_fwd_paired_file_path) \
@@ -1887,9 +1887,9 @@ class kb_util_dylan:
                     
                     raise ValueError ("failed to create paired output")
                 else:
-                    output_obj_name = input_params['output_name']+'_paired'+str(lib_i)
+                    output_obj_name = params['output_name']+'_paired'+str(lib_i)
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
-                    paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['workspace_name']),
+                    paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                                       'name': output_obj_name,
                                                                                       'sequencing_tech': sequencing_tech,
                                                                                       'fwd_file': output_fwd_paired_file_path,
@@ -1902,9 +1902,9 @@ class kb_util_dylan:
             if os.path.isfile (output_fwd_unpaired_file_path) \
                 and os.path.getsize (output_fwd_unpaired_file_path) != 0:
 
-                output_obj_name = input_params['output_reads_name']+'_unpaired_fwd'
+                output_obj_name = params['output_reads_name']+'_unpaired_fwd'
                 self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
-                unpaired_fwd_ref = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['workspace_name']),
+                unpaired_fwd_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
                                                                      'sequencing_tech': sequencing_tech,
                                                                      'fwd_file': output_fwd_unpaired_file_path
@@ -1916,9 +1916,9 @@ class kb_util_dylan:
             if os.path.isfile (output_rev_unpaired_file_path) \
                 and os.path.getsize (output_rev_unpaired_file_path) != 0:
 
-                output_obj_name = input_params['output_reads_name']+'_unpaired_rev'
+                output_obj_name = params['output_reads_name']+'_unpaired_rev'
                 self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
-                unpaired_rev_ref = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['workspace_name']),
+                unpaired_rev_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
                                                                      'sequencing_tech': sequencing_tech,
                                                                      'fwd_file': output_rev_unpaired_file_path
@@ -1946,7 +1946,7 @@ class kb_util_dylan:
 
             # split fwd paired
             paired_output_reads_file_handles = []
-            for lib_i in range(input_params['split_num']):
+            for lib_i in range(params['split_num']):
                 paired_output_reads_file_handles[lib_i] = open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
                 total_paired_reads_by_set[lib_i] = 0
 
@@ -1958,7 +1958,7 @@ class kb_util_dylan:
                 for line in input_reads_file_handle:
                     if line.startswith('@'):
                         if last_read_id != None:
-                            lib_i = paired_cnt % input_params['split_num']
+                            lib_i = paired_cnt % params['split_num']
                             total_paired_reads_by_set[lib_i] += 1
                             paired_output_reads_file_handles[lib_i].writelines(rec_buf)
                             paired_cnt += 1
@@ -1972,23 +1972,23 @@ class kb_util_dylan:
 
             # store report
             #
-            for lib_i in range(input_params['split_num']):
+            for lib_i in range(params['split_num']):
                 report += "PAIRED READS IN SET "+str(lib_i)+": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
 
             # upload paired reads
             #
             paired_obj_refs = []
-            for lib_i in range(input_params['split_num']):
+            for lib_i in range(params['split_num']):
                 output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 if not os.path.isfile (output_fwd_paired_file_path) \
                         or os.path.getsize (output_fwd_paired_file_path) == 0:
                     
                     raise ValueError ("failed to create paired output")
                 else:
-                    output_obj_name = input_params['output_name']+'-'+str(lib_i)
+                    output_obj_name = params['output_name']+'-'+str(lib_i)
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
-                    paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(input_params['workspace_name']),
+                    paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                                'name': output_obj_name,
                                                                                'sequencing_tech': sequencing_tech,
                                                                                'fwd_file': output_fwd_paired_file_path
@@ -2002,18 +2002,18 @@ class kb_util_dylan:
         #
         items = []
         for lib_i,lib_ref in enumerate(paired_obj_refs):
-            label = input_params['output_name']+'-'+str(lib_i)
+            label = params['output_name']+'-'+str(lib_i)
             items.append({'ref': lib_ref,
                           'label': label
                           #'data_attachment': ,
                           #'info':
                               })
-        description = input_params['desc']
-        output_readsSet_obj = { 'description': input_params['desc'],
+        description = params['desc']
+        output_readsSet_obj = { 'description': params['desc'],
                                 'items': items
                                 }
-        output_readsSet_name = str(input_params['output_name'])
-        readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': input_params['workspace_name'],
+        output_readsSet_name = str(params['output_name'])
+        readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['workspace_name'],
                                                          'output_object_name': output_readsSet_name,
                                                          'data': output_readsSet_obj
                                                          })['set_ref']
@@ -2025,21 +2025,21 @@ class kb_util_dylan:
                      'text_message': report}
 
         reportObj['objects_created'].append({'ref':readsSet_ref,
-                                             'description':input_params['desc']})
+                                             'description':params['desc']})
 
         if unpaired_fwd_ref != None:
             reportObj['objects_created'].append({'ref':unpaired_fwd_ref,
-                                                 'description':input_params['desc']+" unpaired fwd reads"})
+                                                 'description':params['desc']+" unpaired fwd reads"})
 
         if unpaired_rev_ref != None:
             reportObj['objects_created'].append({'ref':unpaired_rev_ref,
-                                                 'description':input_params['desc']+" unpaired rev reads"})
+                                                 'description':params['desc']+" unpaired rev reads"})
 
 
         # save report object
         #
         report = KBaseReport(self.callbackURL, token=ctx['token'], service_ver=SERVICE_VER)
-        report_info = report.create({'report':reportObj, 'workspace_name':input_params['input_ws']})
+        report_info = report.create({'report':reportObj, 'workspace_name':params['input_ws']})
 
         output = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
         #END KButil_Split_Reads
