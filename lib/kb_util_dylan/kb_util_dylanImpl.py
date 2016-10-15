@@ -1994,7 +1994,7 @@ class kb_util_dylan:
                                                                                })['obj_ref']
                     
         else:
-            raise ValueError ("unknown ReadLibrary type as input: "+str(input_reads_obj_type)
+            raise ValueError ("unknown ReadLibrary type as input: "+str(input_reads_obj_type))
 
 
         # save output readsSet
