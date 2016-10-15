@@ -36,14 +36,19 @@ parameters :
             Enter Description
     input_name:
         ui-name : |
-            Reads Library
+            Reads library
         short-hint : |
             Reads Library Name here (SingleEndLibrary or PairedEndLibrary)
     output_name:
         ui-name : |
-            Output ReadsSet Name
+            Output readsSet name
         short-hint : |
             Name for the Output ReadsSet Collection
+    split_num:
+        ui-name : |
+            Split number
+        short-hint : |
+            Number of Split Outputs
 
 
 description : |

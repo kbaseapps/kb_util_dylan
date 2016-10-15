@@ -3,7 +3,7 @@
 #
 name: Split Reads
 tooltip: |
-    Allows user to split a Reads Library into evenly sized Reads Libraries
+    Split a Reads Library into evenly sized Reads Libraries
 screenshots: []
 
 icon: kb-orange.png
