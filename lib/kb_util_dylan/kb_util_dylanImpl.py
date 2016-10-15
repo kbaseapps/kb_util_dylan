@@ -2023,16 +2023,16 @@ class kb_util_dylan:
         reportObj = {'objects_created':[], 
                      'text_message': report}
 
-        reportObj['objects_created'].append({'ref':readSet_ref,
+        reportObj['objects_created'].append({'ref':readsSet_ref,
                                              'description':input_params['desc']})
 
         if unpaired_fwd_ref != None:
-        reportObj['objects_created'].append({'ref':unpaired_fwd_ref,
-                                             'description':input_params['desc']+" unpaired fwd reads"})
+            reportObj['objects_created'].append({'ref':unpaired_fwd_ref,
+                                                 'description':input_params['desc']+" unpaired fwd reads"})
 
         if unpaired_rev_ref != None:
-        reportObj['objects_created'].append({'ref':unpaired_rev_ref,
-                                             'description':input_params['desc']+" unpaired rev reads"})
+            reportObj['objects_created'].append({'ref':unpaired_rev_ref,
+                                                 'description':input_params['desc']+" unpaired rev reads"})
 
 
         # save report object
@@ -2041,8 +2041,6 @@ class kb_util_dylan:
         report_info = report.create({'report':reportObj, 'workspace_name':input_params['input_ws']})
 
         output = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
-
-
         #END KButil_Split_Reads
 
         # At some point might do deeper type checking...
