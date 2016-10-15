@@ -59,6 +59,10 @@ class kb_util_dylan:
     workspaceURL = None
     shockURL = None
     handleURL = None
+    serviceWizardsURL = None
+    callbackURL = None
+    scratch = None
+
 
     # target is a list for collecting log messages
     def log(self, target, message):
@@ -87,10 +91,17 @@ class kb_util_dylan:
         self.workspaceURL = config['workspace-url']
         self.shockURL = config['shock-url']
         self.handleURL = config['handle-service-url']
+        self.serviceWizardURL = config['service-wizard-url']
+
+        #self.callbackURL = os.environ['SDK_CALLBACK_URL'] if os.environ['SDK_CALLBACK_URL'] != None else 'https://kbase.us/services/njs_wrapper'  # DEBUG
+        self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
+        if self.callbackURL == None:
+            raise ValueError ("SDK_CALLBACK_URL not set in environment")
+
         self.scratch = os.path.abspath(config['scratch'])
         # HACK!! temporary hack for issue where megahit fails on mac because of silent named pipe error
         #self.host_scratch = self.scratch
-        self.scratch = os.path.join('/kb','module','local_scratch')
+        #self.scratch = os.path.join('/kb','module','local_scratch')
         # end hack
         if not os.path.exists(self.scratch):
             os.makedirs(self.scratch)
