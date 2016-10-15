@@ -1870,7 +1870,7 @@ class kb_util_dylan:
             report += "TOTAL UNPAIRED REV READS: " +total_unpaired_rev_reads+"\n"
             report += "\n"
             for lib_i in range(input_params['split_num']):
-                report += "PAIRED READS IN SET "+str(lib_i)": "+str(total_paired_reads_by_set[lib_i])+"\n"
+                report += "PAIRED READS IN SET "+str(lib_i)+": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
 
             # upload paired reads
