@@ -1736,7 +1736,7 @@ class kb_util_dylan:
             #input_reads_obj_version = input_reads_obj_info[VERSION_I]  # this is object version, not type version
 
         except Exception as e:
-            raise ValueError('Unable to get read library object from workspace: (' + str(input_reads_ref) +')' + str(e))
+            raise ValueError('Unable to get read library object info from workspace: (' + str(input_reads_ref) +')' + str(e))
 
         input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
 
@@ -1757,7 +1757,7 @@ class kb_util_dylan:
                                                              'interleaved': 'false'
                                                              })
         except Exception as e:
-            raise ValueError('Unable to get read library object from workspace: (' + str(input_reads_ref) +")\n" + str(e))
+            raise ValueError('Unable to download read library sequences from workspace: (' + str(input_reads_ref) +")\n" + str(e))
 
 
         # Paired End
