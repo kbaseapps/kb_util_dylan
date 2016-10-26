@@ -1749,7 +1749,10 @@ class kb_util_dylan:
         #
         try:
             readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
-            
+        except Exception as e:
+            raise ValueError('Unable to get ReadsUtils Client' +"\n" + str(e))
+
+        try:
             readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [input_reads_ref],
                                                              'interleaved': 'false'
                                                              })
