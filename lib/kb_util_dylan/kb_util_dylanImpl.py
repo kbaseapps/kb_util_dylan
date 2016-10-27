@@ -1754,6 +1754,7 @@ class kb_util_dylan:
         except Exception as e:
             raise ValueError('Unable to get ReadsUtils Client' +"\n" + str(e))
 
+        self.log (console, "readsUtils_Client URL: '"+str(readsUtils_Client._client.url)+"'")
         self.log (console, "JUST BEFORE download_reads() SDK_CALLBACK_URL: '"+str(self.callbackURL)+"'")  # DEBUG
 
         try:
