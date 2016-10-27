@@ -1916,7 +1916,7 @@ class kb_util_dylan:
                 
 
             # upload reads reverse unpaired
-            self.log (console, "UPLOAD UNPAIRED FEV READS LIB")  # DEBUG
+            self.log (console, "UPLOAD UNPAIRED REV READS LIB")  # DEBUG
             unpaired_rev_ref = None
             if os.path.isfile (output_rev_unpaired_file_path) \
                 and os.path.getsize (output_rev_unpaired_file_path) != 0:
