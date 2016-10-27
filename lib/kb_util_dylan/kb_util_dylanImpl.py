@@ -1793,6 +1793,7 @@ class kb_util_dylan:
             unpaired_rev_buf = []
             last_read_id = None
             paired_cnt = 0
+            recs_beep_n = 100000
             capture_type_paired = False
 
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
@@ -1805,6 +1806,8 @@ class kb_util_dylan:
                                 paired_lib_i[last_read_id] = lib_i
                                 paired_output_reads_file_handles[lib_i].writelines(rec_buf)
                                 paired_cnt += 1
+                                if paired_cnt % recs_beep_n == 0:
+                                    self.log(console,"\t"+str(paired_cnt)+" recs processed"
                             else:
                                 unpaired_rev_buf.extend(rec_buf)
                             rec_buf = []
@@ -1836,6 +1839,7 @@ class kb_util_dylan:
             unpaired_fwd_buf = []
             last_read_id = None
             paired_cnt = 0
+            recs_beep_n = 100000
             capture_type_paired = False
 
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
@@ -1846,6 +1850,8 @@ class kb_util_dylan:
                                 lib_i = paired_lib_i[last_read_id]
                                 paired_output_reads_file_handles[lib_i].writelines(rec_buf)
                                 paired_cnt += 1
+                                if paired_cnt % recs_beep_n == 0:
+                                    self.log(console,"\t"+str(paired_cnt)+" recs processed"
                             else:
                                 unpaired_fwd_buf.extend(rec_buf)
                             rec_buf = []
@@ -1868,9 +1874,9 @@ class kb_util_dylan:
 
             # store report
             #
-            report += "TOTAL PAIRED READS: "+total_paired_reads+"\n"
-            report += "TOTAL UNPAIRED FWD READS: " +total_unpaired_fwd_reads+"\n"
-            report += "TOTAL UNPAIRED REV READS: " +total_unpaired_rev_reads+"\n"
+            report += "TOTAL PAIRED READS: "+str(total_paired_reads)+"\n"
+            report += "TOTAL UNPAIRED FWD READS: "+str(total_unpaired_fwd_reads)+"\n"
+            report += "TOTAL UNPAIRED REV READS: "+str(total_unpaired_rev_reads)+"\n"
             report += "\n"
             for lib_i in range(params['split_num']):
                 report += "PAIRED READS IN SET "+str(lib_i)+": "+str(total_paired_reads_by_set[lib_i])+"\n"
@@ -1959,7 +1965,7 @@ class kb_util_dylan:
             rec_buf = []
             last_read_id = None
             paired_cnt = 0
-
+            recs_beep_n = 100000
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
                 for line in input_reads_file_handle:
                     if line.startswith('@'):
@@ -1968,6 +1974,8 @@ class kb_util_dylan:
                             total_paired_reads_by_set[lib_i] += 1
                             paired_output_reads_file_handles[lib_i].writelines(rec_buf)
                             paired_cnt += 1
+                            if paired_cnt % recs_beep_n == 0:
+                                self.log(console,"\t"+str(paired_cnt)+" recs processed"
                             rec_buf = []
                         last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
                     rec_buf.append(line)
