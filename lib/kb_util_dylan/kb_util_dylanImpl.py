@@ -1731,16 +1731,10 @@ class kb_util_dylan:
 
         # Download Reads
         #
-        self.log (console, "JUST BEFORE readsUtils_Client SDK_CALLBACK_URL: '"+str(self.callbackURL)+"'")  # DEBUG
-
         try:
             readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
         except Exception as e:
             raise ValueError('Unable to get ReadsUtils Client' +"\n" + str(e))
-
-        self.log (console, "readsUtils_Client URL: '"+str(readsUtils_Client._client.url)+"'")
-        self.log (console, "JUST BEFORE download_reads() SDK_CALLBACK_URL: '"+str(self.callbackURL)+"'")  # DEBUG
-
         try:
             readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [input_reads_ref],
                                                              'interleaved': 'false'
@@ -1788,8 +1782,8 @@ class kb_util_dylan:
             #   write unpaired rev, and store lib_i for paired
             paired_output_reads_file_handles = []
             for lib_i in range(params['split_num']):
-                paired_output_reads_file_handles[lib_i] = open (output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
-                total_paired_reads_by_set[lib_i] = 0
+                paired_output_reads_file_handles.append(open (output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
+                total_paired_reads_by_set.append(0)
 
             rec_buf = []
             unpaired_rev_buf = []
