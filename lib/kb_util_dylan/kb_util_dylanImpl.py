@@ -1783,7 +1783,7 @@ class kb_util_dylan:
 
             # determine paired and unpaired rev, split paired rev
             #   write unpaired rev, and store lib_i for paired
-            self.log (console, "WRITING REV UNPAIRED")  # DEBUG
+            self.log (console, "WRITING REV SPLIT PAIRED")  # DEBUG
             paired_output_reads_file_handles = []
             for lib_i in range(params['split_num']):
                 paired_output_reads_file_handles.append(open (output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
@@ -1824,13 +1824,15 @@ class kb_util_dylan:
             for output_handle in paired_output_reads_file_handles:
                 output_handle.close()
 
+            self.log(console,"\t"+str(paired_cnt)+" recs processed")
+            self.log (console, "WRITING REV UNPAIRED")  # DEBUG
             output_reads_file_handle = open (output_rev_unpaired_file_path, 'w', 0)
             output_reads_file_handle.writelines(unpaired_rev_buf)
             output_reads_file_handle.close()
 
 
             # split fwd paired and write unpaired fwd
-            self.log (console, "WRITING FWD UNPAIRED and SPLIT PAIRED")  # DEBUG
+            self.log (console, "WRITING FWD SPLIT PAIRED")  # DEBUG
             paired_output_reads_file_handles = []
             for lib_i in range(params['split_num']):
                 paired_output_reads_file_handles.append(open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
@@ -1867,6 +1869,8 @@ class kb_util_dylan:
             for output_handle in paired_output_reads_file_handles:
                 output_handle.close()
 
+            self.log(console,"\t"+str(paired_cnt)+" recs processed")
+            self.log (console, "WRITING FWD UNPAIRED")  # DEBUG
             output_reads_file_handle = open (output_fwd_unpaired_file_path, 'w', 0)
             output_reads_file_handle.writelines(unpaired_fwd_buf)
             output_reads_file_handle.close()
@@ -1896,7 +1900,7 @@ class kb_util_dylan:
                     
                     raise ValueError ("failed to create paired output")
                 else:
-                    output_obj_name = params['output_name']+'_paired'+str(lib_i)
+                    output_obj_name = params['output_name']+'_paired-'+str(lib_i)
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
                     paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                                       'name': output_obj_name,
@@ -1912,7 +1916,7 @@ class kb_util_dylan:
             if os.path.isfile (output_fwd_unpaired_file_path) \
                 and os.path.getsize (output_fwd_unpaired_file_path) != 0:
 
-                output_obj_name = params['output_reads_name']+'_unpaired_fwd'
+                output_obj_name = params['output_reads_name']+'_unpaired-fwd'
                 self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
                 unpaired_fwd_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
@@ -1927,7 +1931,7 @@ class kb_util_dylan:
             if os.path.isfile (output_rev_unpaired_file_path) \
                 and os.path.getsize (output_rev_unpaired_file_path) != 0:
 
-                output_obj_name = params['output_reads_name']+'_unpaired_rev'
+                output_obj_name = params['output_reads_name']+'_unpaired-rev'
                 self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
                 unpaired_rev_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
