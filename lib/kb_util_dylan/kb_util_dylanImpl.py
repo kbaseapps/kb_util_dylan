@@ -1747,12 +1747,14 @@ class kb_util_dylan:
 
         # Download Reads
         #
-        self.log ("CALLBACK_URL: '"+str(self.callbackURL)+"'")  # DEBUG
+        self.log (console, "JUST BEFORE readsUtils_Client SDK_CALLBACK_URL: '"+str(self.callbackURL)+"'")  # DEBUG
 
         try:
             readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
         except Exception as e:
             raise ValueError('Unable to get ReadsUtils Client' +"\n" + str(e))
+
+        self.log (console, "JUST BEFORE download_reads() SDK_CALLBACK_URL: '"+str(self.callbackURL)+"'")  # DEBUG
 
         try:
             readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [input_reads_ref],
