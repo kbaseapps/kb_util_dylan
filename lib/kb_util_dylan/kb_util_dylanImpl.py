@@ -1825,7 +1825,7 @@ class kb_util_dylan:
             # split fwd paired and write unpaired fwd
             paired_output_reads_file_handles = []
             for lib_i in range(params['split_num']):
-                paired_output_reads_file_handles[lib_i] = open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
+                paired_output_reads_file_handles.append(open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
 
             rec_buf = []
             unpaired_fwd_buf = []
@@ -1944,7 +1944,7 @@ class kb_util_dylan:
             # split fwd paired
             paired_output_reads_file_handles = []
             for lib_i in range(params['split_num']):
-                paired_output_reads_file_handles[lib_i] = open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size)
+                paired_output_reads_file_handles.append(open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
                 total_paired_reads_by_set[lib_i] = 0
 
             rec_buf = []
