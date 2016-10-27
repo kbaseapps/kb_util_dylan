@@ -1747,6 +1747,8 @@ class kb_util_dylan:
 
         # Download Reads
         #
+        self.log ("CALLBACK_URL: '"+str(self.callbackURL)+"'")  # DEBUG
+
         try:
             readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
         except Exception as e:
