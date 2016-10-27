@@ -1677,6 +1677,7 @@ class kb_util_dylan:
         console = []
         self.log(console, 'Running KButil_Split_Reads() with parameters: ')
         self.log(console, "\n"+pformat(params))
+        report = ''
         
         token = ctx['token']
         wsClient = workspaceService(self.workspaceURL, token=token)
@@ -1731,6 +1732,7 @@ class kb_util_dylan:
 
         # Download Reads
         #
+        self.log (console, "DOWNLOADING READS")  # DEBUG
         try:
             readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
         except Exception as e:
@@ -1772,6 +1774,7 @@ class kb_util_dylan:
             paired_buf_size = 1000000
 
             # read fwd file to get fwd ids
+            self.log (console, "GETTING IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
                 for line in input_reads_file_handle:
                     if line.startswith('@'):
@@ -1780,6 +1783,7 @@ class kb_util_dylan:
 
             # determine paired and unpaired rev, split paired rev
             #   write unpaired rev, and store lib_i for paired
+            self.log (console, "WRITING REV UNPAIRED")  # DEBUG
             paired_output_reads_file_handles = []
             for lib_i in range(params['split_num']):
                 paired_output_reads_file_handles.append(open (output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
@@ -1823,6 +1827,7 @@ class kb_util_dylan:
 
 
             # split fwd paired and write unpaired fwd
+            self.log (console, "WRITING FWD UNPAIRED and SPLIT PAIRED")  # DEBUG
             paired_output_reads_file_handles = []
             for lib_i in range(params['split_num']):
                 paired_output_reads_file_handles.append(open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
@@ -1873,6 +1878,7 @@ class kb_util_dylan:
 
             # upload paired reads
             #
+            self.log (console, "UPLOAD PAIRED READS LIBS")  # DEBUG
             paired_obj_refs = []
             for lib_i in range(params['split_num']):
                 output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
@@ -1895,6 +1901,7 @@ class kb_util_dylan:
                     
 
             # upload reads forward unpaired
+            self.log (console, "UPLOAD UNPAIRED FWD READS LIB")  # DEBUG
             unpaired_fwd_ref = None
             if os.path.isfile (output_fwd_unpaired_file_path) \
                 and os.path.getsize (output_fwd_unpaired_file_path) != 0:
@@ -1909,6 +1916,7 @@ class kb_util_dylan:
                 
 
             # upload reads reverse unpaired
+            self.log (console, "UPLOAD UNPAIRED FEV READS LIB")  # DEBUG
             unpaired_rev_ref = None
             if os.path.isfile (output_rev_unpaired_file_path) \
                 and os.path.getsize (output_rev_unpaired_file_path) != 0:
@@ -1941,7 +1949,8 @@ class kb_util_dylan:
             total_paired_reads_by_set = []
             paired_buf_size = 1000000
 
-            # split fwd paired
+            # split reads
+            self.log (console, "WRITING SPLIT SINGLE END READS")  # DEBUG
             paired_output_reads_file_handles = []
             for lib_i in range(params['split_num']):
                 paired_output_reads_file_handles.append(open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
@@ -1973,8 +1982,9 @@ class kb_util_dylan:
                 report += "PAIRED READS IN SET "+str(lib_i)+": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
 
-            # upload paired reads
+            # upload reads
             #
+            self.log (console, "UPLOADING SPLIT SINGLE END READS")  # DEBUG
             paired_obj_refs = []
             for lib_i in range(params['split_num']):
                 output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
@@ -1997,6 +2007,7 @@ class kb_util_dylan:
 
         # save output readsSet
         #
+        self.log (console, "SAVING READSSET")  # DEBUG
         items = []
         for lib_i,lib_ref in enumerate(paired_obj_refs):
             label = params['output_name']+'-'+str(lib_i)
@@ -2018,6 +2029,7 @@ class kb_util_dylan:
 
         # build report
         #
+        self.log (console, "SAVING REPORT")  # DEBUG        
         reportObj = {'objects_created':[], 
                      'text_message': report}
 
