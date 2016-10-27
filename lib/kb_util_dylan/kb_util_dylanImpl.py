@@ -1975,7 +1975,7 @@ class kb_util_dylan:
                             paired_output_reads_file_handles[lib_i].writelines(rec_buf)
                             paired_cnt += 1
                             if paired_cnt % recs_beep_n == 0:
-                                self.log(console,"\t"+str(paired_cnt)+" recs processed"
+                                self.log(console,"\t"+str(paired_cnt)+" recs processed")
                             rec_buf = []
                         last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
                     rec_buf.append(line)
