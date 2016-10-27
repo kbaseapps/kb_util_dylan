@@ -96,6 +96,8 @@ class kb_util_dylan:
         #self.callbackURL = os.environ['SDK_CALLBACK_URL'] if os.environ['SDK_CALLBACK_URL'] != None else 'https://kbase.us/services/njs_wrapper'  # DEBUG
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
         if self.callbackURL == None:
+            self.callbackURL = os.environ['SDK_CALLBACK_URL']
+        if self.callbackURL == None:
             raise ValueError ("SDK_CALLBACK_URL not set in environment")
 
         self.scratch = os.path.abspath(config['scratch'])
