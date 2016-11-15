@@ -2044,6 +2044,7 @@ class kb_util_dylan:
                                 'items': items
                                 }
         output_readsSet_name = str(params['output_name'])
+        setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
         readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['workspace_name'],
                                                          'output_object_name': output_readsSet_name,
                                                          'data': output_readsSet_obj
