@@ -261,8 +261,8 @@ class kb_util_dylan:
         #
         if 'workspace_name' not in params:
             raise ValueError('workspace_name parameter is required')
-        if 'input_name' not in params:
-            raise ValueError('input_name parameter is required')
+        if 'input_ref' not in params:
+            raise ValueError('input_ref parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
@@ -273,7 +273,7 @@ class kb_util_dylan:
         sequencing_tech = 'N/A'
         try:
             ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['input_name']}])
+            objects = ws.get_objects([{'ref': params['input_ref']}])
             data = objects[0]['data']
             info = objects[0]['info']
             # Object Info Contents
@@ -306,7 +306,7 @@ class kb_util_dylan:
                     sequencing_tech = data['sequencing_tech']
 
         except Exception as e:
-            raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+            raise ValueError('Unable to fetch input_ref object from workspace: ' + str(e))
             #to get the full stack trace: traceback.format_exc()
         
         # pull data from SHOCK
@@ -380,7 +380,7 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         provenance[0]['input_ws_objects'] = []
-        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
+        provenance[0]['input_ws_objects'].append(params['input_ref'])
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_FASTQ_to_FASTA'
 
@@ -488,8 +488,8 @@ class kb_util_dylan:
             raise ValueError('workspace_name parameter is required')
         if 'desc' not in params:
             raise ValueError('desc parameter is required')
-        if 'input_names' not in params:
-            raise ValueError('input_names parameter is required')
+        if 'input_refs' not in params:
+            raise ValueError('input_refs parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
@@ -499,17 +499,17 @@ class kb_util_dylan:
         element_ordering = []
         elements = {}
         featureSet_seen = dict()
-        for featureSet_name in params['input_names']:
-            if not featureSet_name in featureSet_seen.keys():
-                featureSet_seen[featureSet_name] = 1
+        for featureSet_ref in params['input_refs']:
+            if not featureSet_ref in featureSet_seen.keys():
+                featureSet_seen[featureSet_ref] = 1
             else:
-                self.log("repeat featureSet_name: '"+featureSet_name+"'")
-                self.log(invalid_msgs,"repeat featureSet_name: '"+featureSet_name+"'")
+                self.log("repeat featureSet_ref: '"+featureSet_ref+"'")
+                self.log(invalid_msgs,"repeat featureSet_ref: '"+featureSet_ref+"'")
                 continue
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+featureSet_name}])
+                objects = ws.get_objects([{'ref': featureSet_ref}])
                 data = objects[0]['data']
                 info = objects[0]['info']
                 # Object Info Contents
@@ -528,7 +528,7 @@ class kb_util_dylan:
                 type_name = info[2].split('.')[1].split('-')[0]
 
             except Exception as e:
-                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                raise ValueError('Unable to fetch input_ref object from workspace: ' + str(e))
                 #to get the full stack trace: traceback.format_exc()
 
             if type_name != 'FeatureSet':
@@ -541,8 +541,8 @@ class kb_util_dylan:
             else:
                 this_element_ordering = sorted(this_featureSet['elements'].keys())
             element_ordering.extend(this_element_ordering)
-            self.log(console,'features in input set '+featureSet_name+': '+str(len(this_element_ordering)))
-            report += 'features in input set '+featureSet_name+': '+str(len(this_element_ordering))+"\n"
+            self.log(console,'features in input set '+featureSet_ref+': '+str(len(this_element_ordering)))
+            report += 'features in input set '+featureSet_ref+': '+str(len(this_element_ordering))+"\n"
 
             for fId in this_featureSet['elements'].keys():
                 elements[fId] = this_featureSet['elements'][fId]
@@ -556,8 +556,8 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         provenance[0]['input_ws_objects'] = []
-        for featureSet_name in params['input_names']:
-            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+featureSet_name)
+        for featureSet_ref in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(featureSet_ref)
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Merge_FeatureSet_Collection'
 
@@ -671,43 +671,11 @@ class kb_util_dylan:
             raise ValueError('workspace_name parameter is required')
         if 'desc' not in params:
             raise ValueError('desc parameter is required')
-        if 'input_names' not in params:
-            raise ValueError('input_names parameter is required')
+        if 'input_refs' not in params:
+            raise ValueError('input_refs parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
-
-        # Build GenomeSet
-        #
-        elements = dict()
-
-
-        # Add Genomes from GenomeSets
-        #
-        for input_genomeset_name in params['input_names']:
-
-            try:
-                ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+input_genomeset_name}])
-                genomeSet = objects[0]['data']
-                info = objects[0]['info']
-                
-                type_name = info[2].split('.')[1].split('-')[0]
-                if type_name != 'GenomeSet':
-                    raise ValueError("Bad Type:  Should be GenomeSet instead of '"+type_name+"'")
-            except Exception as e:
-                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
-                #to get the full stack trace: traceback.format_exc()
-
-            for gId in genomeSet['elements'].keys():
-                genomeRef = genomeSet['elements'][gId]['ref']
-                try:
-                    already_included = elements[gId]
-                except:
-                    elements[gId] = dict()
-                    elements[gId]['ref'] = genomeRef  # the key line
-                    self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
-            
 
         # load the method provenance from the context object
         #
@@ -720,11 +688,43 @@ class kb_util_dylan:
             prov_defined = provenance[0]['input_ws_objects']
         except:
             provenance[0]['input_ws_objects'] = []
-        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_genome_names'])
-        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_genomeset_name'])
+        for input_genomeset_ref in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(input_genomeset_ref)
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Merge_GenomeSets'
 
+
+        # Build GenomeSet
+        #
+        elements = dict()
+
+
+        # Add Genomes from GenomeSets
+        #
+        for input_genomeset_ref in params['input_refs']:
+
+            try:
+                ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                objects = ws.get_objects([{'ref': input_genomeset_ref}])
+                genomeSet = objects[0]['data']
+                info = objects[0]['info']
+                
+                type_name = info[2].split('.')[1].split('-')[0]
+                if type_name != 'GenomeSet':
+                    raise ValueError("Bad Type:  Should be GenomeSet instead of '"+type_name+"'")
+            except Exception as e:
+                raise ValueError('Unable to fetch input_ref object from workspace: ' + str(e))
+                #to get the full stack trace: traceback.format_exc()
+
+            for gId in genomeSet['elements'].keys():
+                genomeRef = genomeSet['elements'][gId]['ref']
+                try:
+                    already_included = elements[gId]
+                except:
+                    elements[gId] = dict()
+                    elements[gId]['ref'] = genomeRef  # the key line
+                    self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
+            
 
         # Store output object
         #
@@ -834,8 +834,8 @@ class kb_util_dylan:
             raise ValueError('workspace_name parameter is required')
         if 'desc' not in params:
             raise ValueError('desc parameter is required')
-        if 'input_names' not in params:
-            raise ValueError('input_names parameter is required')
+        if 'input_refs' not in params:
+            raise ValueError('input_refs parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
@@ -845,8 +845,7 @@ class kb_util_dylan:
         elements = {}
         genome_seen = dict()
         
-        for genome_name in params['input_names']:
-            genomeRef = params['workspace_name'] + '/' + genome_name
+        for genomeRef in params['input_refs']:
 
             try:
                 already_included = genome_seen[genomeRef]
@@ -880,8 +879,8 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         provenance[0]['input_ws_objects'] = []
-        for genome_name in params['input_names']:
-            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+genome_name)
+        for genomeRef in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(genomeRef)
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Build_GenomeSet'
 
@@ -996,8 +995,8 @@ class kb_util_dylan:
             raise ValueError('workspace_name parameter is required')
         if 'desc' not in params:
             raise ValueError('desc parameter is required')
-        if 'input_name' not in params:
-            raise ValueError('input_name parameter is required')
+        if 'input_ref' not in params:
+            raise ValueError('input_ref parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
@@ -1006,7 +1005,7 @@ class kb_util_dylan:
         #
         try:
             ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['input_name']}])
+            objects = ws.get_objects([{'ref': params['input_ref']}])
             data = objects[0]['data']
             info = objects[0]['info']
             # Object Info Contents
@@ -1025,7 +1024,7 @@ class kb_util_dylan:
             featureSet = data
             type_name = info[2].split('.')[1].split('-')[0]
         except Exception as e:
-            raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+            raise ValueError('Unable to fetch input_ref object from workspace: ' + str(e))
             #to get the full stack trace: traceback.format_exc()
         if type_name != 'FeatureSet':
             raise ValueError("Bad Type:  Should be FeatureSet instead of '"+type_name+"'")
@@ -1052,7 +1051,7 @@ class kb_util_dylan:
                         genomeObj = data
                         type_name = info[2].split('.')[1].split('-')[0]
                     except Exception as e:
-                        raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                        raise ValueError('Unable to fetch genomeRef object from workspace: ' + str(e))
                     if type_name != 'Genome' and type_name != 'GenomeAnnotaton':
                         raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"' for ref: '"+genomeRef+"'")
                     
@@ -1071,7 +1070,7 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         provenance[0]['input_ws_objects'] = []
-        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_name'])
+        provenance[0]['input_ws_objects'].append(params['input_ref'])
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Build_GenomeSet_from_FeatureSet'
 
@@ -1186,10 +1185,10 @@ class kb_util_dylan:
             raise ValueError('workspace_name parameter is required')
         if 'desc' not in params:
             raise ValueError('desc parameter is required')
-        if 'input_genome_names' not in params:
-            raise ValueError('input_genome_names parameter is required')
-        if 'input_genomeset_name' not in params:
-            raise ValueError('input_genomeset_name parameter is required')
+        if 'input_genome_refs' not in params:
+            raise ValueError('input_genome_refs parameter is required')
+        if 'input_genomeset_ref' not in params:
+            raise ValueError('input_genomeset_ref parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
@@ -1200,15 +1199,14 @@ class kb_util_dylan:
         genome_seen = dict()
 
         # add new genome
-        for genome_name in params['input_genome_names']:
+        for genomeRef in params['input_genome_refs']:
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['genome_name']}])
+                objects = ws.get_objects([{'ref': genomeRef}])
                 genomeObj = objects[0]['data']
                 info = objects[0]['info']
 
-                genomeRef = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
                 type_name = info[2].split('.')[1].split('-')[0]
                 if type_name != 'Genome' and type != 'GenomeAnnotation':
                     raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"'")
@@ -1228,10 +1226,10 @@ class kb_util_dylan:
 
         # add rest of old GenomeSet
         #
-        if 'input_genomeset_name' in params and params['input_genomeset_name'] != None:
+        if 'input_genomeset_ref' in params and params['input_genomeset_ref'] != None:
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+params['input_genomeset_name']}])
+                objects = ws.get_objects([{'ref': params['input_genomeset_ref']}])
                 genomeSet = objects[0]['data']
                 info = objects[0]['info']
                 
@@ -1239,7 +1237,7 @@ class kb_util_dylan:
                 if type_name != 'GenomeSet':
                     raise ValueError("Bad Type:  Should be GenomeSet instead of '"+type_name+"'")
             except Exception as e:
-                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                raise ValueError('Unable to fetch input_ref object from workspace: ' + str(e))
                 #to get the full stack trace: traceback.format_exc()
 
             for gId in genomeSet['elements'].keys():
@@ -1263,8 +1261,8 @@ class kb_util_dylan:
             prov_defined = provenance[0]['input_ws_objects']
         except:
             provenance[0]['input_ws_objects'] = []
-        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_genome_names'])
-        provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+params['input_genomeset_name'])
+        provenance[0]['input_ws_objects'].extend(params['input_genome_refs'])
+        provenance[0]['input_ws_objects'].append(params['input_genomeset_name'])
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Add_Genomes_to_GenomeSet'
 
@@ -1378,12 +1376,12 @@ class kb_util_dylan:
             raise ValueError('workspace_name parameter is required')
         if 'desc' not in params:
             raise ValueError('desc parameter is required')
-        if 'input_names' not in params:
-            raise ValueError('input_names parameter is required')
+        if 'input_refs' not in params:
+            raise ValueError('input_refs parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
-        if len(params['input_names']) < 2:
+        if len(params['input_refs']) < 2:
             self.log(console,"Must provide more than one MSA")
             self.log(invalid_msgs,"Must provide more than one MSA")
 
@@ -1396,20 +1394,20 @@ class kb_util_dylan:
         MSA_seen = {}
         discard_set = {}
         sequence_type = None
-        for MSA_i,MSA_name in enumerate(params['input_names']):
-            if len(params['input_names']) < 2:  # too lazy to reindent the block
+        for MSA_i,MSA_ref in enumerate(params['input_refs']):
+            if len(params['input_refs']) < 2:  # too lazy to reindent the block
                 continue
 
-            if not MSA_name in MSA_seen.keys():
-                MSA_seen[MSA_name] = True
+            if not MSA_ref in MSA_seen.keys():
+                MSA_seen[MSA_ref] = True
             else:
-                self.log(console,"repeat MSA_name: '"+MSA_name+"'")
-                self.log(invalid_msgs,"repeat MSA_name: '"+MSA_name+"'")
+                self.log(console,"repeat MSA_ref: '"+MSA_ref+"'")
+                self.log(invalid_msgs,"repeat MSA_ref: '"+MSA_ref+"'")
                 continue
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': params['workspace_name']+'/'+MSA_name}])
+                objects = ws.get_objects([{'ref': MSA_ref}])
                 data = objects[0]['data']
                 info = objects[0]['info']
                 # Object Info Contents
@@ -1428,7 +1426,7 @@ class kb_util_dylan:
                 type_name = info[2].split('.')[1].split('-')[0]
 
             except Exception as e:
-                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                raise ValueError('Unable to fetch input_ref object from workspace: ' + str(e))
                 #to get the full stack trace: traceback.format_exc()
 
             if type_name != 'MSA':
@@ -1443,7 +1441,7 @@ class kb_util_dylan:
                 if sequence_type == None:
                     sequence_type = this_sequence_type
                 elif this_sequence_type != sequence_type:
-                    self.log(invalid_msgs,"inconsistent sequence type for MSA "+MSA_name+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
+                    self.log(invalid_msgs,"inconsistent sequence type for MSA "+MSA_ref+" '"+this_sequence_type+"' doesn't match '"+sequence_type+"'")
                     continue
             except:
                 pass
@@ -1477,15 +1475,15 @@ class kb_util_dylan:
                 # can't have repeat genome_ids (i.e. no paralogs allowed)
                 try:
                     genome_id_seen = this_genomes_seen[genome_id]
-                    self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
-                    self.log(invalid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_name+" genome_id: "+genome_id+" row_id: "+row_id)
+                    self.log(console,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_ref+" genome_id: "+genome_id+" row_id: "+row_id)
+                    self.log(invalid_msgs,"only one feature per genome permitted in a given MSA.  MSA: "+MSA_ref+" genome_id: "+genome_id+" row_id: "+row_id)
                     continue
                 except:
                     this_genomes_seen[genome_id] = True
 
                 this_row_len = len(this_MSA['alignment'][row_id])
                 if this_row_len != this_aln_len:
-                    self.log(invalid_msgs,"inconsistent alignment len in "+MSA_name+": first_row_len="+str(this_aln_len)+" != "+str(this_row_len)+" ("+row_id+")")
+                    self.log(invalid_msgs,"inconsistent alignment len in "+MSA_ref+": first_row_len="+str(this_aln_len)+" != "+str(this_row_len)+" ("+row_id+")")
                     continue
 
                 # create new rows
@@ -1517,9 +1515,9 @@ class kb_util_dylan:
             
             # report
             if len(invalid_msgs) == 0:
-                report += 'num rows in input set '+MSA_name+': '+str(len(this_row_order))+" "+str(this_row_order)+"\n"
-                self.log(console,'num rows in input set '+MSA_name+': '+str(len(this_row_order)))
-                self.log(console,'row_ids in input set '+MSA_name+': '+str(this_row_order))
+                report += 'num rows in input set '+MSA_ref+': '+str(len(this_row_order))+" "+str(this_row_order)+"\n"
+                self.log(console,'num rows in input set '+MSA_ref+': '+str(len(this_row_order)))
+                self.log(console,'row_ids in input set '+MSA_ref+': '+str(this_row_order))
 
         # report which are incomplete rows (regardless of whether discarding)
         if len(invalid_msgs) == 0:
@@ -1562,8 +1560,8 @@ class kb_util_dylan:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
         provenance[0]['input_ws_objects'] = []
-        for MSA_name in params['input_names']:
-            provenance[0]['input_ws_objects'].append(params['workspace_name']+'/'+MSA_name)
+        for MSA_ref in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(MSA_ref)
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Concat_MSAs'
 
@@ -1688,7 +1686,8 @@ class kb_util_dylan:
         SERVICE_VER = 'dev'  # DEBUG
 
         # param checks
-        required_params = ['input_name', 
+        required_params = ['workspace_name',
+                           'input_ref', 
                            'output_name'
                            ]
         for required_param in required_params:
@@ -1706,7 +1705,7 @@ class kb_util_dylan:
         provenance = [{}]
         if 'provenance' in ctx:
             provenance = ctx['provenance']
-        provenance[0]['input_ws_objects']=[str(params['workspace_name'])+'/'+str(params['input_name'])]
+        provenance[0]['input_ws_objects']=[str(params['input_ref'])]
 
 
         # Determine whether read library is of correct type
@@ -1715,7 +1714,7 @@ class kb_util_dylan:
             # object_info tuple
             [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
             
-            input_reads_ref = str(params['workspace_name'])+'/'+str(params['input_name'])
+            input_reads_ref = params['input_ref']
             input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':input_reads_ref}]})[0]
             input_reads_obj_type = input_reads_obj_info[TYPE_I]
             #input_reads_obj_version = input_reads_obj_info[VERSION_I]  # this is object version, not type version

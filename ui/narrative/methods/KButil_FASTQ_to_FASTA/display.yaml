@@ -27,7 +27,7 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    input_name:
+    input_ref:
         ui-name : |
             Input FASTQ Object
         short-hint : |

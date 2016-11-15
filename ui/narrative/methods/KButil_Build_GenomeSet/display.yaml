@@ -34,7 +34,7 @@ parameters :
             Describe Purpose or Contents of Output GenomeSet
         placeholder: |
             Enter Description
-    input_names:
+    input_refs:
         ui-name : |
             Genome Names
         short-hint : |

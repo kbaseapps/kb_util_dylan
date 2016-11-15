@@ -55,7 +55,7 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_name;
+	data_obj_name  input_ref;
         data_obj_name  output_name;
     } KButil_FASTQ_to_FASTA_Params;
 
@@ -79,7 +79,7 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_names;
+	data_obj_name  input_refs;
         data_obj_name  output_name;
 	string         desc;
     } KButil_Merge_FeatureSet_Collection_Params;
@@ -98,7 +98,7 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_names;
+	data_obj_name  input_refs;
         data_obj_name  output_name;
 	string         desc;
     } KButil_Merge_GenomeSets_Params;
@@ -117,7 +117,7 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_names;
+	data_obj_name  input_refs;
         data_obj_name  output_name;
 	string         desc;
     } KButil_Build_GenomeSet_Params;
@@ -136,7 +136,7 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_name;
+	data_obj_name  input_ref;
         data_obj_name  output_name;
 	string         desc;
     } KButil_Build_GenomeSet_from_FeatureSet_Params;
@@ -155,8 +155,8 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_genome_names;
-        data_obj_name  input_genomeset_name;
+	data_obj_name  input_genome_refs;
+        data_obj_name  input_genomeset_ref;
         data_obj_name  output_name;
 	string         desc;
     } KButil_Add_Genomes_to_GenomeSet_Params;
@@ -175,7 +175,7 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_names;
+	data_obj_name  input_refs;
         data_obj_name  output_name;
 	string         desc;
 	int            blanks_flag;  /* actually bool */
@@ -195,7 +195,7 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_name  input_name;  /* Reads Libraries */
+	data_obj_name  input_ref;  /* Reads Libraries */
         data_obj_name  output_name;  /* ReadsSet */
 	int            split_num;
 	string         desc;
