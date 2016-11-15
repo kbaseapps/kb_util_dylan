@@ -1784,7 +1784,7 @@ class kb_util_dylan:
                         fwd_ids[read_id] = True
                         # DEBUG
                         if rec_cnt % 10 == 0:
-                            self.log(console,"read_id: '"+str(rec_cnt)+"'")
+                            self.log(console,"read_id: '"+str(read_id)+"'")
                         rec_cnt += 1 
 
             # determine paired and unpaired rev, split paired rev
@@ -1819,6 +1819,7 @@ class kb_util_dylan:
                         last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
                         try:
                             found = fwd_ids[read_id]
+                            self.log(console,"FOUND PAIR: '"+str(read_id)+"'") # DEBUG
                             total_paired_reads += 1
                             capture_type_paired = True
                         except:
