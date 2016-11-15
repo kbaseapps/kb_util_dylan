@@ -1781,6 +1781,7 @@ class kb_util_dylan:
                 for line in input_reads_file_handle:
                     if line.startswith('@'):
                         read_id = re.sub ("[ \t]+.*", "", line)
+                        read_id = re.sub ("\/\d+", "", read_id)
                         fwd_ids[read_id] = True
                         # DEBUG
                         if rec_cnt % 100 == 0:
@@ -1816,7 +1817,9 @@ class kb_util_dylan:
                             else:
                                 unpaired_rev_buf.extend(rec_buf)
                             rec_buf = []
-                        last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
+                        read_id = re.sub ("[ \t]+.*", "", line)
+                        read_id = re.sub ("\/\d+", "", read_id)
+                        last_read_id = read_id
                         try:
                             self.log(console,"CHECKING: '"+str(read_id)+"'") # DEBUG
                             found = fwd_ids[read_id]
@@ -1863,7 +1866,9 @@ class kb_util_dylan:
                             else:
                                 unpaired_fwd_buf.extend(rec_buf)
                             rec_buf = []
-                        last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
+                        read_id = re.sub ("[ \t]+.*", "", line)
+                        read_id = re.sub ("\/\d+", "", read_id)
+                        last_read_id = read_id
                         try:
                             found = paired_lib_i[read_id]
                             capture_type_paired = True
