@@ -209,8 +209,8 @@ class kb_util_dylan:
 
         #self.callbackURL = os.environ['SDK_CALLBACK_URL'] if os.environ['SDK_CALLBACK_URL'] != None else 'https://kbase.us/services/njs_wrapper'  # DEBUG
         self.callbackURL = os.environ.get('SDK_CALLBACK_URL')
-        if self.callbackURL == None:
-            self.callbackURL = os.environ['SDK_CALLBACK_URL']
+#        if self.callbackURL == None:
+#            self.callbackURL = os.environ['SDK_CALLBACK_URL']
         if self.callbackURL == None:
             raise ValueError ("SDK_CALLBACK_URL not set in environment")
 
@@ -1771,15 +1771,21 @@ class kb_util_dylan:
             fwd_ids = dict()
             paired_lib_i = dict()
             unpaired_buf_size = 0
-            paired_buf_size = 1000000
+            paired_buf_size = 100000
+            recs_beep_n = 100000
 
             # read fwd file to get fwd ids
+            rec_cnt = 0  # DEBUG
             self.log (console, "GETTING IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
                 for line in input_reads_file_handle:
                     if line.startswith('@'):
                         read_id = re.sub ("[ \t]+.*", "", line)
                         fwd_ids[read_id] = True
+                        # DEBUG
+                        rec_cnt += 1 
+                        if rec_cnt % 100 == 0:
+                            self.log(console,"read_id: '"+rec_cnt+"'")
 
             # determine paired and unpaired rev, split paired rev
             #   write unpaired rev, and store lib_i for paired
@@ -1793,7 +1799,6 @@ class kb_util_dylan:
             unpaired_rev_buf = []
             last_read_id = None
             paired_cnt = 0
-            recs_beep_n = 100000
             capture_type_paired = False
 
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
@@ -1841,7 +1846,6 @@ class kb_util_dylan:
             unpaired_fwd_buf = []
             last_read_id = None
             paired_cnt = 0
-            recs_beep_n = 100000
             capture_type_paired = False
 
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
@@ -1916,7 +1920,7 @@ class kb_util_dylan:
             if os.path.isfile (output_fwd_unpaired_file_path) \
                 and os.path.getsize (output_fwd_unpaired_file_path) != 0:
 
-                output_obj_name = params['output_reads_name']+'_unpaired-fwd'
+                output_obj_name = params['output_name']+'_unpaired-fwd'
                 self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
                 unpaired_fwd_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
@@ -1931,7 +1935,7 @@ class kb_util_dylan:
             if os.path.isfile (output_rev_unpaired_file_path) \
                 and os.path.getsize (output_rev_unpaired_file_path) != 0:
 
-                output_obj_name = params['output_reads_name']+'_unpaired-rev'
+                output_obj_name = params['output_name']+'_unpaired-rev'
                 self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
                 unpaired_rev_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
