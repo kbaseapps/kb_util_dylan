@@ -2107,7 +2107,7 @@ class kb_util_dylan:
         # save report object
         #
         report = KBaseReport(self.callbackURL, token=ctx['token'], service_ver=SERVICE_VER)
-        report_info = report.create({'report':reportObj, 'workspace_name':params['input_ws']})
+        report_info = report.create({'report':reportObj, 'workspace_name':params['workspace_name']})
 
         output = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
         #END KButil_Split_Reads
