@@ -1784,9 +1784,9 @@ class kb_util_dylan:
                         read_id = re.sub ("\/\d+", "", read_id)
                         fwd_ids[read_id] = True
                         # DEBUG
-                        if rec_cnt % 100 == 0:
-                            self.log(console,"read_id: '"+str(read_id)+"'")
-                        rec_cnt += 1 
+#                        if rec_cnt % 100 == 0:
+#                            self.log(console,"read_id: '"+str(read_id)+"'")
+#                        rec_cnt += 1 
 
             # determine paired and unpaired rev, split paired rev
             #   write unpaired rev, and store lib_i for paired
@@ -1821,9 +1821,9 @@ class kb_util_dylan:
                         read_id = re.sub ("\/\d+", "", read_id)
                         last_read_id = read_id
                         try:
-                            self.log(console,"CHECKING: '"+str(read_id)+"'") # DEBUG
+#                            self.log(console,"CHECKING: '"+str(read_id)+"'") # DEBUG
                             found = fwd_ids[read_id]
-                            self.log(console,"FOUND PAIR: '"+str(read_id)+"'") # DEBUG
+#                            self.log(console,"FOUND PAIR: '"+str(read_id)+"'") # DEBUG
                             total_paired_reads += 1
                             capture_type_paired = True
                         except:
@@ -1913,12 +1913,12 @@ class kb_util_dylan:
                 else:
                     output_obj_name = params['output_name']+'_paired-'+str(lib_i)
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
-                    paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
-                                                                                      'name': output_obj_name,
-                                                                                      'sequencing_tech': sequencing_tech,
-                                                                                      'fwd_file': output_fwd_paired_file_path,
-                                                                                      'rev_file': output_rev_paired_file_path
-                                                                                      })['obj_ref']
+                    paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                              'name': output_obj_name,
+                                                                              'sequencing_tech': sequencing_tech,
+                                                                              'fwd_file': output_fwd_paired_file_path,
+                                                                              'rev_file': output_rev_paired_file_path
+                                                                              })['obj_ref'])
                     
 
             # upload reads forward unpaired
@@ -2018,12 +2018,12 @@ class kb_util_dylan:
                 else:
                     output_obj_name = params['output_name']+'-'+str(lib_i)
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
-                    paired_obj_refs[lib_i] = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
-                                                                               'name': output_obj_name,
-                                                                               'sequencing_tech': sequencing_tech,
-                                                                               'fwd_file': output_fwd_paired_file_path
-                                                                               })['obj_ref']
-                    
+                    paired_obj_refs.append( readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                              'name': output_obj_name,
+                                                                              'sequencing_tech': sequencing_tech,
+                                                                              'fwd_file': output_fwd_paired_file_path
+                                                                              })['obj_ref'])
+                                            
         else:
             raise ValueError ("unknown ReadLibrary type as input: "+str(input_reads_obj_type))
 
