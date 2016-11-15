@@ -1783,9 +1783,9 @@ class kb_util_dylan:
                         read_id = re.sub ("[ \t]+.*", "", line)
                         fwd_ids[read_id] = True
                         # DEBUG
+                        if rec_cnt % 10 == 0:
+                            self.log(console,"read_id: '"+str(rec_cnt)+"'")
                         rec_cnt += 1 
-                        if rec_cnt % 100 == 0:
-                            self.log(console,"read_id: '"+rec_cnt+"'")
 
             # determine paired and unpaired rev, split paired rev
             #   write unpaired rev, and store lib_i for paired
