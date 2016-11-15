@@ -1783,7 +1783,7 @@ class kb_util_dylan:
                         read_id = re.sub ("[ \t]+.*", "", line)
                         fwd_ids[read_id] = True
                         # DEBUG
-                        if rec_cnt % 10 == 0:
+                        if rec_cnt % 100 == 0:
                             self.log(console,"read_id: '"+str(read_id)+"'")
                         rec_cnt += 1 
 
