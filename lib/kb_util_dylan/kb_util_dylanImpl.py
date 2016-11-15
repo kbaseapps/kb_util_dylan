@@ -1818,6 +1818,7 @@ class kb_util_dylan:
                             rec_buf = []
                         last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
                         try:
+                            self.log(console,"CHECKING: '"+str(read_id)+"'") # DEBUG
                             found = fwd_ids[read_id]
                             self.log(console,"FOUND PAIR: '"+str(read_id)+"'") # DEBUG
                             total_paired_reads += 1
