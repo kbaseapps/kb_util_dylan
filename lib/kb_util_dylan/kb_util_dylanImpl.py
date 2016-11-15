@@ -1775,7 +1775,7 @@ class kb_util_dylan:
             recs_beep_n = 100000
 
             # read fwd file to get fwd ids
-            rec_cnt = 0  # DEBUG
+#            rec_cnt = 0  # DEBUG
             self.log (console, "GETTING IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
                 for line in input_reads_file_handle:
@@ -1830,6 +1830,19 @@ class kb_util_dylan:
                             total_unpaired_rev_reads += 1
                             capture_type_paired = False
                     rec_buf.append(line)
+                # last record
+                if len(rec_buf) > 0:
+                    if capture_type_paired:
+                        lib_i = paired_cnt % params['split_num']
+                        total_paired_reads_by_set[lib_i] += 1
+                        paired_lib_i[last_read_id] = lib_i
+                        paired_output_reads_file_handles[lib_i].writelines(rec_buf)
+                        paired_cnt += 1
+                        if paired_cnt % recs_beep_n == 0:
+                            self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                    else:
+                        unpaired_rev_buf.extend(rec_buf)
+                    rec_buf = []
 
             for output_handle in paired_output_reads_file_handles:
                 output_handle.close()
@@ -1876,6 +1889,17 @@ class kb_util_dylan:
                             total_unpaired_fwd_reads += 1
                             capture_type_paired = False
                     rec_buf.append(line)
+                # last rec
+                if len(rec_buf) > 0:
+                    if capture_type_paired:
+                        lib_i = paired_lib_i[last_read_id]
+                        paired_output_reads_file_handles[lib_i].writelines(rec_buf)
+                        paired_cnt += 1
+                        if paired_cnt % recs_beep_n == 0:
+                            self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                    else:
+                        unpaired_fwd_buf.extend(rec_buf)
+                    rec_buf = []
 
             for output_handle in paired_output_reads_file_handles:
                 output_handle.close()
@@ -1994,6 +2018,17 @@ class kb_util_dylan:
                             rec_buf = []
                         last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
                     rec_buf.append(line)
+                # last rec
+                if len(rec_buf) > 0:
+                    if capture_type_paired:
+                        lib_i = paired_lib_i[last_read_id]
+                        paired_output_reads_file_handles[lib_i].writelines(rec_buf)
+                        paired_cnt += 1
+                        if paired_cnt % recs_beep_n == 0:
+                            self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                    else:
+                        unpaired_fwd_buf.extend(rec_buf)
+                    rec_buf = []
 
             for output_handle in paired_output_reads_file_handles:
                 output_handle.close()
