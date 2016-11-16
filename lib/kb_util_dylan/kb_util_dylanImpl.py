@@ -1780,7 +1780,7 @@ class kb_util_dylan:
                 for line in input_reads_file_handle:
                     if line.startswith('@'):
                         read_id = re.sub ("[ \t]+.*", "", line)
-                        read_id = re.sub ("\/\d+", "", read_id)
+                        read_id = re.sub ("[\/\_][12lrLRfrFR]", "", read_id)
                         fwd_ids[read_id] = True
                         # DEBUG
 #                        if rec_cnt % 100 == 0:
@@ -1816,8 +1816,9 @@ class kb_util_dylan:
                             else:
                                 unpaired_rev_buf.extend(rec_buf)
                             rec_buf = []
-                        read_id = re.sub ("[ \t]+.*", "", line)
-                        read_id = re.sub ("\/\d+", "", read_id)
+                        read_id = line.strip ('\n')
+                        read_id = re.sub ("[ \t]+.*$", "", line)
+                        read_id = re.sub ("[\/\.\_\-\:\;][12lrLRfrFR]$", "", read_id)
                         last_read_id = read_id
                         try:
 #                            self.log(console,"CHECKING: '"+str(read_id)+"'") # DEBUG
@@ -1878,8 +1879,9 @@ class kb_util_dylan:
                             else:
                                 unpaired_fwd_buf.extend(rec_buf)
                             rec_buf = []
-                        read_id = re.sub ("[ \t]+.*", "", line)
-                        read_id = re.sub ("\/\d+", "", read_id)
+                        read_id = line.strip ('\n')
+                        read_id = re.sub ("[ \t]+.*$", "", line)
+                        read_id = re.sub ("[\/\.\_\-\:\;][12lrLRfrFR]$", "", read_id)
                         last_read_id = read_id
                         try:
                             found = paired_lib_i[read_id]
@@ -2015,18 +2017,19 @@ class kb_util_dylan:
                             if paired_cnt % recs_beep_n == 0:
                                 self.log(console,"\t"+str(paired_cnt)+" recs processed")
                             rec_buf = []
-                        last_read_id = read_id = re.sub ("[ \t]+.*", "", line)
+                        read_id = line.strip ('\n')
+                        read_id = re.sub ("[ \t]+.*$", "", line)
+                        #read_id = re.sub ("[\/\.\_\-\:\;][12lrLRfrFR]$", "", read_id)
+                        last_read_id = read_id
                     rec_buf.append(line)
                 # last rec
                 if len(rec_buf) > 0:
-                    if capture_type_paired:
-                        lib_i = paired_lib_i[last_read_id]
-                        paired_output_reads_file_handles[lib_i].writelines(rec_buf)
-                        paired_cnt += 1
-                        if paired_cnt % recs_beep_n == 0:
-                            self.log(console,"\t"+str(paired_cnt)+" recs processed")
-                    else:
-                        unpaired_fwd_buf.extend(rec_buf)
+                    lib_i = paired_cnt % params['split_num']
+                    total_paired_reads_by_set[lib_i] += 1
+                    paired_output_reads_file_handles[lib_i].writelines(rec_buf)
+                    paired_cnt += 1
+                    if paired_cnt % recs_beep_n == 0:
+                        self.log(console,"\t"+str(paired_cnt)+" recs processed")
                     rec_buf = []
 
             for output_handle in paired_output_reads_file_handles:
