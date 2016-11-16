@@ -46,7 +46,7 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_ref" of type "data_obj_name", parameter
+           parameter "input_ref" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name"
         :returns: instance of type "KButil_FASTQ_to_FASTA_Output" ->
            structure: parameter "report_name" of type "data_obj_name",
@@ -69,7 +69,7 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_refs" of type "data_obj_name", parameter
+           parameter "input_refs" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type
            "KButil_Merge_FeatureSet_Collection_Output" -> structure:
@@ -92,7 +92,7 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_refs" of type "data_obj_name", parameter
+           parameter "input_refs" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type "KButil_Merge_GenomeSets_Output" ->
            structure: parameter "report_name" of type "data_obj_name",
@@ -114,7 +114,7 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_refs" of type "data_obj_name", parameter
+           parameter "input_refs" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type "KButil_Build_GenomeSet_Output" ->
            structure: parameter "report_name" of type "data_obj_name",
@@ -137,7 +137,7 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_ref" of type "data_obj_name", parameter
+           parameter "input_ref" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type
            "KButil_Build_GenomeSet_from_FeatureSet_Output" -> structure:
@@ -161,8 +161,8 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_genome_refs" of type "data_obj_name", parameter
-           "input_genomeset_ref" of type "data_obj_name", parameter
+           parameter "input_genome_refs" of type "data_obj_ref", parameter
+           "input_genomeset_ref" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type "KButil_Add_Genomes_to_GenomeSet_Output"
            -> structure: parameter "report_name" of type "data_obj_name",
@@ -184,7 +184,7 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_refs" of type "data_obj_name", parameter
+           parameter "input_refs" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String,
            parameter "blanks_flag" of Long
         :returns: instance of type "KButil_Concat_MSAs_Output" -> structure:
@@ -207,7 +207,7 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_ref" of type "data_obj_name", parameter
+           parameter "input_ref" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "split_num" of
            Long, parameter "desc" of String
         :returns: instance of type "KButil_Split_Reads_Output" -> structure:

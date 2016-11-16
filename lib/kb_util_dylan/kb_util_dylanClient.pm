@@ -126,14 +126,14 @@ $params is a kb_util_dylan.KButil_FASTQ_to_FASTA_Params
 $return is a kb_util_dylan.KButil_FASTQ_to_FASTA_Output
 KButil_FASTQ_to_FASTA_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_ref has a value which is a kb_util_dylan.data_obj_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_FASTQ_to_FASTA_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 </pre>
 
@@ -145,14 +145,14 @@ $params is a kb_util_dylan.KButil_FASTQ_to_FASTA_Params
 $return is a kb_util_dylan.KButil_FASTQ_to_FASTA_Output
 KButil_FASTQ_to_FASTA_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_ref has a value which is a kb_util_dylan.data_obj_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_FASTQ_to_FASTA_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 
 =end text
@@ -228,15 +228,15 @@ $params is a kb_util_dylan.KButil_Merge_FeatureSet_Collection_Params
 $return is a kb_util_dylan.KButil_Merge_FeatureSet_Collection_Output
 KButil_Merge_FeatureSet_Collection_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_refs has a value which is a kb_util_dylan.data_obj_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Merge_FeatureSet_Collection_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 </pre>
 
@@ -248,15 +248,15 @@ $params is a kb_util_dylan.KButil_Merge_FeatureSet_Collection_Params
 $return is a kb_util_dylan.KButil_Merge_FeatureSet_Collection_Output
 KButil_Merge_FeatureSet_Collection_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_refs has a value which is a kb_util_dylan.data_obj_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Merge_FeatureSet_Collection_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 
 =end text
@@ -332,15 +332,15 @@ $params is a kb_util_dylan.KButil_Merge_GenomeSets_Params
 $return is a kb_util_dylan.KButil_Merge_GenomeSets_Output
 KButil_Merge_GenomeSets_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_refs has a value which is a kb_util_dylan.data_obj_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Merge_GenomeSets_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 </pre>
 
@@ -352,15 +352,15 @@ $params is a kb_util_dylan.KButil_Merge_GenomeSets_Params
 $return is a kb_util_dylan.KButil_Merge_GenomeSets_Output
 KButil_Merge_GenomeSets_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_refs has a value which is a kb_util_dylan.data_obj_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Merge_GenomeSets_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 
 =end text
@@ -436,15 +436,15 @@ $params is a kb_util_dylan.KButil_Build_GenomeSet_Params
 $return is a kb_util_dylan.KButil_Build_GenomeSet_Output
 KButil_Build_GenomeSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_refs has a value which is a kb_util_dylan.data_obj_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Build_GenomeSet_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 </pre>
 
@@ -456,15 +456,15 @@ $params is a kb_util_dylan.KButil_Build_GenomeSet_Params
 $return is a kb_util_dylan.KButil_Build_GenomeSet_Output
 KButil_Build_GenomeSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_refs has a value which is a kb_util_dylan.data_obj_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Build_GenomeSet_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 
 =end text
@@ -540,15 +540,15 @@ $params is a kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet_Params
 $return is a kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet_Output
 KButil_Build_GenomeSet_from_FeatureSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_ref has a value which is a kb_util_dylan.data_obj_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Build_GenomeSet_from_FeatureSet_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 </pre>
 
@@ -560,15 +560,15 @@ $params is a kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet_Params
 $return is a kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet_Output
 KButil_Build_GenomeSet_from_FeatureSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_ref has a value which is a kb_util_dylan.data_obj_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Build_GenomeSet_from_FeatureSet_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 
 =end text
@@ -644,16 +644,16 @@ $params is a kb_util_dylan.KButil_Add_Genomes_to_GenomeSet_Params
 $return is a kb_util_dylan.KButil_Add_Genomes_to_GenomeSet_Output
 KButil_Add_Genomes_to_GenomeSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_genome_refs has a value which is a kb_util_dylan.data_obj_name
-	input_genomeset_ref has a value which is a kb_util_dylan.data_obj_name
+	input_genome_refs has a value which is a kb_util_dylan.data_obj_ref
+	input_genomeset_ref has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Add_Genomes_to_GenomeSet_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 </pre>
 
@@ -665,16 +665,16 @@ $params is a kb_util_dylan.KButil_Add_Genomes_to_GenomeSet_Params
 $return is a kb_util_dylan.KButil_Add_Genomes_to_GenomeSet_Output
 KButil_Add_Genomes_to_GenomeSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_genome_refs has a value which is a kb_util_dylan.data_obj_name
-	input_genomeset_ref has a value which is a kb_util_dylan.data_obj_name
+	input_genome_refs has a value which is a kb_util_dylan.data_obj_ref
+	input_genomeset_ref has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Add_Genomes_to_GenomeSet_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 
 =end text
@@ -750,16 +750,16 @@ $params is a kb_util_dylan.KButil_Concat_MSAs_Params
 $return is a kb_util_dylan.KButil_Concat_MSAs_Output
 KButil_Concat_MSAs_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_refs has a value which is a kb_util_dylan.data_obj_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 	blanks_flag has a value which is an int
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Concat_MSAs_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 </pre>
 
@@ -771,16 +771,16 @@ $params is a kb_util_dylan.KButil_Concat_MSAs_Params
 $return is a kb_util_dylan.KButil_Concat_MSAs_Output
 KButil_Concat_MSAs_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_refs has a value which is a kb_util_dylan.data_obj_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 	blanks_flag has a value which is an int
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Concat_MSAs_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 
 =end text
@@ -856,16 +856,16 @@ $params is a kb_util_dylan.KButil_Split_Reads_Params
 $return is a kb_util_dylan.KButil_Split_Reads_Output
 KButil_Split_Reads_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_ref has a value which is a kb_util_dylan.data_obj_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	split_num has a value which is an int
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Split_Reads_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 </pre>
 
@@ -877,16 +877,16 @@ $params is a kb_util_dylan.KButil_Split_Reads_Params
 $return is a kb_util_dylan.KButil_Split_Reads_Output
 KButil_Split_Reads_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_ref has a value which is a kb_util_dylan.data_obj_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	split_num has a value which is an int
 	desc has a value which is a string
 workspace_name is a string
+data_obj_ref is a string
 data_obj_name is a string
 KButil_Split_Reads_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
-data_obj_ref is a string
 
 
 =end text
@@ -1169,7 +1169,7 @@ KButil_FASTQ_to_FASTA()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_ref has a value which is a kb_util_dylan.data_obj_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 
 </pre>
@@ -1180,7 +1180,7 @@ output_name has a value which is a kb_util_dylan.data_obj_name
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_ref has a value which is a kb_util_dylan.data_obj_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 
 
@@ -1242,7 +1242,7 @@ KButil_Merge_FeatureSet_Collection()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_refs has a value which is a kb_util_dylan.data_obj_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1254,7 +1254,7 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_refs has a value which is a kb_util_dylan.data_obj_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1317,7 +1317,7 @@ KButil_Merge_GenomeSets()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_refs has a value which is a kb_util_dylan.data_obj_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1329,7 +1329,7 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_refs has a value which is a kb_util_dylan.data_obj_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1392,7 +1392,7 @@ KButil_Build_GenomeSet()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_refs has a value which is a kb_util_dylan.data_obj_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1404,7 +1404,7 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_refs has a value which is a kb_util_dylan.data_obj_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1467,7 +1467,7 @@ KButil_Build_GenomeSet_from_FeatureSet()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_ref has a value which is a kb_util_dylan.data_obj_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1479,7 +1479,7 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_ref has a value which is a kb_util_dylan.data_obj_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1542,8 +1542,8 @@ KButil_Add_Genomes_to_GenomeSet()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_genome_refs has a value which is a kb_util_dylan.data_obj_name
-input_genomeset_ref has a value which is a kb_util_dylan.data_obj_name
+input_genome_refs has a value which is a kb_util_dylan.data_obj_ref
+input_genomeset_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1555,8 +1555,8 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_genome_refs has a value which is a kb_util_dylan.data_obj_name
-input_genomeset_ref has a value which is a kb_util_dylan.data_obj_name
+input_genome_refs has a value which is a kb_util_dylan.data_obj_ref
+input_genomeset_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -1619,7 +1619,7 @@ KButil_Concat_MSAs()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_refs has a value which is a kb_util_dylan.data_obj_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 blanks_flag has a value which is an int
@@ -1632,7 +1632,7 @@ blanks_flag has a value which is an int
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_refs has a value which is a kb_util_dylan.data_obj_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 blanks_flag has a value which is an int
@@ -1696,7 +1696,7 @@ KButil_Split_Reads()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_ref has a value which is a kb_util_dylan.data_obj_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 split_num has a value which is an int
 desc has a value which is a string
@@ -1709,7 +1709,7 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_ref has a value which is a kb_util_dylan.data_obj_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 split_num has a value which is an int
 desc has a value which is a string
