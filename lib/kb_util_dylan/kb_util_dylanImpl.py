@@ -53,7 +53,7 @@ class kb_util_dylan:
     #########################################
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "23776788b5eaffe76eb408adfd4b5b31848d5fad"
+    GIT_COMMIT_HASH = "942e6b45e0b537cbd6f70e9c8b2b975f6619536c"
     
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -1353,7 +1353,7 @@ class kb_util_dylan:
            of a workspace or object.  This is received from Narrative.),
            parameter "input_refs" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String,
-           parameter "blanks_flag" of Long
+           parameter "blanks_flag" of type "bool"
         :returns: instance of type "KButil_Concat_MSAs_Output" -> structure:
            parameter "report_name" of type "data_obj_name", parameter
            "report_ref" of type "data_obj_ref"
@@ -2117,6 +2117,135 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_Split_Reads return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Random_Subsample_Reads(self, ctx, params):
+        """
+        :param params: instance of type
+           "KButil_Random_Subsample_Reads_Params" -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_ref" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "split_num" of
+           Long, parameter "subsample_fraction" of type "Fractionate_Options"
+           (KButil_Random_Subsample_Reads() ** **  Method for random
+           subsampling of reads library) -> structure: parameter "reads_num"
+           of Long, parameter "reads_perc" of Double, parameter "reads_uniq"
+           of type "bool", parameter "desc" of String
+        :returns: instance of type "KButil_Random_Subsample_Reads_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Random_Subsample_Reads
+        #END KButil_Random_Subsample_Reads
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Random_Subsample_Reads return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Merge_ReadsSet_to_OneLibrary(self, ctx, params):
+        """
+        :param params: instance of type
+           "KButil_Merge_ReadsSet_to_OneLibrary_Params"
+           (KButil_Merge_ReadsSet_to_OneLibrary() ** **  Method for merging a
+           ReadsSet into one library) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_ref" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type
+           "KButil_Merge_ReadsSet_to_OneLibrary_Output" -> structure:
+           parameter "report_name" of type "data_obj_name", parameter
+           "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Merge_ReadsSet_to_OneLibrary
+        #END KButil_Merge_ReadsSet_to_OneLibrary
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Merge_ReadsSet_to_OneLibrary return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Merge_MultipleReadsSets_to_OneReadsSet(self, ctx, params):
+        """
+        :param params: instance of type
+           "KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params"
+           (KButil_Merge_MultipleReadsSets_to_OneReadsSet() ** **  Method for
+           merging multiple ReadsSets into one ReadsSet) -> structure:
+           parameter "workspace_name" of type "workspace_name" (** The
+           workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_ref" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type
+           "KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Merge_MultipleReadsSets_to_OneReadsSet
+        #END KButil_Merge_MultipleReadsSets_to_OneReadsSet
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Merge_MultipleReadsSets_to_OneReadsSet return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Remove_Unpaired_Reads(self, ctx, params):
+        """
+        :param params: instance of type "KButil_Remove_Unpaired_Reads_Params"
+           (KButil_Remove_Unpaired_Reads() ** **  Method for removing
+           unpaired reads from a paired end library) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_ref" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Remove_Unpaired_Reads_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Remove_Unpaired_Reads
+        #END KButil_Remove_Unpaired_Reads
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Remove_Unpaired_Reads return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]

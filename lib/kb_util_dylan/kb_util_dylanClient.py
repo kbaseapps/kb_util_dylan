@@ -186,7 +186,7 @@ class kb_util_dylan(object):
            of a workspace or object.  This is received from Narrative.),
            parameter "input_refs" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String,
-           parameter "blanks_flag" of Long
+           parameter "blanks_flag" of type "bool"
         :returns: instance of type "KButil_Concat_MSAs_Output" -> structure:
            parameter "report_name" of type "data_obj_name", parameter
            "report_ref" of type "data_obj_ref"
@@ -216,6 +216,103 @@ class kb_util_dylan(object):
         """
         return self._client.call_method(
             'kb_util_dylan.KButil_Split_Reads',
+            [params], self._service_ver, context)
+
+    def KButil_Random_Subsample_Reads(self, params, context=None):
+        """
+        :param params: instance of type
+           "KButil_Random_Subsample_Reads_Params" -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_ref" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "split_num" of
+           Long, parameter "subsample_fraction" of type "Fractionate_Options"
+           (KButil_Random_Subsample_Reads() ** **  Method for random
+           subsampling of reads library) -> structure: parameter "reads_num"
+           of Long, parameter "reads_perc" of Double, parameter "reads_uniq"
+           of type "bool", parameter "desc" of String
+        :returns: instance of type "KButil_Random_Subsample_Reads_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        return self._client.call_method(
+            'kb_util_dylan.KButil_Random_Subsample_Reads',
+            [params], self._service_ver, context)
+
+    def KButil_Merge_ReadsSet_to_OneLibrary(self, params, context=None):
+        """
+        :param params: instance of type
+           "KButil_Merge_ReadsSet_to_OneLibrary_Params"
+           (KButil_Merge_ReadsSet_to_OneLibrary() ** **  Method for merging a
+           ReadsSet into one library) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_ref" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type
+           "KButil_Merge_ReadsSet_to_OneLibrary_Output" -> structure:
+           parameter "report_name" of type "data_obj_name", parameter
+           "report_ref" of type "data_obj_ref"
+        """
+        return self._client.call_method(
+            'kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary',
+            [params], self._service_ver, context)
+
+    def KButil_Merge_MultipleReadsSets_to_OneReadsSet(self, params, context=None):
+        """
+        :param params: instance of type
+           "KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params"
+           (KButil_Merge_MultipleReadsSets_to_OneReadsSet() ** **  Method for
+           merging multiple ReadsSets into one ReadsSet) -> structure:
+           parameter "workspace_name" of type "workspace_name" (** The
+           workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_ref" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type
+           "KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        return self._client.call_method(
+            'kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet',
+            [params], self._service_ver, context)
+
+    def KButil_Remove_Unpaired_Reads(self, params, context=None):
+        """
+        :param params: instance of type "KButil_Remove_Unpaired_Reads_Params"
+           (KButil_Remove_Unpaired_Reads() ** **  Method for removing
+           unpaired reads from a paired end library) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_ref" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Remove_Unpaired_Reads_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        return self._client.call_method(
+            'kb_util_dylan.KButil_Remove_Unpaired_Reads',
             [params], self._service_ver, context)
 
     def status(self, context=None):

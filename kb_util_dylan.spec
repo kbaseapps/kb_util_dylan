@@ -19,6 +19,7 @@ module kb_util_dylan {
     typedef string sequence;
     typedef string data_obj_name;
     typedef string data_obj_ref;
+    typedef int    bool;
 
 
     /* KButil_Insert_SingleEndLibrary()
@@ -178,7 +179,7 @@ module kb_util_dylan {
 	data_obj_ref   input_refs;
         data_obj_name  output_name;
 	string         desc;
-	int            blanks_flag;  /* actually bool */
+	bool           blanks_flag;
     } KButil_Concat_MSAs_Params;
 
     typedef structure {
@@ -195,7 +196,7 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_ref   input_ref;  /* Reads Libraries */
+	data_obj_ref   input_ref;    /* ReadsLibrary */
         data_obj_name  output_name;  /* ReadsSet */
 	int            split_num;
 	string         desc;
@@ -207,6 +208,90 @@ module kb_util_dylan {
     } KButil_Split_Reads_Output;
 
     funcdef KButil_Split_Reads (KButil_Split_Reads_Params params)  returns (KButil_Split_Reads_Output) authentication required;
+
+
+    /* KButil_Random_Subsample_Reads()
+    **
+    **  Method for random subsampling of reads library
+    */
+    
+    typedef structure {
+	int            reads_num;
+	float          reads_perc;
+    } Fractionate_Options;
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_ref;    /* ReadsLibrary */
+        data_obj_name  output_name;  /* ReadsSet */
+	int            split_num;
+	Fractionate_Options subsample_fraction;
+	bool           reads_uniq;
+	string         desc;
+    } KButil_Random_Subsample_Reads_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Random_Subsample_Reads_Output;
+
+    funcdef KButil_Random_Subsample_Reads (KButil_Random_Subsample_Reads_Params params)  returns (KButil_Random_Subsample_Reads_Output) authentication required;
+
+
+    /* KButil_Merge_ReadsSet_to_OneLibrary()
+    **
+    **  Method for merging a ReadsSet into one library
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_ref;    /* ReadsSet */
+        data_obj_name  output_name;  /* ReadsLibrary */
+	string         desc;
+    } KButil_Merge_ReadsSet_to_OneLibrary_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Merge_ReadsSet_to_OneLibrary_Output;
+
+    funcdef KButil_Merge_ReadsSet_to_OneLibrary (KButil_Merge_ReadsSet_to_OneLibrary_Params params)  returns (KButil_Merge_ReadsSet_to_OneLibrary_Output) authentication required;
+
+
+    /* KButil_Merge_MultipleReadsSets_to_OneReadsSet()
+    **
+    **  Method for merging multiple ReadsSets into one ReadsSet
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_ref;    /* ReadsSets */
+        data_obj_name  output_name;  /* ReadsSet */
+	string         desc;
+    } KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output;
+
+    funcdef KButil_Merge_MultipleReadsSets_to_OneReadsSet (KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params params)  returns (KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output) authentication required;
+
+
+    /* KButil_Remove_Unpaired_Reads()
+    **
+    **  Method for removing unpaired reads from a paired end library
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_ref;    /* ReadsSet or ReadLibrary */
+        data_obj_name  output_name;  /* ReadsSet or ReadLibrary */
+	string         desc;
+    } KButil_Remove_Unpaired_Reads_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Remove_Unpaired_Reads_Output;
+
+    funcdef KButil_Remove_Unpaired_Reads (KButil_Remove_Unpaired_Reads_Params params)  returns (KButil_Remove_Unpaired_Reads_Output) authentication required;
 
 };
 

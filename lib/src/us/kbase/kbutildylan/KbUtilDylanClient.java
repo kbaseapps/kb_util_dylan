@@ -313,6 +313,74 @@ public class KbUtilDylanClient {
         return res.get(0);
     }
 
+    /**
+     * <p>Original spec-file function name: KButil_Random_Subsample_Reads</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilRandomSubsampleReadsParams KButilRandomSubsampleReadsParams} (original type "KButil_Random_Subsample_Reads_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilRandomSubsampleReadsOutput KButilRandomSubsampleReadsOutput} (original type "KButil_Random_Subsample_Reads_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilRandomSubsampleReadsOutput kButilRandomSubsampleReads(KButilRandomSubsampleReadsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilRandomSubsampleReadsOutput>> retType = new TypeReference<List<KButilRandomSubsampleReadsOutput>>() {};
+        List<KButilRandomSubsampleReadsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Random_Subsample_Reads", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: KButil_Merge_ReadsSet_to_OneLibrary</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilMergeReadsSetToOneLibraryParams KButilMergeReadsSetToOneLibraryParams} (original type "KButil_Merge_ReadsSet_to_OneLibrary_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilMergeReadsSetToOneLibraryOutput KButilMergeReadsSetToOneLibraryOutput} (original type "KButil_Merge_ReadsSet_to_OneLibrary_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilMergeReadsSetToOneLibraryOutput kButilMergeReadsSetToOneLibrary(KButilMergeReadsSetToOneLibraryParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilMergeReadsSetToOneLibraryOutput>> retType = new TypeReference<List<KButilMergeReadsSetToOneLibraryOutput>>() {};
+        List<KButilMergeReadsSetToOneLibraryOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: KButil_Merge_MultipleReadsSets_to_OneReadsSet</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilMergeMultipleReadsSetsToOneReadsSetParams KButilMergeMultipleReadsSetsToOneReadsSetParams} (original type "KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilMergeMultipleReadsSetsToOneReadsSetOutput KButilMergeMultipleReadsSetsToOneReadsSetOutput} (original type "KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilMergeMultipleReadsSetsToOneReadsSetOutput kButilMergeMultipleReadsSetsToOneReadsSet(KButilMergeMultipleReadsSetsToOneReadsSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilMergeMultipleReadsSetsToOneReadsSetOutput>> retType = new TypeReference<List<KButilMergeMultipleReadsSetsToOneReadsSetOutput>>() {};
+        List<KButilMergeMultipleReadsSetsToOneReadsSetOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: KButil_Remove_Unpaired_Reads</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilRemoveUnpairedReadsParams KButilRemoveUnpairedReadsParams} (original type "KButil_Remove_Unpaired_Reads_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilRemoveUnpairedReadsOutput KButilRemoveUnpairedReadsOutput} (original type "KButil_Remove_Unpaired_Reads_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilRemoveUnpairedReadsOutput kButilRemoveUnpairedReads(KButilRemoveUnpairedReadsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilRemoveUnpairedReadsOutput>> retType = new TypeReference<List<KButilRemoveUnpairedReadsOutput>>() {};
+        List<KButilRemoveUnpairedReadsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Remove_Unpaired_Reads", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
     public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};

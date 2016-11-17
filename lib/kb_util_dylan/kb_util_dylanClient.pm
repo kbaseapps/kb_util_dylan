@@ -753,10 +753,11 @@ KButil_Concat_MSAs_Params is a reference to a hash where the following keys are 
 	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
-	blanks_flag has a value which is an int
+	blanks_flag has a value which is a kb_util_dylan.bool
 workspace_name is a string
 data_obj_ref is a string
 data_obj_name is a string
+bool is an int
 KButil_Concat_MSAs_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
@@ -774,10 +775,11 @@ KButil_Concat_MSAs_Params is a reference to a hash where the following keys are 
 	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
-	blanks_flag has a value which is an int
+	blanks_flag has a value which is a kb_util_dylan.bool
 workspace_name is a string
 data_obj_ref is a string
 data_obj_name is a string
+bool is an int
 KButil_Concat_MSAs_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
@@ -945,6 +947,436 @@ KButil_Split_Reads_Output is a reference to a hash where the following keys are 
     }
 }
  
+
+
+=head2 KButil_Random_Subsample_Reads
+
+  $return = $obj->KButil_Random_Subsample_Reads($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a kb_util_dylan.KButil_Random_Subsample_Reads_Params
+$return is a kb_util_dylan.KButil_Random_Subsample_Reads_Output
+KButil_Random_Subsample_Reads_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	split_num has a value which is an int
+	subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
+	reads_uniq has a value which is a kb_util_dylan.bool
+	desc has a value which is a string
+workspace_name is a string
+data_obj_ref is a string
+data_obj_name is a string
+Fractionate_Options is a reference to a hash where the following keys are defined:
+	reads_num has a value which is an int
+	reads_perc has a value which is a float
+bool is an int
+KButil_Random_Subsample_Reads_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a kb_util_dylan.KButil_Random_Subsample_Reads_Params
+$return is a kb_util_dylan.KButil_Random_Subsample_Reads_Output
+KButil_Random_Subsample_Reads_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	split_num has a value which is an int
+	subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
+	reads_uniq has a value which is a kb_util_dylan.bool
+	desc has a value which is a string
+workspace_name is a string
+data_obj_ref is a string
+data_obj_name is a string
+Fractionate_Options is a reference to a hash where the following keys are defined:
+	reads_num has a value which is an int
+	reads_perc has a value which is a float
+bool is an int
+KButil_Random_Subsample_Reads_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub KButil_Random_Subsample_Reads
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function KButil_Random_Subsample_Reads (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to KButil_Random_Subsample_Reads:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'KButil_Random_Subsample_Reads');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "kb_util_dylan.KButil_Random_Subsample_Reads",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'KButil_Random_Subsample_Reads',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Random_Subsample_Reads",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'KButil_Random_Subsample_Reads',
+				       );
+    }
+}
+ 
+
+
+=head2 KButil_Merge_ReadsSet_to_OneLibrary
+
+  $return = $obj->KButil_Merge_ReadsSet_to_OneLibrary($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary_Params
+$return is a kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary_Output
+KButil_Merge_ReadsSet_to_OneLibrary_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+workspace_name is a string
+data_obj_ref is a string
+data_obj_name is a string
+KButil_Merge_ReadsSet_to_OneLibrary_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary_Params
+$return is a kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary_Output
+KButil_Merge_ReadsSet_to_OneLibrary_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+workspace_name is a string
+data_obj_ref is a string
+data_obj_name is a string
+KButil_Merge_ReadsSet_to_OneLibrary_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub KButil_Merge_ReadsSet_to_OneLibrary
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function KButil_Merge_ReadsSet_to_OneLibrary (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to KButil_Merge_ReadsSet_to_OneLibrary:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'KButil_Merge_ReadsSet_to_OneLibrary');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'KButil_Merge_ReadsSet_to_OneLibrary',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Merge_ReadsSet_to_OneLibrary",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'KButil_Merge_ReadsSet_to_OneLibrary',
+				       );
+    }
+}
+ 
+
+
+=head2 KButil_Merge_MultipleReadsSets_to_OneReadsSet
+
+  $return = $obj->KButil_Merge_MultipleReadsSets_to_OneReadsSet($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params
+$return is a kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output
+KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+workspace_name is a string
+data_obj_ref is a string
+data_obj_name is a string
+KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params
+$return is a kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output
+KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+workspace_name is a string
+data_obj_ref is a string
+data_obj_name is a string
+KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub KButil_Merge_MultipleReadsSets_to_OneReadsSet
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function KButil_Merge_MultipleReadsSets_to_OneReadsSet (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to KButil_Merge_MultipleReadsSets_to_OneReadsSet:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'KButil_Merge_MultipleReadsSets_to_OneReadsSet');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'KButil_Merge_MultipleReadsSets_to_OneReadsSet',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Merge_MultipleReadsSets_to_OneReadsSet",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'KButil_Merge_MultipleReadsSets_to_OneReadsSet',
+				       );
+    }
+}
+ 
+
+
+=head2 KButil_Remove_Unpaired_Reads
+
+  $return = $obj->KButil_Remove_Unpaired_Reads($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a kb_util_dylan.KButil_Remove_Unpaired_Reads_Params
+$return is a kb_util_dylan.KButil_Remove_Unpaired_Reads_Output
+KButil_Remove_Unpaired_Reads_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+workspace_name is a string
+data_obj_ref is a string
+data_obj_name is a string
+KButil_Remove_Unpaired_Reads_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a kb_util_dylan.KButil_Remove_Unpaired_Reads_Params
+$return is a kb_util_dylan.KButil_Remove_Unpaired_Reads_Output
+KButil_Remove_Unpaired_Reads_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	output_name has a value which is a kb_util_dylan.data_obj_name
+	desc has a value which is a string
+workspace_name is a string
+data_obj_ref is a string
+data_obj_name is a string
+KButil_Remove_Unpaired_Reads_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub KButil_Remove_Unpaired_Reads
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function KButil_Remove_Unpaired_Reads (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to KButil_Remove_Unpaired_Reads:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'KButil_Remove_Unpaired_Reads');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "kb_util_dylan.KButil_Remove_Unpaired_Reads",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'KButil_Remove_Unpaired_Reads',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Remove_Unpaired_Reads",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'KButil_Remove_Unpaired_Reads',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -988,16 +1420,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'KButil_Split_Reads',
+                method_name => 'KButil_Remove_Unpaired_Reads',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method KButil_Split_Reads",
+            error => "Error invoking method KButil_Remove_Unpaired_Reads",
             status_line => $self->{client}->status_line,
-            method_name => 'KButil_Split_Reads',
+            method_name => 'KButil_Remove_Unpaired_Reads',
         );
     }
 }
@@ -1142,6 +1574,32 @@ a string
 =begin text
 
 a string
+
+=end text
+
+=back
+
+
+
+=head2 bool
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+an int
+</pre>
+
+=end html
+
+=begin text
+
+an int
 
 =end text
 
@@ -1622,7 +2080,7 @@ workspace_name has a value which is a kb_util_dylan.workspace_name
 input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
-blanks_flag has a value which is an int
+blanks_flag has a value which is a kb_util_dylan.bool
 
 </pre>
 
@@ -1635,7 +2093,7 @@ workspace_name has a value which is a kb_util_dylan.workspace_name
 input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
-blanks_flag has a value which is an int
+blanks_flag has a value which is a kb_util_dylan.bool
 
 
 =end text
@@ -1722,6 +2180,344 @@ desc has a value which is a string
 
 
 =head2 KButil_Split_Reads_Output
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=back
+
+
+
+=head2 Fractionate_Options
+
+=over 4
+
+
+
+=item Description
+
+KButil_Random_Subsample_Reads()
+**
+**  Method for random subsampling of reads library
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+reads_num has a value which is an int
+reads_perc has a value which is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+reads_num has a value which is an int
+reads_perc has a value which is a float
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Random_Subsample_Reads_Params
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
+output_name has a value which is a kb_util_dylan.data_obj_name
+split_num has a value which is an int
+subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
+reads_uniq has a value which is a kb_util_dylan.bool
+desc has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
+output_name has a value which is a kb_util_dylan.data_obj_name
+split_num has a value which is an int
+subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
+reads_uniq has a value which is a kb_util_dylan.bool
+desc has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Random_Subsample_Reads_Output
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Merge_ReadsSet_to_OneLibrary_Params
+
+=over 4
+
+
+
+=item Description
+
+KButil_Merge_ReadsSet_to_OneLibrary()
+**
+**  Method for merging a ReadsSet into one library
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Merge_ReadsSet_to_OneLibrary_Output
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params
+
+=over 4
+
+
+
+=item Description
+
+KButil_Merge_MultipleReadsSets_to_OneReadsSet()
+**
+**  Method for merging multiple ReadsSets into one ReadsSet
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Remove_Unpaired_Reads_Params
+
+=over 4
+
+
+
+=item Description
+
+KButil_Remove_Unpaired_Reads()
+**
+**  Method for removing unpaired reads from a paired end library
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_ref has a value which is a kb_util_dylan.data_obj_ref
+output_name has a value which is a kb_util_dylan.data_obj_name
+desc has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Remove_Unpaired_Reads_Output
 
 =over 4
 
