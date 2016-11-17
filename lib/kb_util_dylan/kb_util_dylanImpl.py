@@ -2111,7 +2111,7 @@ class kb_util_dylan:
         report = KBaseReport(self.callbackURL, token=ctx['token'], service_ver=SERVICE_VER)
         report_info = report.create({'report':reportObj, 'workspace_name':params['workspace_name']})
 
-        output = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
+        returnVal = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
         #END KButil_Split_Reads
 
         # At some point might do deeper type checking...
