@@ -227,6 +227,7 @@ module kb_util_dylan {
 	Fractionate_Options subsample_fraction;
 	bool           reads_uniq;
 	string         desc;
+	int            seed;
     } KButil_Random_Subsample_Reads_Params;
 
     typedef structure {

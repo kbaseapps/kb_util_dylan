@@ -970,6 +970,7 @@ KButil_Random_Subsample_Reads_Params is a reference to a hash where the followin
 	subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
 	reads_uniq has a value which is a kb_util_dylan.bool
 	desc has a value which is a string
+	seed has a value which is an int
 workspace_name is a string
 data_obj_ref is a string
 data_obj_name is a string
@@ -997,6 +998,7 @@ KButil_Random_Subsample_Reads_Params is a reference to a hash where the followin
 	subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
 	reads_uniq has a value which is a kb_util_dylan.bool
 	desc has a value which is a string
+	seed has a value which is an int
 workspace_name is a string
 data_obj_ref is a string
 data_obj_name is a string
@@ -2269,6 +2271,7 @@ split_num has a value which is an int
 subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
 reads_uniq has a value which is a kb_util_dylan.bool
 desc has a value which is a string
+seed has a value which is an int
 
 </pre>
 
@@ -2284,6 +2287,7 @@ split_num has a value which is an int
 subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
 reads_uniq has a value which is a kb_util_dylan.bool
 desc has a value which is a string
+seed has a value which is an int
 
 
 =end text
