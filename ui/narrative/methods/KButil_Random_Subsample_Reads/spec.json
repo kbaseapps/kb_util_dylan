@@ -81,13 +81,24 @@
         {
             "id": "reads_uniq",
             "optional": false,
-            "advanced": false,
+            "advanced": true,
             "allow_multiple": false,
             "default_values": [ "1" ],
             "field_type": "checkbox",
 	    "checkbox_options": {
                 "checked_value": "1",
                 "unchecked_value": "0"
+            }
+        },
+        {
+            "id": "seed",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+		"validate_as": "int"
             }
         }
     ],

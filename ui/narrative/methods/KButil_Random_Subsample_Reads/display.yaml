@@ -64,6 +64,11 @@ parameters :
             Unique reads?
         short-hint : |
             Allow repeat reads or must they all be unique?
+    seed:
+        ui-name : |
+            Seed (optional)
+        short-hint : |
+            Specify seed for Randomizer if you want repeatable results
 
 parameter-groups :
     subsample_fraction :
