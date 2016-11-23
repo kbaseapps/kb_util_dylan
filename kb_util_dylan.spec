@@ -225,7 +225,7 @@ module kb_util_dylan {
         data_obj_name  output_name;  /* ReadsSet */
 	int            split_num;
 	Fractionate_Options subsample_fraction;
-	bool           reads_uniq;
+	/*bool           reads_uniq;*/  /* sampling without replacement */
 	string         desc;
 	int            seed;
     } KButil_Random_Subsample_Reads_Params;

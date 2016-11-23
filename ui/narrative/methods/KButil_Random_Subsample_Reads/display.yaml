@@ -56,14 +56,9 @@ parameters :
             Number of reads to put into each library sample
     reads_perc:
         ui-name : |
-            or Perc reads
+            or Perc reads (1-100)
         short-hint : |
             Percentage of original reads library to put into each sample library
-    reads_uniq:
-        ui-name : |
-            Unique reads?
-        short-hint : |
-            Allow repeat reads or must they all be unique?
     seed:
         ui-name : |
             Seed (optional)
