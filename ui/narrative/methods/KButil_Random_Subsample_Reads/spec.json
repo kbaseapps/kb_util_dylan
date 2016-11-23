@@ -50,7 +50,7 @@
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
-            "default_values": [ "10" ],
+            "default_values": [ "1" ],
             "field_type": "text",
             "text_options": {
 		"validate_as": "int"
@@ -94,7 +94,7 @@
     "parameter-groups": [
      	{
 	    "id": "subsample_fraction",
-            "parameters": ["reads_num", "reads_perc"],
+            "parameters": ["split_num", "reads_num", "reads_perc"],
             "optional": false,
             "allow_multiple": false,
             "with_border": true
@@ -123,10 +123,6 @@
                 {
                     "input_parameter": "output_name",
                     "target_property": "output_name"
-                },
-                {
-                    "input_parameter": "split_num",
-                    "target_property": "split_num"
                 },
                 {
                     "input_parameter": "subsample_fraction",

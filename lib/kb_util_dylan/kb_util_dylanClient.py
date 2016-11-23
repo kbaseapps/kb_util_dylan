@@ -230,12 +230,12 @@ class kb_util_dylan(object):
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
            parameter "input_ref" of type "data_obj_ref", parameter
-           "output_name" of type "data_obj_name", parameter "split_num" of
-           Long, parameter "subsample_fraction" of type "Fractionate_Options"
+           "output_name" of type "data_obj_name", parameter
+           "subsample_fraction" of type "Fractionate_Options"
            (KButil_Random_Subsample_Reads() ** **  Method for random
-           subsampling of reads library) -> structure: parameter "reads_num"
-           of Long, parameter "reads_perc" of Double, parameter "desc" of
-           String, parameter "seed" of Long
+           subsampling of reads library) -> structure: parameter "split_num"
+           of Long, parameter "reads_num" of Long, parameter "reads_perc" of
+           Double, parameter "desc" of String, parameter "seed" of Long
         :returns: instance of type "KButil_Random_Subsample_Reads_Output" ->
            structure: parameter "report_name" of type "data_obj_name",
            parameter "report_ref" of type "data_obj_ref"

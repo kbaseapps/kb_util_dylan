@@ -216,6 +216,7 @@ module kb_util_dylan {
     */
     
     typedef structure {
+	int            split_num;
 	int            reads_num;
 	float          reads_perc;
     } Fractionate_Options;
@@ -223,7 +224,6 @@ module kb_util_dylan {
         workspace_name workspace_name;
 	data_obj_ref   input_ref;    /* ReadsLibrary */
         data_obj_name  output_name;  /* ReadsSet */
-	int            split_num;
 	Fractionate_Options subsample_fraction;
 	/*bool           reads_uniq;*/  /* sampling without replacement */
 	string         desc;

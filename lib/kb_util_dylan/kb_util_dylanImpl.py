@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "defc245a2dc02da47524f83bc4e0dd954e6a7f41"
+    GIT_COMMIT_HASH = "5da06e51b49fef3a1072727381a05fd69efdd606"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -2135,12 +2135,12 @@ class kb_util_dylan:
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
            parameter "input_ref" of type "data_obj_ref", parameter
-           "output_name" of type "data_obj_name", parameter "split_num" of
-           Long, parameter "subsample_fraction" of type "Fractionate_Options"
+           "output_name" of type "data_obj_name", parameter
+           "subsample_fraction" of type "Fractionate_Options"
            (KButil_Random_Subsample_Reads() ** **  Method for random
-           subsampling of reads library) -> structure: parameter "reads_num"
-           of Long, parameter "reads_perc" of Double, parameter "desc" of
-           String, parameter "seed" of Long
+           subsampling of reads library) -> structure: parameter "split_num"
+           of Long, parameter "reads_num" of Long, parameter "reads_perc" of
+           Double, parameter "desc" of String, parameter "seed" of Long
         :returns: instance of type "KButil_Random_Subsample_Reads_Output" ->
            structure: parameter "report_name" of type "data_obj_name",
            parameter "report_ref" of type "data_obj_ref"
@@ -2176,19 +2176,19 @@ class kb_util_dylan:
             if required_param not in params or params[required_param] == None:
                 raise ValueError ("Must define required param: '"+required_param+"'")
             
-        # and param defaults
-        defaults = { 'split_num': 10
-                   }
-        for arg in defaults.keys():
-            if arg not in params or params[arg] == None or params[arg] == '':
-                params[arg] = defaults[arg]
+#        # and param defaults
+#        defaults = { 'split_num': 10
+#                   }
+#        for arg in defaults.keys():
+#            if arg not in params or params[arg] == None or params[arg] == '':
+#                params[arg] = defaults[arg]
 
         if 'subsample_fraction' not in params or params['subsample_fraction'] == None:
             raise ValueError ("Missing subsample_fraction params")
-        if ('reads_num' not in params['subsample_fraction'] or params['subsample_fraction']['reads_num'] == None or params['subsample_fraction']['reads_num'] <= 0) \
-                and ('reads_perc' not in params['subsample_fraction'] or params['subsample_fraction']['reads_perc'] == None or params['subsample_fraction']['reads_perc'] <= 0):
-            raise ValueError ("Missing subsample_fraction params")
+        if 'split_num' not in params['subsample_fraction'] or params['subsample_fraction']['split_num'] == None or params['subsample_fraction']['split_num'] < 0:
+            raise ValueError ("Missing split_num")
 
+        # use split_num to create reads_perc if neither reads_num or reads_perc defined
         use_reads_num  = False
         use_reads_perc = False
         if ('reads_num' in params['subsample_fraction'] and params['subsample_fraction']['reads_num'] != None and params['subsample_fraction']['reads_num'] > 0):
@@ -2198,6 +2198,13 @@ class kb_util_dylan:
         elif ('reads_perc' in params['subsample_fraction'] and params['subsample_fraction']['reads_perc'] != None and params['subsample_fraction']['reads_perc'] > 0 and params['subsample_fraction']['reads_perc'] <= 100):
             self.log (console, "Ignoring reads_num and just using reads_perc: "+str(params['subsample_fraction']['reads_perc']))
             use_reads_perc = True
+
+        elif ('reads_num' not in params['subsample_fraction'] or params['subsample_fraction']['reads_num'] == None or params['subsample_fraction']['reads_num'] <= 0) \
+                and ('reads_perc' not in params['subsample_fraction'] or params['subsample_fraction']['reads_perc'] == None or params['subsample_fraction']['reads_perc'] <= 0):
+
+            params['subsample_fraction']['reads_perc'] = int(100.0 * 1.0/params['subsample_fraction']['split_num'])
+            use_reads_perc = True
+
         else:
             raise ValueError ("Badly configured subsample_fraction params")
             
@@ -2309,12 +2316,12 @@ class kb_util_dylan:
             # Determine sublibrary sizes
             if use_reads_num:
                 reads_per_lib = params['subsample_fraction']['reads_num']
-                if reads_per_lib > total_paired_reads // params['split_num']:
-                    raise ValueError ("must specify reads_num <= total_paired_reads_cnt / split_num.  You have reads_num:"+str(params['subsample_fraction']['reads_num'])+" > total_paired_reads_cnt:"+str(total_paired_reads)+" / split_num:"+str(params['split_num'])+".  Instead try reads_num <= "+str(total_paired_reads // params['split_num']))
+                if reads_per_lib > total_paired_reads // params['subsample_fraction']['split_num']:
+                    raise ValueError ("must specify reads_num <= total_paired_reads_cnt / split_num.  You have reads_num:"+str(params['subsample_fraction']['reads_num'])+" > total_paired_reads_cnt:"+str(total_paired_reads)+" / split_num:"+str(params['subsample_fraction']['split_num'])+".  Instead try reads_num <= "+str(total_paired_reads // params['subsample_fraction']['split_num']))
             elif use_reads_perc:
                 reads_per_lib = int ((params['subsample_fraction']['reads_perc']/100.0) * total_paired_reads)
-                if reads_per_lib > total_paired_reads // params['split_num']:
-                    raise ValueError ("must specify reads_perc <= 1 / split_num.  You have reads_perc:"+str(params['subsample_fraction']['reads_perc'])+" > 1 / split_num:"+str(params['split_num'])+".  Instead try reads_perc <= "+ str(int(100 * 1/params['split_num'])))
+                if reads_per_lib > total_paired_reads // params['subsample_fraction']['split_num']:
+                    raise ValueError ("must specify reads_perc <= 1 / split_num.  You have reads_perc:"+str(params['subsample_fraction']['reads_perc'])+" > 1 / split_num:"+str(params['subsample_fraction']['split_num'])+".  Instead try reads_perc <= "+ str(int(100 * 1/params['subsample_fraction']['split_num'])))
             else:
                 raise ValueError ("error in logic reads_num vs. reads_perc logic")
 
@@ -2322,15 +2329,15 @@ class kb_util_dylan:
             # Determine random membership in each sublibrary
             self.log (console, "GETTING RANDOM SUBSAMPLES")  # DEBUG
 
-            for i,read_id in enumerate(random.sample (paired_ids_list, reads_per_lib * params['split_num'])):
-                lib_i = i % params['split_num']
+            for i,read_id in enumerate(random.sample (paired_ids_list, reads_per_lib * params['subsample_fraction']['split_num'])):
+                lib_i = i % params['subsample_fraction']['split_num']
                 paired_lib_i[read_id] = lib_i
 
 
             # split fwd paired
             self.log (console, "WRITING FWD SPLIT PAIRED")  # DEBUG
             paired_output_reads_file_handles = []
-            for lib_i in range(params['split_num']):
+            for lib_i in range(params['subsample_fraction']['split_num']):
                 paired_output_reads_file_handles.append(open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
                 total_paired_reads_by_set.append(0)
 
@@ -2387,7 +2394,7 @@ class kb_util_dylan:
             # split rev paired
             self.log (console, "WRITING REV SPLIT PAIRED")  # DEBUG
             paired_output_reads_file_handles = []
-            for lib_i in range(params['split_num']):
+            for lib_i in range(params['subsample_fraction']['split_num']):
                 paired_output_reads_file_handles.append(open (output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
 
             rec_buf = []
@@ -2445,7 +2452,7 @@ class kb_util_dylan:
             report += "TOTAL UNPAIRED FWD READS (discarded): "+str(total_unpaired_fwd_reads)+"\n"
             report += "TOTAL UNPAIRED REV READS (discarded): "+str(total_unpaired_rev_reads)+"\n"
             report += "\n"
-            for lib_i in range(params['split_num']):
+            for lib_i in range(params['subsample_fraction']['split_num']):
                 report += "PAIRED READS IN SET "+str(lib_i)+": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
 
@@ -2453,7 +2460,7 @@ class kb_util_dylan:
             #
             self.log (console, "UPLOAD PAIRED READS LIBS")  # DEBUG
             paired_obj_refs = []
-            for lib_i in range(params['split_num']):
+            for lib_i in range(params['subsample_fraction']['split_num']):
                 output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 output_rev_paired_file_path = output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 if not os.path.isfile (output_fwd_paired_file_path) \
@@ -2509,12 +2516,12 @@ class kb_util_dylan:
             # Determine sublibrary sizes
             if use_reads_num:
                 reads_per_lib = params['subsample_fraction']['reads_num']
-                if reads_per_lib > total_paired_reads // params['split_num']:
-                    raise ValueError ("must specify reads_num <= total_reads_cnt / split_num.  You have reads_num:"+str(params['subsample_fraction']['reads_num'])+" > total_reads_cnt:"+str(total_paired_reads)+" / split_num:"+str(params['split_num'])+".  Instead try reads_num <= "+str(total_paired_reads // params['split_num']))
+                if reads_per_lib > total_paired_reads // params['subsample_fraction']['split_num']:
+                    raise ValueError ("must specify reads_num <= total_reads_cnt / split_num.  You have reads_num:"+str(params['subsample_fraction']['reads_num'])+" > total_reads_cnt:"+str(total_paired_reads)+" / split_num:"+str(params['subsample_fraction']['split_num'])+".  Instead try reads_num <= "+str(total_paired_reads // params['subsample_fraction']['split_num']))
             elif use_reads_perc:
                 reads_per_lib = int ((params['subsample_fraction']['reads_perc']/100.0) * total_paired_reads)
-                if reads_per_lib > total_paired_reads // params['split_num']:
-                    raise ValueError ("must specify reads_perc <= 1 / split_num.  You have reads_perc:"+str(params['subsample_fraction']['reads_perc'])+" > 1 / split_num:"+str(params['split_num'])+".  Instead try reads_perc <= "+ str(int(100 * 1/params['split_num'])))
+                if reads_per_lib > total_paired_reads // params['subsample_fraction']['split_num']:
+                    raise ValueError ("must specify reads_perc <= 1 / split_num.  You have reads_perc:"+str(params['subsample_fraction']['reads_perc'])+" > 1 / split_num:"+str(params['subsample_fraction']['split_num'])+".  Instead try reads_perc <= "+ str(int(100 * 1/params['subsample_fraction']['split_num'])))
             else:
                 raise ValueError ("error in logic reads_num vs. reads_perc logic")
 
@@ -2522,8 +2529,8 @@ class kb_util_dylan:
             # Determine random membership in each sublibrary
             self.log (console, "GETTING RANDOM SUBSAMPLES")  # DEBUG
 
-            for i,read_id in enumerate(random.sample (paired_ids_list, reads_per_lib * params['split_num'])):
-                lib_i = i % params['split_num']
+            for i,read_id in enumerate(random.sample (paired_ids_list, reads_per_lib * params['subsample_fraction']['split_num'])):
+                lib_i = i % params['subsample_fraction']['split_num']
                 paired_lib_i[read_id] = lib_i
 
 
@@ -2536,7 +2543,7 @@ class kb_util_dylan:
             # split reads
             self.log (console, "WRITING SPLIT SINGLE END READS")  # DEBUG
             paired_output_reads_file_handles = []
-            for lib_i in range(params['split_num']):
+            for lib_i in range(params['subsample_fraction']['split_num']):
                 paired_output_reads_file_handles.append(open (output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq", 'w', paired_buf_size))
                 total_paired_reads_by_set.append(0)
 
@@ -2583,7 +2590,7 @@ class kb_util_dylan:
 
             # store report
             #
-            for lib_i in range(params['split_num']):
+            for lib_i in range(params['subsample_fraction']['split_num']):
                 report += "PAIRED READS IN SET "+str(lib_i)+": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
 
@@ -2591,7 +2598,7 @@ class kb_util_dylan:
             #
             self.log (console, "UPLOADING SPLIT SINGLE END READS")  # DEBUG
             paired_obj_refs = []
-            for lib_i in range(params['split_num']):
+            for lib_i in range(params['subsample_fraction']['split_num']):
                 output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 if not os.path.isfile (output_fwd_paired_file_path) \
                         or os.path.getsize (output_fwd_paired_file_path) == 0:
