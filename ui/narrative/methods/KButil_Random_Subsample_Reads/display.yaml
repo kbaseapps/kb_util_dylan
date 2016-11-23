@@ -70,7 +70,7 @@ parameter-groups :
         ui-name: |
             Subsample Fraction
         short-hint : |
-            Either provide number of reads per sublibrary or percentage of original library
+            Either provide number of reads per sublibrary or percentage of original library (or just number of split libraries to capture all reads)
 
 description : |
     <p>This method allows the user to split a Reads Library into a randomly subsampled Reads Libraries, organized into a ReadsSet.</p>
