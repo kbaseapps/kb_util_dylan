@@ -968,7 +968,6 @@ KButil_Random_Subsample_Reads_Params is a reference to a hash where the followin
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	split_num has a value which is an int
 	subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
-	reads_uniq has a value which is a kb_util_dylan.bool
 	desc has a value which is a string
 	seed has a value which is an int
 workspace_name is a string
@@ -977,7 +976,6 @@ data_obj_name is a string
 Fractionate_Options is a reference to a hash where the following keys are defined:
 	reads_num has a value which is an int
 	reads_perc has a value which is a float
-bool is an int
 KButil_Random_Subsample_Reads_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
@@ -996,7 +994,6 @@ KButil_Random_Subsample_Reads_Params is a reference to a hash where the followin
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	split_num has a value which is an int
 	subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
-	reads_uniq has a value which is a kb_util_dylan.bool
 	desc has a value which is a string
 	seed has a value which is an int
 workspace_name is a string
@@ -1005,7 +1002,6 @@ data_obj_name is a string
 Fractionate_Options is a reference to a hash where the following keys are defined:
 	reads_num has a value which is an int
 	reads_perc has a value which is a float
-bool is an int
 KButil_Random_Subsample_Reads_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
@@ -2269,7 +2265,6 @@ input_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 split_num has a value which is an int
 subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
-reads_uniq has a value which is a kb_util_dylan.bool
 desc has a value which is a string
 seed has a value which is an int
 
@@ -2285,7 +2280,6 @@ input_ref has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 split_num has a value which is an int
 subsample_fraction has a value which is a kb_util_dylan.Fractionate_Options
-reads_uniq has a value which is a kb_util_dylan.bool
 desc has a value which is a string
 seed has a value which is an int
 

@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "38d8fd8a25cc598fedaf28d1dc5c5e683476e21c"
+    GIT_COMMIT_HASH = "defc245a2dc02da47524f83bc4e0dd954e6a7f41"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -2139,9 +2139,8 @@ class kb_util_dylan:
            Long, parameter "subsample_fraction" of type "Fractionate_Options"
            (KButil_Random_Subsample_Reads() ** **  Method for random
            subsampling of reads library) -> structure: parameter "reads_num"
-           of Long, parameter "reads_perc" of Double, parameter "reads_uniq"
-           of type "bool", parameter "desc" of String, parameter "seed" of
-           Long
+           of Long, parameter "reads_perc" of Double, parameter "desc" of
+           String, parameter "seed" of Long
         :returns: instance of type "KButil_Random_Subsample_Reads_Output" ->
            structure: parameter "report_name" of type "data_obj_name",
            parameter "report_ref" of type "data_obj_ref"

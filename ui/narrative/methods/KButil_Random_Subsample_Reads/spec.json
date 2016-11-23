@@ -131,10 +131,6 @@
                 {
                     "input_parameter": "subsample_fraction",
                     "target_property": "subsample_fraction"
-                },
-                {
-                    "input_parameter": "reads_uniq",
-                    "target_property": "reads_uniq"
                 }
             ],
             "output_mapping": [
