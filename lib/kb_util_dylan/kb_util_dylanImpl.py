@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "ccfa40620860b2836573967588db6846df84e340"
+    GIT_COMMIT_HASH = "8aafda6aa5d891e3235838c83a1947e953438824"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -1674,9 +1674,9 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Split_Reads
         console = []
+        report = ''
         self.log(console, 'Running KButil_Split_Reads() with parameters: ')
         self.log(console, "\n"+pformat(params))
-        report = ''
         
         token = ctx['token']
         wsClient = workspaceService(self.workspaceURL, token=token)
@@ -2553,6 +2553,7 @@ class kb_util_dylan:
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
                 for line in input_reads_file_handle:
                     if line.startswith('@'):
+                        total_paired_reads += 1
                         if last_read_id != None:
                             try:
                                 lib_i = paired_lib_i[last_read_id]
@@ -2589,6 +2590,7 @@ class kb_util_dylan:
 
             # store report
             #
+            report += "TOTAL READS: "+str(total_paired_reads)+"\n"
             for lib_i in range(params['subsample_fraction']['split_num']):
                 report += "PAIRED READS IN SET "+str(lib_i)+": "+str(total_paired_reads_by_set[lib_i])+"\n"
 
@@ -2688,6 +2690,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Merge_ReadsSet_to_OneLibrary
         console = []
+        report = ''
         self.log(console, 'Running KButil_Merge_ReadsSet_to_OneLibrary with parameters: ')
         self.log(console, "\n"+pformat(params))
 
@@ -2699,6 +2702,15 @@ class kb_util_dylan:
 
         SERVICE_VER = 'dev'  # DEBUG
 
+        # param checks
+        required_params = ['workspace_name',
+                           'input_ref', 
+                           'output_name'
+                           ]
+        for required_param in required_params:
+            if required_param not in params or params[required_param] == None:
+                raise ValueError ("Must define required param: '"+required_param+"'")
+            
         # load provenance
         provenance = [{}]
         if 'provenance' in ctx:
@@ -2852,18 +2864,21 @@ class kb_util_dylan:
 
         if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
             reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
-                                                                 'name': output_obj_name,
-                                                                 'sequencing_tech': sequencing_tech,
-                                                                 'fwd_file': combined_input_fwd_path,
-                                                                 'rev_file': combined_input_rev_path
-                                                                 })['obj_ref'])
+                                                                  'name': output_obj_name,
+                                                                  'sequencing_tech': sequencing_tech,
+                                                                  'fwd_file': combined_input_fwd_path,
+                                                                  'rev_file': combined_input_rev_path
+                                                                  })['obj_ref']
         else:
             reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
-                                                                 'name': output_obj_name,
-                                                                 'sequencing_tech': sequencing_tech,
-                                                                 'fwd_file': combined_input_fwd_path,
-                                                                 })['obj_ref'])
+                                                                  'name': output_obj_name,
+                                                                  'sequencing_tech': sequencing_tech,
+                                                                  'fwd_file': combined_input_fwd_path,
+                                                                  })['obj_ref']
+            
 
+        # build report message
+        report += "NUM READS LIBRARIES COMBINED INTO ONE READS LIBRARY: "+len (readsSet_ref_list)+"\n"
 
         # build report
         #
@@ -2904,7 +2919,7 @@ class kb_util_dylan:
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_ref" of type "data_obj_ref", parameter
+           parameter "input_refs" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type
            "KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output" ->
@@ -2914,6 +2929,141 @@ class kb_util_dylan:
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Merge_MultipleReadsSets_to_OneReadsSet
+        console = []
+        report = ''
+        self.log(console, 'Running KButil_Merge_ReadsSet_to_OneLibrary with parameters: ')
+        self.log(console, "\n"+pformat(params))
+
+        token = ctx['token']
+        wsClient = workspaceService(self.workspaceURL, token=token)
+        headers = {'Authorization': 'OAuth '+token}
+        env = os.environ.copy()
+        env['KB_AUTH_TOKEN'] = token
+
+        SERVICE_VER = 'dev'  # DEBUG
+
+        # param checks
+        required_params = ['workspace_name',
+                           'input_refs', 
+                           'output_name'
+                           ]
+        for required_param in required_params:
+            if required_param not in params or params[required_param] == None:
+                raise ValueError ("Must define required param: '"+required_param+"'")
+            
+        # load provenance
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects']=params['input_refs']
+
+
+        # init output object fields and SetAPI
+        combined_readsSet_ref_list   = []
+        combined_readsSet_name_list  = []
+        combined_readsSet_label_list = []
+        try:
+            setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
+        except Exception as e:
+            raise ValueError('ERROR: unable to instantiate SetAPI' + str(e))
+
+
+        # Iterate through list of ReadsSets
+        #
+        reads_lib_type = None
+        reads_lib_ref_seen = dict()
+        accepted_libs = []
+        repeat_libs = []
+        for set_i,this_readsSet_ref in enumerate(params['input_refs']):
+            accepted_libs.append([])
+            repeat_libs.append([])
+            try:
+                # object_info tuple
+                [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+                
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':this_readsSet_ref}]})[0]
+                input_reads_obj_type = input_reads_obj_info[TYPE_I]
+                input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+
+            except Exception as e:
+                raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
+
+            acceptable_types = ["KBaseSets.ReadsSet"]
+            if input_reads_obj_type not in acceptable_types:
+                raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+
+            # iterate through read libraries in read set and add new ones to combined ReadsSet
+            try:
+                input_readsSet_obj = setAPI_Client.get_reads_set_v1 ({'ref':this_readsSet_ref,'include_item_info':1})
+            except Exception as e:
+                raise ValueError('SetAPI FAILURE: Unable to get read library set object from workspace: (' + this_readsSet_ref+")\n" + str(e))
+
+            NAME_I = 1
+            TYPE_I = 2
+            for readsLibrary_obj in input_readsSet_obj['data']['items']:
+                this_readsLib_ref    = readsLibrary_obj['ref']
+                this_readsLib_label  = readsLibrary_obj['label']
+                this_readsLib_name   = readsLibrary_obj['info'][NAME_I]
+                this_readsLib_type   = readsLibrary_obj['info'][TYPE_I]
+                this_readsLib_type   = re.sub ('-[0-9]+\.[0-9]+$', "", this_readsLib_type)  # remove trailing version
+                if reads_lib_type == None:
+                    reads_lib_type = this_readsLib_type
+                elif this_readsLib_type != reads_lib_type:
+                    raise ValueError ("inconsistent reads library types in ReadsSets.  Must all be PairedEndLibrary or SingleEndLibrary to merge")
+                
+                if this_readsLib_ref not in reads_lib_ref_seen:
+                    reads_lib_ref_seen[this_readsLib_ref] = True
+                    combined_readsSet_ref_list.append(this_readsLib_ref)
+                    combined_readsSet_label_list.append(this_readsLib_label)
+                    combined_readsSet_name_list.append(this_readsLib_name)
+                    accepted_libs[set_i].append(this_readsLib_ref)
+                else:
+                    repeat_libs[set_i].append(this_readsLib_ref)
+
+
+        # Save Merged ReadsSet
+        #
+        items = []
+        for lib_i,lib_ref in enumerate(combined_readsSet_refs):
+            items.append({'ref': lib_ref,
+                          'label': combined_readsSet_labels[lib_i]
+                          #'data_attachment': ,
+                          #'info':
+                              })
+        output_readsSet_obj = { 'description': params['desc'],
+                                'items': items
+                              }
+        output_readsSet_name = params['output_name']
+        try:
+            output_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['workspace_name'],
+                                                                    'output_object_name': output_readsSet_name,
+                                                                    'data': output_readsSet_obj
+                                                                    })['set_ref']
+        except Exception as e:
+            raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + param['workspace_name']+")\n" + str(e))
+
+
+        # build report
+        #
+        self.log (console, "SAVING REPORT")  # DEBUG        
+        report += "TOTAL READS LIBRARIES COMBINED INTO ONE READS SET: "+len(combined_readsSet_refs)+"\n"
+        for set_i,this_readsLib_ref in enumerate(params['input_refs']):
+            report += "READS LIBRARIES ACCEPTED FROM ReadsSet "+str(set_i)+": "+str(len(accepted_libs[set_i]))+"\n"
+            report += "READS LIBRARIES REPEAT FROM ReadsSet "+str(set_i)+":   "+str(len(repeat_libs[set_i]))+"\n"
+        reportObj = {'objects_created':[], 
+                     'text_message': report}
+
+        reportObj['objects_created'].append({'ref':output_readsSet_ref,
+                                             'description':params['desc']})
+
+
+        # save report object
+        #
+        report = KBaseReport(self.callbackURL, token=ctx['token'], service_ver=SERVICE_VER)
+        report_info = report.create({'report':reportObj, 'workspace_name':params['workspace_name']})
+
+        returnVal = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
         #END KButil_Merge_MultipleReadsSets_to_OneReadsSet
 
         # At some point might do deeper type checking...
@@ -2944,6 +3094,8 @@ class kb_util_dylan:
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Remove_Unpaired_Reads
+
+
         #END KButil_Remove_Unpaired_Reads
 
         # At some point might do deeper type checking...

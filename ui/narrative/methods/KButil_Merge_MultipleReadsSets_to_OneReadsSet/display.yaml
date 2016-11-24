@@ -34,7 +34,7 @@ parameters :
             Describe Purpose or Contents of Output ReadsSet
         placeholder: |
             Enter Description
-    input_ref:
+    input_refs:
         ui-name : |
             Input reads sets
         short-hint : |

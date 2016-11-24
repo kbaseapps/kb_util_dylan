@@ -282,7 +282,7 @@ class kb_util_dylan(object):
            "id" is a numerical identifier of the workspace or object, and
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
-           parameter "input_ref" of type "data_obj_ref", parameter
+           parameter "input_refs" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
         :returns: instance of type
            "KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output" ->

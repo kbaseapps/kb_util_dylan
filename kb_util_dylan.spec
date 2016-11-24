@@ -263,8 +263,8 @@ module kb_util_dylan {
     */
     typedef structure {
         workspace_name workspace_name;
-	data_obj_ref   input_ref;    /* ReadsSets */
-        data_obj_name  output_name;  /* ReadsSet */
+	data_obj_ref   input_refs;    /* ReadsSets */
+        data_obj_name  output_name;   /* ReadsSet */
 	string         desc;
     } KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params;
 

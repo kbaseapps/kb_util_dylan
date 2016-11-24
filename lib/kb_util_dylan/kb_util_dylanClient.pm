@@ -1184,7 +1184,7 @@ $params is a kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params
 $return is a kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output
 KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
@@ -1204,7 +1204,7 @@ $params is a kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params
 $return is a kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output
 KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
-	input_ref has a value which is a kb_util_dylan.data_obj_ref
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
 	desc has a value which is a string
 workspace_name is a string
@@ -2417,7 +2417,7 @@ KButil_Merge_MultipleReadsSets_to_OneReadsSet()
 <pre>
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_ref has a value which is a kb_util_dylan.data_obj_ref
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
@@ -2429,7 +2429,7 @@ desc has a value which is a string
 
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
-input_ref has a value which is a kb_util_dylan.data_obj_ref
+input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
 desc has a value which is a string
 
