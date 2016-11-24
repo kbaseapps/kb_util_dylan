@@ -2931,7 +2931,7 @@ class kb_util_dylan:
         #BEGIN KButil_Merge_MultipleReadsSets_to_OneReadsSet
         console = []
         report = ''
-        self.log(console, 'Running KButil_Merge_ReadsSet_to_OneLibrary with parameters: ')
+        self.log(console, 'Running KButil_Merge_MultipleReadsSets_to_OneReadsSet with parameters: ')
         self.log(console, "\n"+pformat(params))
 
         token = ctx['token']
