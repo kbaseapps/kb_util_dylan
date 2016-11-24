@@ -276,7 +276,7 @@ module kb_util_dylan {
     funcdef KButil_Merge_MultipleReadsSets_to_OneReadsSet (KButil_Merge_MultipleReadsSets_to_OneReadsSet_Params params)  returns (KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output) authentication required;
 
 
-    /* KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs()
+    /* KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs()
     **
     **  Method for removing unpaired reads from a paired end library or set and matching the order of reads
     */
@@ -285,14 +285,14 @@ module kb_util_dylan {
 	data_obj_ref   input_ref;    /* ReadsSet or ReadLibrary */
         data_obj_name  output_name;  /* ReadsSet or ReadLibrary */
 	string         desc;
-    } KButil_Remove_Unpaired_Reads_Params;
+    } KButil_Extract_Unpaired_Reads_Params;
 
     typedef structure {
 	data_obj_name report_name;
 	data_obj_ref  report_ref;
-    } KButil_Remove_Unpaired_Reads_Output;
+    } KButil_Extract_Unpaired_Reads_Output;
 
-    funcdef KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs (KButil_Remove_Unpaired_Reads_Params params)  returns (KButil_Remove_Unpaired_Reads_Output) authentication required;
+    funcdef KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs (KButil_Extract_Unpaired_Reads_Params params)  returns (KButil_Extract_Unpaired_Reads_Output) authentication required;
 
 };
 

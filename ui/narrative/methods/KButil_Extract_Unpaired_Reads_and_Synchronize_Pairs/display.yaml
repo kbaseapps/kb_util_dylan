@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Remove Unpaired Reads
+name: Extract Unpaired Reads and Synchronize Pairs
 tooltip: |
-    Remove Unpaired reads from PairedEnd Reads Libraries
+    Extract unpaired reads from PairedEnd reads libraries or reads sets and match the order of records
 screenshots: []
 
 icon: kb-orange.png
@@ -46,4 +46,4 @@ parameters :
             Name for the Output Reads Libraries or ReadsSet
 
 description : |
-    <p>This method allows the user to remove unpaired reads from a PairedEnd Reads Library or Reads Set.  Unpaired fwd and rev reads are saved as separate SingleEnd Read Libraries.</p>
+    <p>This method allows the user to remove unpaired reads from a PairedEnd Reads Library or Reads Set.  Unpaired fwd and rev reads are saved as separate SingleEnd Read Libraries.  Pair records are reordered to match in FORWARD and REVERSE</p>
