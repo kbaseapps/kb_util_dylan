@@ -373,10 +373,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet'] = 'required' # noqa
-        self.rpc_service.add(impl_kb_util_dylan.KButil_Remove_Unpaired_Reads,
-                             name='kb_util_dylan.KButil_Remove_Unpaired_Reads',
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs,
+                             name='kb_util_dylan.KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Remove_Unpaired_Reads'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs'] = 'required' # noqa
         self.rpc_service.add(impl_kb_util_dylan.status,
                              name='kb_util_dylan.status',
                              types=[dict])

@@ -50,7 +50,7 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "KButil_Remove_Unpaired_Reads",
+            "method": "KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",

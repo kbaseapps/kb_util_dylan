@@ -61,7 +61,7 @@ parameters :
             Percentage of original reads library to put into each sample library
     seed:
         ui-name : |
-            Seed (optional)
+            Random Seed (optional)
         short-hint : |
             Specify seed for Randomizer if you want repeatable results
 

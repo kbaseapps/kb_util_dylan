@@ -1273,9 +1273,9 @@ KButil_Merge_MultipleReadsSets_to_OneReadsSet_Output is a reference to a hash wh
  
 
 
-=head2 KButil_Remove_Unpaired_Reads
+=head2 KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs
 
-  $return = $obj->KButil_Remove_Unpaired_Reads($params)
+  $return = $obj->KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs($params)
 
 =over 4
 
@@ -1329,7 +1329,7 @@ KButil_Remove_Unpaired_Reads_Output is a reference to a hash where the following
 
 =cut
 
- sub KButil_Remove_Unpaired_Reads
+ sub KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs
 {
     my($self, @args) = @_;
 
@@ -1338,7 +1338,7 @@ KButil_Remove_Unpaired_Reads_Output is a reference to a hash where the following
     if ((my $n = @args) != 1)
     {
 	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
-							       "Invalid argument count for function KButil_Remove_Unpaired_Reads (received $n, expecting 1)");
+							       "Invalid argument count for function KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs (received $n, expecting 1)");
     }
     {
 	my($params) = @args;
@@ -1346,31 +1346,31 @@ KButil_Remove_Unpaired_Reads_Output is a reference to a hash where the following
 	my @_bad_arguments;
         (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
         if (@_bad_arguments) {
-	    my $msg = "Invalid arguments passed to KButil_Remove_Unpaired_Reads:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    my $msg = "Invalid arguments passed to KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs:\n" . join("", map { "\t$_\n" } @_bad_arguments);
 	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
-								   method_name => 'KButil_Remove_Unpaired_Reads');
+								   method_name => 'KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs');
 	}
     }
 
     my $url = $self->{url};
     my $result = $self->{client}->call($url, $self->{headers}, {
-	    method => "kb_util_dylan.KButil_Remove_Unpaired_Reads",
+	    method => "kb_util_dylan.KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs",
 	    params => \@args,
     });
     if ($result) {
 	if ($result->is_error) {
 	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
 					       code => $result->content->{error}->{code},
-					       method_name => 'KButil_Remove_Unpaired_Reads',
+					       method_name => 'KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs',
 					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
 					      );
 	} else {
 	    return wantarray ? @{$result->result} : $result->result->[0];
 	}
     } else {
-        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Remove_Unpaired_Reads",
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs",
 					    status_line => $self->{client}->status_line,
-					    method_name => 'KButil_Remove_Unpaired_Reads',
+					    method_name => 'KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs',
 				       );
     }
 }
@@ -1418,16 +1418,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'KButil_Remove_Unpaired_Reads',
+                method_name => 'KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method KButil_Remove_Unpaired_Reads",
+            error => "Error invoking method KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs",
             status_line => $self->{client}->status_line,
-            method_name => 'KButil_Remove_Unpaired_Reads',
+            method_name => 'KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs',
         );
     }
 }
@@ -2480,9 +2480,9 @@ report_ref has a value which is a kb_util_dylan.data_obj_ref
 
 =item Description
 
-KButil_Remove_Unpaired_Reads()
+KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs()
 **
-**  Method for removing unpaired reads from a paired end library
+**  Method for removing unpaired reads from a paired end library or set and matching the order of reads
 
 
 =item Definition

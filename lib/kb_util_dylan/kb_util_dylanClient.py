@@ -293,11 +293,12 @@ class kb_util_dylan(object):
             'kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet',
             [params], self._service_ver, context)
 
-    def KButil_Remove_Unpaired_Reads(self, params, context=None):
+    def KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs(self, params, context=None):
         """
         :param params: instance of type "KButil_Remove_Unpaired_Reads_Params"
-           (KButil_Remove_Unpaired_Reads() ** **  Method for removing
-           unpaired reads from a paired end library) -> structure: parameter
+           (KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs() ** ** 
+           Method for removing unpaired reads from a paired end library or
+           set and matching the order of reads) -> structure: parameter
            "workspace_name" of type "workspace_name" (** The workspace object
            refs are of form: ** **    objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
@@ -312,7 +313,7 @@ class kb_util_dylan(object):
            parameter "report_ref" of type "data_obj_ref"
         """
         return self._client.call_method(
-            'kb_util_dylan.KButil_Remove_Unpaired_Reads',
+            'kb_util_dylan.KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs',
             [params], self._service_ver, context)
 
     def status(self, context=None):

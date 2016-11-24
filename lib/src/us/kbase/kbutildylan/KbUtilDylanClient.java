@@ -352,7 +352,7 @@ public class KbUtilDylanClient {
     }
 
     /**
-     * <p>Original spec-file function name: KButil_Remove_Unpaired_Reads</p>
+     * <p>Original spec-file function name: KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs</p>
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.kbutildylan.KButilRemoveUnpairedReadsParams KButilRemoveUnpairedReadsParams} (original type "KButil_Remove_Unpaired_Reads_Params")
@@ -360,11 +360,11 @@ public class KbUtilDylanClient {
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public KButilRemoveUnpairedReadsOutput kButilRemoveUnpairedReads(KButilRemoveUnpairedReadsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public KButilRemoveUnpairedReadsOutput kButilRemoveUnpairedReadsAndSynchronizePairs(KButilRemoveUnpairedReadsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
         TypeReference<List<KButilRemoveUnpairedReadsOutput>> retType = new TypeReference<List<KButilRemoveUnpairedReadsOutput>>() {};
-        List<KButilRemoveUnpairedReadsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Remove_Unpaired_Reads", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        List<KButilRemoveUnpairedReadsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 

@@ -125,6 +125,10 @@
                     "target_property": "output_name"
                 },
                 {
+                    "input_parameter": "seed",
+                    "target_property": "seed"
+                },
+                {
                     "input_parameter": "subsample_fraction",
                     "target_property": "subsample_fraction"
                 }

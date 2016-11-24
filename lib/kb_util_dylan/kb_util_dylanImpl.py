@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "8aafda6aa5d891e3235838c83a1947e953438824"
+    GIT_COMMIT_HASH = "4285fb5a9b8a316b797b4c621d6a306e79a060b2"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -3073,11 +3073,12 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-    def KButil_Remove_Unpaired_Reads(self, ctx, params):
+    def KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs(self, ctx, params):
         """
         :param params: instance of type "KButil_Remove_Unpaired_Reads_Params"
-           (KButil_Remove_Unpaired_Reads() ** **  Method for removing
-           unpaired reads from a paired end library) -> structure: parameter
+           (KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs() ** ** 
+           Method for removing unpaired reads from a paired end library or
+           set and matching the order of reads) -> structure: parameter
            "workspace_name" of type "workspace_name" (** The workspace object
            refs are of form: ** **    objects = ws.get_objects([{'ref':
            params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
@@ -3093,14 +3094,12 @@ class kb_util_dylan:
         """
         # ctx is the context object
         # return variables are: returnVal
-        #BEGIN KButil_Remove_Unpaired_Reads
-
-
-        #END KButil_Remove_Unpaired_Reads
+        #BEGIN KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs
+        #END KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs
 
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
-            raise ValueError('Method KButil_Remove_Unpaired_Reads return value ' +
+            raise ValueError('Method KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
