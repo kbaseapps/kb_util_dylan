@@ -293,10 +293,11 @@ class kb_util_dylan(object):
             'kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet',
             [params], self._service_ver, context)
 
-    def KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs(self, params, context=None):
+    def KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs(self, params, context=None):
         """
-        :param params: instance of type "KButil_Remove_Unpaired_Reads_Params"
-           (KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs() ** ** 
+        :param params: instance of type
+           "KButil_Extract_Unpaired_Reads_Params"
+           (KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs() ** ** 
            Method for removing unpaired reads from a paired end library or
            set and matching the order of reads) -> structure: parameter
            "workspace_name" of type "workspace_name" (** The workspace object
@@ -308,12 +309,12 @@ class kb_util_dylan(object):
            of a workspace or object.  This is received from Narrative.),
            parameter "input_ref" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
-        :returns: instance of type "KButil_Remove_Unpaired_Reads_Output" ->
+        :returns: instance of type "KButil_Extract_Unpaired_Reads_Output" ->
            structure: parameter "report_name" of type "data_obj_name",
            parameter "report_ref" of type "data_obj_ref"
         """
         return self._client.call_method(
-            'kb_util_dylan.KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs',
+            'kb_util_dylan.KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs',
             [params], self._service_ver, context)
 
     def status(self, context=None):

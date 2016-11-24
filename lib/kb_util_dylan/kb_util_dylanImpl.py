@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "4285fb5a9b8a316b797b4c621d6a306e79a060b2"
+    GIT_COMMIT_HASH = "39d01f09247841d7cba2978abc19a19a470bd357"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -3073,10 +3073,11 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
-    def KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs(self, ctx, params):
+    def KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs(self, ctx, params):
         """
-        :param params: instance of type "KButil_Remove_Unpaired_Reads_Params"
-           (KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs() ** ** 
+        :param params: instance of type
+           "KButil_Extract_Unpaired_Reads_Params"
+           (KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs() ** ** 
            Method for removing unpaired reads from a paired end library or
            set and matching the order of reads) -> structure: parameter
            "workspace_name" of type "workspace_name" (** The workspace object
@@ -3088,16 +3089,16 @@ class kb_util_dylan:
            of a workspace or object.  This is received from Narrative.),
            parameter "input_ref" of type "data_obj_ref", parameter
            "output_name" of type "data_obj_name", parameter "desc" of String
-        :returns: instance of type "KButil_Remove_Unpaired_Reads_Output" ->
+        :returns: instance of type "KButil_Extract_Unpaired_Reads_Output" ->
            structure: parameter "report_name" of type "data_obj_name",
            parameter "report_ref" of type "data_obj_ref"
         """
         # ctx is the context object
         # return variables are: returnVal
-        #BEGIN KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs
+        #BEGIN KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs
         console = []
         report = ''
-        self.log(console, 'Running KButil_Merge_MultipleReadsSets_to_OneReadsSet with parameters: ')
+        self.log(console, 'Running KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs with parameters: ')
         self.log(console, "\n"+pformat(params))
 
         token = ctx['token']
@@ -3677,11 +3678,11 @@ class kb_util_dylan:
 
 # HERE END
 
-        #END KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs
+        #END KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs
 
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
-            raise ValueError('Method KButil_Remove_Unpaired_Reads_and_Synchronize_Pairs return value ' +
+            raise ValueError('Method KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
