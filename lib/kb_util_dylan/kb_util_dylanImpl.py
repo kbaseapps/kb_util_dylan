@@ -2774,7 +2774,7 @@ class kb_util_dylan:
             except Exception as e:
                 raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
             
-            if read_libary_type == None:
+            if read_library_type == None:
                 read_library_type = input_reads_obj_type
             elif input_reads_obj_type != read_library_type:
                 raise ValueError ("incompatible read library types in ReadsSet "+params['input_ref'])
