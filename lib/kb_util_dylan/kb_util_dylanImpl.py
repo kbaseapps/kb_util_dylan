@@ -2269,6 +2269,8 @@ class kb_util_dylan:
             output_rev_paired_file_path_base   = input_rev_path+"_rev_paired"
             # set up for file io
             total_paired_reads = 0
+            total_unpaired_fwd_reads = 0
+            total_unpaired_rev_reads = 0
             total_paired_reads_by_set = []
             fwd_ids = dict()
             paired_ids = dict()
