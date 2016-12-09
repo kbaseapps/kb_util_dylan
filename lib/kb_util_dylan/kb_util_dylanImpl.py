@@ -3295,7 +3295,7 @@ class kb_util_dylan:
 
             # don't bother if there are no pairs
             if paired_read_cnt == 0:
-                raise ValueError ("No pairs found in read library "+readsSet_name_list[lib_i]+" ("readsSet_ref_list[lib_i]+")")
+                raise ValueError ("No pairs found in read library "+readsSet_name_list[lib_i]+" ("+readsSet_ref_list[lib_i]+")")
 
             # determine if pairs are already in order, or if they're too shuffled to fit in memory
             ordering_offset_upper_bound = 1000000   # only allow a million recs in buf
