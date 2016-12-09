@@ -3235,6 +3235,7 @@ class kb_util_dylan:
             output_fwd_unpaired_file_path_base = input_fwd_path+"_fwd_unpaired"
             output_rev_unpaired_file_path_base = input_rev_path+"_rev_unpaired"
 
+
             # set up for file io
             paired_read_cnt = 0
             unpaired_fwd_read_cnt = 0
@@ -3489,62 +3490,70 @@ class kb_util_dylan:
             report += "UNPAIRED REV READS: "+str(unpaired_rev_read_cnt)+"\n"
             report += "\n"
 
+            if paired_read_cnt == 0:
+                raise ValueError ("There were no paired reads")
+
 
             # upload paired reads
             #
-            self.log (console, "UPLOAD PAIRED READS LIBS")  # DEBUG
-            paired_obj_refs = []
-            output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
-            output_rev_paired_file_path = output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq"
-            if not os.path.isfile (output_fwd_paired_file_path) \
-                    or os.path.getsize (output_fwd_paired_file_path) == 0 \
-               or not os.path.isfile (output_rev_paired_file_path) \
-                    or os.path.getsize (output_rev_paired_file_path) == 0:
+            if paired_read_cnt > 0:
+                self.log (console, "UPLOAD PAIRED READS LIBS")  # DEBUG
+                paired_obj_refs = []
+                output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
+                output_rev_paired_file_path = output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq"
+                if not os.path.isfile (output_fwd_paired_file_path) \
+                        or os.path.getsize (output_fwd_paired_file_path) == 0 \
+                      or not os.path.isfile (output_rev_paired_file_path) \
+                        or os.path.getsize (output_rev_paired_file_path) == 0:
                     
-                raise ValueError ("failed to create paired output")
-            else:
-                output_obj_name = params['output_name']+'_paired-'+str(lib_i)
-                self.log(console, 'Uploading paired reads: '+output_obj_name)
-                paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
-                                                                          'name': output_obj_name,
-                                                                          'sequencing_tech': sequencing_tech,
-                                                                          'fwd_file': output_fwd_paired_file_path,
-                                                                          'rev_file': output_rev_paired_file_path
-                                                                          })['obj_ref'])
+                    raise ValueError ("failed to create paired output")
+                else:
+                    output_obj_name = params['output_name']+'_paired-'+str(lib_i)
+                    self.log(console, 'Uploading paired reads: '+output_obj_name)
+                    paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                              'name': output_obj_name,
+                                                                              'sequencing_tech': sequencing_tech,
+                                                                              'fwd_file': output_fwd_paired_file_path,
+                                                                              'rev_file': output_rev_paired_file_path
+                                                                              })['obj_ref'])
                     
 
             # upload reads forward unpaired
-            self.log (console, "UPLOAD UNPAIRED FWD READS LIB")  # DEBUG
-            unpaired_fwd_ref = None
-            if os.path.isfile (output_fwd_unpaired_file_path) \
-                and os.path.getsize (output_fwd_unpaired_file_path) != 0:
-
-                output_obj_name = params['output_name']+'_unpaired-fwd'
-                self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
-                unpaired_fwd_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
-                                                                                'name': output_obj_name,
-                                                                                'sequencing_tech': sequencing_tech,
-                                                                                'fwd_file': output_fwd_unpaired_file_path
-                                                                                })['obj_ref'])
-            else:
-                unpaired_fwd_obj_refs.append (None)
+            if unpaired_fwd_read_cnt > 0:
+                self.log (console, "UPLOAD UNPAIRED FWD READS LIB")  # DEBUG
+                unpaired_fwd_ref = None
+                output_fwd_unpaired_file_path = output_fwd_unpaired_file_path_base+"-".str(lib_i)+".fastq"
+                if os.path.isfile (output_fwd_unpaired_file_path) \
+                        and os.path.getsize (output_fwd_unpaired_file_path) != 0:
+                    
+                    output_obj_name = params['output_name']+'_unpaired-fwd'
+                    self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
+                    unpaired_fwd_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                                    'name': output_obj_name,
+                                                                                    'sequencing_tech': sequencing_tech,
+                                                                                    'fwd_file': output_fwd_unpaired_file_path
+                                                                                    })['obj_ref'])
+                else:
+                    unpaired_fwd_obj_refs.append (None)
 
 
             # upload reads reverse unpaired
-            self.log (console, "UPLOAD UNPAIRED REV READS LIB")  # DEBUG
-            unpaired_rev_ref = None
-            if os.path.isfile (output_rev_unpaired_file_path) \
-                and os.path.getsize (output_rev_unpaired_file_path) != 0:
+            if unpaired_fwd_read_cnt > 0:
+                self.log (console, "UPLOAD UNPAIRED REV READS LIB")  # DEBUG
+                unpaired_rev_ref = None
+                output_rev_unpaired_file_path = output_rev_unpaired_file_path_base+"-"+str(lib_i)+".fastq"
+                if os.path.isfile (output_rev_unpaired_file_path) \
+                        and os.path.getsize (output_rev_unpaired_file_path) != 0:
 
-                output_obj_name = params['output_name']+'_unpaired-rev'
-                self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
-                unpaired_rev_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
-                                                                                'name': output_obj_name,
-                                                                                'sequencing_tech': sequencing_tech,
-                                                                                'fwd_file': output_rev_unpaired_file_path
-                                                                                })['obj_ref'])
-            else:
-                unpaired_fwd_obj_refs.append (None)
+                    output_obj_name = params['output_name']+'_unpaired-rev'
+                    self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
+                    unpaired_rev_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                                    'name': output_obj_name,
+                                                                                    'sequencing_tech': sequencing_tech,
+                                                                                    'fwd_file': output_rev_unpaired_file_path
+                                                                                    })['obj_ref'])
+                else:
+                    unpaired_fwd_obj_refs.append (None)
 
         
         # Create ReadsSets for paired libs and unpaired fwd and rev libs if input was ReadsSet
