@@ -2888,7 +2888,7 @@ class kb_util_dylan:
             
 
         # build report message
-        report += "NUM READS LIBRARIES COMBINED INTO ONE READS LIBRARY: "+len (readsSet_ref_list)+"\n"
+        report += "NUM READS LIBRARIES COMBINED INTO ONE READS LIBRARY: " + str(len(readsSet_ref_list))+"\n"
 
         # build report
         #
@@ -3057,7 +3057,7 @@ class kb_util_dylan:
         # build report
         #
         self.log (console, "SAVING REPORT")  # DEBUG        
-        report += "TOTAL READS LIBRARIES COMBINED INTO ONE READS SET: "+len(combined_readsSet_refs)+"\n"
+        report += "TOTAL READS LIBRARIES COMBINED INTO ONE READS SET: "+ str(len(combined_readsSet_refs))+"\n"
         for set_i,this_readsLib_ref in enumerate(params['input_refs']):
             report += "READS LIBRARIES ACCEPTED FROM ReadsSet "+str(set_i)+": "+str(len(accepted_libs[set_i]))+"\n"
             report += "READS LIBRARIES REPEAT FROM ReadsSet "+str(set_i)+":   "+str(len(repeat_libs[set_i]))+"\n"
