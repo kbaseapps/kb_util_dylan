@@ -3560,6 +3560,8 @@ class kb_util_dylan:
         #
         if input_reads_obj_type == "KBaseSets.ReadsSet":
 
+
+
             paired_readsSet_ref = None
             unpaired_fwd_readsSet_ref = None
             unpaired_rev_readsSet_ref = None
@@ -3591,8 +3593,8 @@ class kb_util_dylan:
                 output_readsSet_obj = { 'description': input_readsSet_obj['data']['description']+reads_desc_ext,
                                         'items': items
                                         }
-                output_readsSet_name = str(params['output_reads_name'])+reads_name_ext
-                paired_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['output_ws'],
+                output_readsSet_name = str(params['output_name'])+reads_name_ext
+                paired_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['workspace_name'],
                                                                         'output_object_name': output_readsSet_name,
                                                                         'data': output_readsSet_obj
                                                                         })['set_ref']
@@ -3632,8 +3634,8 @@ class kb_util_dylan:
                     output_readsSet_obj = { 'description': input_readsSet_obj['data']['description']+reads_desc_ext,
                                             'items': items
                                             }
-                    output_readsSet_name = str(params['output_reads_name'])+reads_name_ext
-                    unpaired_fwd_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['output_ws'],
+                    output_readsSet_name = str(params['output_name'])+reads_name_ext
+                    unpaired_fwd_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['workspace_name'],
                                                                                   'output_object_name': output_readsSet_name,
                                                                                   'data': output_readsSet_obj
                                                                                   })['set_ref']
@@ -3674,8 +3676,8 @@ class kb_util_dylan:
                     output_readsSet_obj = { 'description': input_readsSet_obj['data']['description']+reads_desc_ext,
                                             'items': items
                                             }
-                    output_readsSet_name = str(params['output_reads_name'])+reads_name_ext
-                    unpaired_rev_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['output_ws'],
+                    output_readsSet_name = str(params['output_name'])+reads_name_ext
+                    unpaired_rev_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['workspace_name'],
                                                                                   'output_object_name': output_readsSet_name,
                                                                                   'data': output_readsSet_obj
                                                                                   })['set_ref']
