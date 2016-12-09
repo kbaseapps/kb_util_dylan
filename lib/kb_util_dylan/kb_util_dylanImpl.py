@@ -3232,8 +3232,8 @@ class kb_util_dylan:
             input_rev_path = re.sub ("\.FASTQ$", "", input_rev_path)
             output_fwd_paired_file_path_base   = input_fwd_path+"_fwd_paired"
             output_rev_paired_file_path_base   = input_rev_path+"_rev_paired"
-            output_fwd_unpaired_file_path = input_fwd_path+"_fwd_unpaired.fastq"
-            output_rev_unpaired_file_path = input_rev_path+"_rev_unpaired.fastq"
+            output_fwd_unpaired_file_path_base = input_fwd_path+"_fwd_unpaired"
+            output_rev_unpaired_file_path_base = input_rev_path+"_rev_unpaired"
 
             # set up for file io
             paired_read_cnt = 0
