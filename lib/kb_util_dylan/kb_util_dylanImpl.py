@@ -3475,7 +3475,7 @@ class kb_util_dylan:
             unpaired_output_reads_file_handle.close()
             self.log(console,"\t"+str(paired_cnt)+" PAIRED READS processed")
             self.log(console,"\t"+str(unpaired_fwd_read_cnt)+" UNPAIRED FWD READS processed")
-            os.remove (input_fwd_file_path)  # create space since we no longer need the piece file
+            os.remove (input_rev_file_path)  # create space since we no longer need the piece file
             if paired_cnt != paired_read_cnt:
                 raise ValueError ("FAILURE: didn't find expected paired reads in rev file for lib_i: "+str(lib_i))
             if unpaired_cnt != unpaired_rev_read_cnt:
