@@ -3176,7 +3176,7 @@ class kb_util_dylan:
                     this_input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", this_input_reads_obj_type)  # remove trailing version
 
                 except Exception as e:
-                    raise ValueError('Unable to get read library object from workspace: (' + input_reads_ref) +')' + str(e))
+                    raise ValueError('Unable to get read library object from workspace: (' + input_reads_ref +')' + str(e))
 
                 acceptable_types = ["KBaseFile.PairedEndLibrary", "KBaseAssembly.PairedEndLibrary"]
                 if this_input_reads_obj_type not in acceptable_types:
