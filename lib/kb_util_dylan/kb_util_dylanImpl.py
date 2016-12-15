@@ -1684,7 +1684,8 @@ class kb_util_dylan:
         env = os.environ.copy()
         env['KB_AUTH_TOKEN'] = token
         
-        SERVICE_VER = 'dev'  # DEBUG
+        #SERVICE_VER = 'dev'  # DEBUG
+        SERVICE_VER = 'release'
 
         # param checks
         required_params = ['workspace_name',
@@ -2159,7 +2160,8 @@ class kb_util_dylan:
         env = os.environ.copy()
         env['KB_AUTH_TOKEN'] = token
         
-        SERVICE_VER = 'dev'  # DEBUG
+        #SERVICE_VER = 'dev'  # DEBUG
+        SERVICE_VER = 'release'
 
         # init randomizer
         if 'seed' in params and params['seed'] != None:
@@ -2702,7 +2704,8 @@ class kb_util_dylan:
         env = os.environ.copy()
         env['KB_AUTH_TOKEN'] = token
 
-        SERVICE_VER = 'dev'  # DEBUG
+        #SERVICE_VER = 'dev'  # DEBUG
+        SERVICE_VER = 'release'
 
         # param checks
         required_params = ['workspace_name',
@@ -2950,7 +2953,8 @@ class kb_util_dylan:
         env = os.environ.copy()
         env['KB_AUTH_TOKEN'] = token
 
-        SERVICE_VER = 'dev'  # DEBUG
+        #SERVICE_VER = 'dev'  # DEBUG
+        SERVICE_VER = 'release'
 
         # param checks
         required_params = ['workspace_name',
@@ -3117,7 +3121,8 @@ class kb_util_dylan:
         env = os.environ.copy()
         env['KB_AUTH_TOKEN'] = token
 
-        SERVICE_VER = 'dev'  # DEBUG
+        #SERVICE_VER = 'dev'  # DEBUG
+        SERVICE_VER = 'release'
 
         # param checks
         required_params = ['workspace_name',
