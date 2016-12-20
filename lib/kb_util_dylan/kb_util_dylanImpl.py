@@ -25,7 +25,7 @@ from biokbase.AbstractHandle.Client import AbstractHandle as HandleService  # ad
 
 # SDK Utils
 from ReadsUtils.ReadsUtilsClient import ReadsUtils
-from SetAPI.SetAPIClient import SetAPI
+from SetAPI.SetAPIServiceClient import SetAPI
 from KBaseReport.KBaseReportClient import KBaseReport
 
 # silence whining
