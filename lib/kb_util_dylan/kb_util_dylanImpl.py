@@ -3537,6 +3537,7 @@ class kb_util_dylan:
                     
 
             # upload reads forward unpaired
+            unpaired_fwd_obj_refs = []
             if unpaired_fwd_read_cnt > 0:
                 self.log (console, "UPLOAD UNPAIRED FWD READS LIB")  # DEBUG
                 unpaired_fwd_ref = None
@@ -3556,7 +3557,8 @@ class kb_util_dylan:
 
 
             # upload reads reverse unpaired
-            if unpaired_fwd_read_cnt > 0:
+            unpaired_rev_obj_refs = []
+            if unpaired_rev_read_cnt > 0:
                 self.log (console, "UPLOAD UNPAIRED REV READS LIB")  # DEBUG
                 unpaired_rev_ref = None
                 output_rev_unpaired_file_path = output_rev_unpaired_file_path_base+"-"+str(lib_i)+".fastq"
@@ -3571,14 +3573,12 @@ class kb_util_dylan:
                                                                                     'fwd_file': output_rev_unpaired_file_path
                                                                                     })['obj_ref'])
                 else:
-                    unpaired_fwd_obj_refs.append (None)
+                    unpaired_rev_obj_refs.append (None)
 
         
         # Create ReadsSets for paired libs and unpaired fwd and rev libs if input was ReadsSet
         #
         if input_reads_obj_type == "KBaseSets.ReadsSet":
-
-
 
             paired_readsSet_ref = None
             unpaired_fwd_readsSet_ref = None
