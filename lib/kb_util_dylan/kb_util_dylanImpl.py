@@ -21,7 +21,7 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Alphabet import generic_protein
 from biokbase.workspace.client import Workspace as workspaceService
 from requests_toolbelt import MultipartEncoder  # added
-from biokbase.AbstractHandle.Client import AbstractHandle as HandleService  # added
+from biokbase.AbstractHandle.Client import AbstractHandle as HandleService
 
 # SDK Utils
 from ReadsUtils.ReadsUtilsClient import ReadsUtils
@@ -3321,8 +3321,11 @@ class kb_util_dylan:
                 rev_pos = rev_id_pos[read_id]
                 if rev_pos > fwd_pos:
                     ordering_offset_cnt += rev_pos - fwd_pos
+                    # DEBUG
+                    print (str(read_id)+"\t"+str(fwd_pos)+"\t"+str(rev_pos)+"\t"+str(rev_pos+fwd_pos)+"\t"+str(ordering_offset_cnt))
+
             if ordering_offset_cnt > ordering_offset_upper_bound:
-                raise ValueError ("Pairs are too shuffled and many to fit in memory.  Ordering_offset_cnt="+str(ordering_offset_cnt)+" > Ordering_offset_upper_bound="+str(ordering_offset_upper_bound))
+                raise ValueError ("Too many shuffled pairs with too great a distance to fit in memory.  Ordering_offset_cnt="+str(ordering_offset_cnt)+" > Ordering_offset_upper_bound="+str(ordering_offset_upper_bound))
                 
             # determine if there's nothing to do
             if ordering_offset_cnt == 0 and unpaired_fwd_read_cnt == 0 and unpaired_rev_read_cnt == 0:
