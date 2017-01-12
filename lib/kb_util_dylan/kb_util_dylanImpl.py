@@ -3323,8 +3323,8 @@ class kb_util_dylan:
                     ordering_offset_cnt += rev_pos - fwd_pos
                     # DEBUG
                     if i % 1000 == 0:
-                    print (str(read_id)+"\t"+str(fwd_pos)+"\t"+str(rev_pos)+"\t"+str(rev_pos+fwd_pos)+"\t"+str(ordering_offset_cnt))
-
+                        print (str(read_id)+"\t"+str(fwd_pos)+"\t"+str(rev_pos)+"\t"+str(rev_pos+fwd_pos)+"\t"+str(ordering_offset_cnt))
+            # RESTORE when corrected
 #            if ordering_offset_cnt > ordering_offset_upper_bound:
 #                raise ValueError ("Too many shuffled pairs with too great a distance to fit in memory.  Ordering_offset_cnt="+str(ordering_offset_cnt)+" > Ordering_offset_upper_bound="+str(ordering_offset_upper_bound))
                 
