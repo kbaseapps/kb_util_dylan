@@ -3,7 +3,7 @@
 #
 name: Extract Unpaired Reads and Synchronize Pairs
 tooltip: |
-    Extract unpaired reads from PairedEnd reads libraries or reads sets and match the order of records
+    Extract unpaired reads from PairedEnd reads libraries or reads sets and match the order of paired reads
 screenshots: []
 
 icon: kb-orange.png
