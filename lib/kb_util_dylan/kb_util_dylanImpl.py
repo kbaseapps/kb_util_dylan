@@ -3415,7 +3415,7 @@ class kb_util_dylan:
             last_read_id = None
             pair_i = 0
             paired_cnt = 0
-            unpaired_rev_cnt = 0
+            unpaired_cnt = 0
             capture_type_paired = False
 
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
