@@ -3540,7 +3540,7 @@ class kb_util_dylan:
             if unpaired_fwd_read_cnt > 0:
                 self.log (console, "UPLOAD UNPAIRED FWD READS LIB")  # DEBUG
                 unpaired_fwd_ref = None
-                output_fwd_unpaired_file_path = output_fwd_unpaired_file_path_base+"-".str(lib_i)+".fastq"
+                output_fwd_unpaired_file_path = output_fwd_unpaired_file_path_base+"-"+str(lib_i)+".fastq"
                 if os.path.isfile (output_fwd_unpaired_file_path) \
                         and os.path.getsize (output_fwd_unpaired_file_path) != 0:
                     
