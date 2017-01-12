@@ -3316,17 +3316,26 @@ class kb_util_dylan:
             # determine if pairs are already in order, or if they're too shuffled to fit in memory
             ordering_offset_upper_bound = 1000000   # only allow a million recs in buf
             ordering_offset_cnt = 0
+            last_rev_pos = None
+            last_fwd_pos = None
+            # THIS LOGIC IS BAD
             for i,read_id in enumerate(pair_ids_order):
                 fwd_pos = i+1
                 rev_pos = rev_id_pos[read_id]
                 if rev_pos > fwd_pos:
+                    if last_fwd_pos != None:
+                        ordering_offset_cnt -= last_rev_pos - last_fwd_pos
+
                     ordering_offset_cnt += rev_pos - fwd_pos
-                    # DEBUG
+
+                    last_fwd_pos = fwd_pos
+                    last_rev_pos = rev_pos
+
                     if i % 1000 == 0:
-                        print (str(read_id)+"\t"+str(fwd_pos)+"\t"+str(rev_pos)+"\t"+str(rev_pos+fwd_pos)+"\t"+str(ordering_offset_cnt))
+                        print (str(read_id)+"\t"+str(fwd_pos)+"\t"+str(rev_pos)+"\t"+str(rev_pos-fwd_pos)+"\t"+str(ordering_offset_cnt))
             # RESTORE when corrected
 #            if ordering_offset_cnt > ordering_offset_upper_bound:
-#                raise ValueError ("Too many shuffled pairs with too great a distance to fit in memory.  Ordering_offset_cnt="+str(ordering_offset_cnt)+" > Ordering_offset_upper_bound="+str(ordering_offset_upper_bound))
+#                raise ValueError ("Too many shuffled pairs with too great a distance to fit in memory.  Ordering_offset_cnt="+str(ordering_offset_cnt)+" > Ordering_offset_upper_bound="+str(ordering_offset_upper_bound)+"\nPerhaps do a sort by record ID first")
                 
             # determine if there's nothing to do
             if ordering_offset_cnt == 0 and unpaired_fwd_read_cnt == 0 and unpaired_rev_read_cnt == 0:
