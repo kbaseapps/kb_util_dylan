@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Extract Unpaired Reads and Synchronize Pairs
+name: Build ReadsSet
 tooltip: |
-    Extract unpaired reads from PairedEnd reads libraries or reads sets and match the order of records
+    Allows user to create a ReadsSet
 screenshots: []
 
 icon: kb-orange.png
@@ -34,16 +34,17 @@ parameters :
             Describe Purpose or Contents of Output ReadsSet
         placeholder: |
             Enter Description
-    input_ref:
+    input_refs:
         ui-name : |
-            Reads library or reads set
+            Reads Lib Names
         short-hint : |
-            Reads Library or Set Name here (PairedEndLibrary only)
+            Add a list of Reads Lib Names here
     output_name:
         ui-name : |
-            Output reads name
+            Output ReadsSet Name
         short-hint : |
-            Name for the Output Reads Libraries or ReadsSet
+            Name for the Output ReadsSet Collection
+
 
 description : |
-    <p>This method allows the user to remove unpaired reads from a PairedEnd Reads Library or Reads Set.  Unpaired fwd and rev reads are saved as separate SingleEnd Read Libraries.  Pair records are reordered to match in FORWARD and REVERSE</p>
+    <p>This method allows the user to group Reads Libs into a ReadsSet.</p>
