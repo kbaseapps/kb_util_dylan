@@ -52,9 +52,9 @@ class kb_util_dylan:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "0.0.1"
+    VERSION = "0.0.2"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "39d01f09247841d7cba2978abc19a19a470bd357"
+    GIT_COMMIT_HASH = "e1aebc391196c71e44a74ccadeff0726e74107f7"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -1647,6 +1647,177 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_Concat_MSAs return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Build_ReadsSet(self, ctx, params):
+        """
+        :param params: instance of type "KButil_Build_ReadsSet_Params"
+           (KButil_Build_ReadsSet() ** **  Method for creating a ReadsSet) ->
+           structure: parameter "workspace_name" of type "workspace_name" (**
+           The workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_refs" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Build_ReadsSet_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Build_ReadsSet
+        console = []
+        invalid_msgs = []
+        self.log(console,'Running KButil_Build_ReadsSet with params=')
+        self.log(console, "\n"+pformat(params))
+        report = ''
+#        report = 'Running KButil_Build_ReadsSet with params='
+#        report += "\n"+pformat(params)
+
+
+        #### do some basic checks
+        #
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'desc' not in params:
+            raise ValueError('desc parameter is required')
+        if 'input_refs' not in params:
+            raise ValueError('input_refs parameter is required')
+        if 'output_name' not in params:
+            raise ValueError('output_name parameter is required')
+
+
+        # Build ReadsSet
+        #
+        items = []
+        lib_seen = dict()
+        set_type = None
+        
+        for libRef in params['input_refs']:
+
+            try:
+                already_included = lib_seen[libRef]
+            except:
+                lib_seen[libRef] = True
+
+                try:
+                    ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                    objects = ws.get_objects([{'ref': libRef}])
+                    data = objects[0]['data']
+                    info = objects[0]['info']
+                    libObj = data
+                    NAME_I = 1
+                    TYPE_I = 2
+                    lib_name = info[NAME_I]
+                    lib_type = info[TYPE_I].split('.')[1].split('-')[0]
+
+                    if set_type != None:
+                        if lib_type != set_type:
+                            raise ValueError ("Don't currently support heterogeneous ReadsSets.  You have more than one type in your input")
+                        set_type = lib_type
+                except Exception as e:
+                    raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                if lib_type != 'SingleEndLibrary' and lib_type != 'PairedEndLibrary':
+                    raise ValueError("Bad Type:  Should be SingleEndLibrary or PairedEndLibrary instead of '"+lib_type+"' for ref: '"+libRef+"'")
+                    
+                # add lib
+                self.log(console,"adding lib "+lib_name+" : "+libRef)  # DEBUG
+                items.append ({'ref': libRef,
+                               'label': lib_name
+                               #'data_attachment': ,
+                               #'info'
+                               })
+
+        # load the method provenance from the context object
+        #
+        self.log(console,"SETTING PROVENANCE")  # DEBUG
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects'] = []
+        for libRef in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(libRef)
+        provenance[0]['service'] = 'kb_util_dylan'
+        provenance[0]['method'] = 'KButil_Build_ReadsSet'
+
+
+        # Store output object
+        #
+        if len(invalid_msgs) == 0:
+            self.log(console,"SAVING READS_SET")  # DEBUG
+
+            try:
+                setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
+            except Exception as e:
+                raise ValueError('ERROR: unable to instantiate SetAPI' + str(e))
+
+            output_readsSet_obj = { 'description': params['desc'],
+                                    'items': items
+                                    }
+            output_readsSet_name = params['output_name']
+            try:
+                output_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['workspace_name'],
+                                                                        'output_object_name': output_readsSet_name,
+                                                                        'data': output_readsSet_obj
+                                                                        })['set_ref']
+            except Exception as e:
+                raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + param['workspace_name']+")\n" + str(e))
+
+
+        # build output report object
+        #
+        self.log(console,"SAVING REPORT")  # DEBUG
+        if len(invalid_msgs) == 0:
+            self.log(console,"reads libs in output set "+params['output_name']+": "+str(len(params['input_refs'])))
+            report += 'reads libs in output set '+params['output_name']+': '+str(len(params['input_refs']))
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Build_ReadsSet'}],
+                'text_message':report
+                }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
+
+        reportName = 'kb_util_dylan_build_readsset_report_'+str(uuid.uuid4())
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
+        report_obj_info = ws.save_objects({
+#                'id':info[6],
+                'workspace':params['workspace_name'],
+                'objects':[
+                    {
+                        'type':'KBaseReport.Report',
+                        'data':reportObj,
+                        'name':reportName,
+                        'meta':{},
+                        'hidden':1,
+                        'provenance':provenance
+                    }
+                ]
+            })[0]
+
+
+        # Build report and return
+        #
+        self.log(console,"BUILDING RETURN OBJECT")
+        returnVal = { 'report_name': reportName,
+                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+                      }
+        self.log(console,"KButil_Build_ReadsSet DONE")
+        #END KButil_Build_ReadsSet
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Build_ReadsSet return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]

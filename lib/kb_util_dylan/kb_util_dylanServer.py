@@ -357,6 +357,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Concat_MSAs',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Concat_MSAs'] = 'required' # noqa
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Build_ReadsSet,
+                             name='kb_util_dylan.KButil_Build_ReadsSet',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Build_ReadsSet'] = 'required' # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Split_Reads,
                              name='kb_util_dylan.KButil_Split_Reads',
                              types=[dict])
