@@ -1700,7 +1700,7 @@ class kb_util_dylan:
         set_type = None
         
         # DEBUG
-        params['input_refs'] = ['18858/2/1', '18858/5/1']
+        #params['input_refs'] = ['18858/2/1', '18858/5/1']
 
         for libRef in params['input_refs']:
 
