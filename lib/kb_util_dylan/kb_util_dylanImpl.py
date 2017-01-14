@@ -1699,6 +1699,9 @@ class kb_util_dylan:
         lib_seen = dict()
         set_type = None
         
+        # DEBUG
+        params['input_refs'] = ['2775/3/1', '2775/7/1']
+
         for libRef in params['input_refs']:
 
             try:
@@ -1888,6 +1891,7 @@ class kb_util_dylan:
             [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
             
             input_reads_ref = params['input_ref']
+
             input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':input_reads_ref}]})[0]
             input_reads_obj_type = input_reads_obj_info[TYPE_I]
             #input_reads_obj_version = input_reads_obj_info[VERSION_I]  # this is object version, not type version
