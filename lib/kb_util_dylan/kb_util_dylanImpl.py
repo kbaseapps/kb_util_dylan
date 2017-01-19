@@ -494,7 +494,18 @@ class kb_util_dylan:
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
 
+        if len(params['input_refs']) < 2:
+            self.log(console,"Must provide at least two FeatureSets")
+            self.log(invalid_msgs,"Must provide at least two FeatureSets")
+
+            
         # Build FeatureSet
         #
         element_ordering = []
@@ -678,6 +689,18 @@ class kb_util_dylan:
             raise ValueError('output_name parameter is required')
 
 
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
+
+        if len(params['input_refs']) < 2:
+            self.log(console,"Must provide at least two GenomeSets")
+            self.log(invalid_msgs,"Must provide at least two GenomeSets")
+
+            
         # load the method provenance from the context object
         #
         self.log(console,"SETTING PROVENANCE")  # DEBUG
@@ -841,6 +864,18 @@ class kb_util_dylan:
             raise ValueError('output_name parameter is required')
 
 
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
+
+        if len(params['input_refs']) < 1:
+            self.log(console,"Must provide at least one Genome")
+            self.log(invalid_msgs,"Must provide at least one Genome")
+
+            
         # Build GenomeSet
         #
         elements = {}
@@ -1382,9 +1417,16 @@ class kb_util_dylan:
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
+            
         if len(params['input_refs']) < 2:
-            self.log(console,"Must provide more than one MSA")
-            self.log(invalid_msgs,"Must provide more than one MSA")
+            self.log(console,"Must provide at least two MSAs")
+            self.log(invalid_msgs,"Must provide at least two MSAs")
 
 
         # Build FeatureSet
@@ -1692,7 +1734,18 @@ class kb_util_dylan:
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
 
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
 
+        if len(params['input_refs']) < 1:
+            self.log(console,"Must provide at least one Reads Lib")
+            self.log(invalid_msgs,"Must provide at least one Reads Lib")
+
+            
         # Build ReadsSet
         #
         items = []
@@ -3139,6 +3192,18 @@ class kb_util_dylan:
         for required_param in required_params:
             if required_param not in params or params[required_param] == None:
                 raise ValueError ("Must define required param: '"+required_param+"'")
+
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
+
+        if len(params['input_refs']) < 2:
+            self.log(console,"Must provide at least two ReadsSets")
+            self.log(invalid_msgs,"Must provide at least two ReadsSets")
+
             
         # load provenance
         provenance = [{}]
@@ -3176,7 +3241,7 @@ class kb_util_dylan:
                 input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
 
             except Exception as e:
-                raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
+                raise ValueError('Unable to get readsSet object from workspace: (' + str(this_readsSet_ref) +')' + str(e))
 
             acceptable_types = ["KBaseSets.ReadsSet"]
             if input_reads_obj_type not in acceptable_types:
@@ -3214,9 +3279,9 @@ class kb_util_dylan:
         # Save Merged ReadsSet
         #
         items = []
-        for lib_i,lib_ref in enumerate(combined_readsSet_refs):
+        for lib_i,lib_ref in enumerate(combined_readsSet_ref_list):
             items.append({'ref': lib_ref,
-                          'label': combined_readsSet_labels[lib_i]
+                          'label': combined_readsSet_label_list[lib_i]
                           #'data_attachment': ,
                           #'info':
                               })
@@ -3236,10 +3301,11 @@ class kb_util_dylan:
         # build report
         #
         self.log (console, "SAVING REPORT")  # DEBUG        
-        report += "TOTAL READS LIBRARIES COMBINED INTO ONE READS SET: "+ str(len(combined_readsSet_refs))+"\n"
+        report += "TOTAL READS LIBRARIES COMBINED INTO ONE READS SET: "+ str(len(combined_readsSet_ref_list))+"\n"
         for set_i,this_readsLib_ref in enumerate(params['input_refs']):
             report += "READS LIBRARIES ACCEPTED FROM ReadsSet "+str(set_i)+": "+str(len(accepted_libs[set_i]))+"\n"
             report += "READS LIBRARIES REPEAT FROM ReadsSet "+str(set_i)+":   "+str(len(repeat_libs[set_i]))+"\n"
+            report += "\n"
         reportObj = {'objects_created':[], 
                      'text_message': report}
 
