@@ -2171,7 +2171,9 @@ class kb_util_dylan:
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
                     paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
+                                                                              # remove sequencing_tech when source_reads_ref working
                                                                               'sequencing_tech': sequencing_tech,
+                                                                              'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path,
                                                                               'rev_file': output_rev_paired_file_path
                                                                               })['obj_ref'])
@@ -2187,7 +2189,9 @@ class kb_util_dylan:
                 self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
                 unpaired_fwd_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
+                                                                     # remove sequencing_tech when source_reads_ref working
                                                                      'sequencing_tech': sequencing_tech,
+                                                                     'source_reads_ref': input_reads_ref,
                                                                      'fwd_file': output_fwd_unpaired_file_path
                                                                      })['obj_ref']
                 
@@ -2202,7 +2206,9 @@ class kb_util_dylan:
                 self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
                 unpaired_rev_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
+                                                                     # remove sequencing_tech when source_reads_ref working
                                                                      'sequencing_tech': sequencing_tech,
+                                                                     'source_reads_ref': input_reads_ref,
                                                                      'fwd_file': output_rev_unpaired_file_path
                                                                      })['obj_ref']
                 
@@ -2288,7 +2294,9 @@ class kb_util_dylan:
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
                     paired_obj_refs.append( readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
+                                                                              # remove sequencing_tech when source_reads_ref working
                                                                               'sequencing_tech': sequencing_tech,
+                                                                              'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path
                                                                               })['obj_ref'])
                                             
@@ -2705,7 +2713,9 @@ class kb_util_dylan:
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
                     paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
+                                                                              # remove sequencing_tech when source_reads_ref is working
                                                                               'sequencing_tech': sequencing_tech,
+                                                                              'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path,
                                                                               'rev_file': output_rev_paired_file_path
                                                                               })['obj_ref'])
@@ -2842,7 +2852,9 @@ class kb_util_dylan:
                     self.log(console, 'Uploading single end reads: '+output_obj_name)
                     paired_obj_refs.append( readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
+                                                                              # remove sequencing_tech when source_reads_ref is working
                                                                               'sequencing_tech': sequencing_tech,
+                                                                              'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path
                                                                               })['obj_ref'])
                                             
@@ -3106,14 +3118,18 @@ class kb_util_dylan:
         if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
             reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                   'name': output_obj_name,
+                                                                  # remove sequencing_tech when source_reads_ref is working
                                                                   'sequencing_tech': sequencing_tech,
+                                                                  'source_reads_ref': readsSet_ref_list[0],
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   'rev_file': combined_input_rev_path
                                                                   })['obj_ref']
         else:
             reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                   'name': output_obj_name,
+                                                                  # remove sequencing_tech when source_reads_ref is working
                                                                   'sequencing_tech': sequencing_tech,
+                                                                  'source_reads_ref': readsSet_ref_list[0],
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   })['obj_ref']
             
@@ -3771,7 +3787,9 @@ class kb_util_dylan:
                     self.log(console, 'Uploading paired reads: '+output_obj_name)
                     paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
+                                                                              # remove sequencing_tech when source_reads_ref is working
                                                                               'sequencing_tech': sequencing_tech,
+                                                                              'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path,
                                                                               'rev_file': output_rev_paired_file_path
                                                                               })['obj_ref'])
@@ -3790,7 +3808,9 @@ class kb_util_dylan:
                     self.log(console, '\nUploading trimmed unpaired forward reads: '+output_obj_name)
                     unpaired_fwd_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                                     'name': output_obj_name,
+                                                                                    # remove sequencing_tech when source_reads_ref is working
                                                                                     'sequencing_tech': sequencing_tech,
+                                                                                    'source_reads_ref': input_reads_ref,
                                                                                     'fwd_file': output_fwd_unpaired_file_path
                                                                                     })['obj_ref'])
                 else:
@@ -3810,7 +3830,9 @@ class kb_util_dylan:
                     self.log(console, '\nUploading trimmed unpaired reverse reads: '+output_obj_name)
                     unpaired_rev_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                                     'name': output_obj_name,
+                                                                                    # remove sequencing_tech when source_reads_ref is working
                                                                                     'sequencing_tech': sequencing_tech,
+                                                                                    'source_reads_ref': input_reads_ref,
                                                                                     'fwd_file': output_rev_unpaired_file_path
                                                                                     })['obj_ref'])
                 else:
