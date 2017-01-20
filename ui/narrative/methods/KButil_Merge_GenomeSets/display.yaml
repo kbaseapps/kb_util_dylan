@@ -6,7 +6,7 @@ tooltip: |
     Allows user to combine multiple GenomeSets into one GenomeSet
 screenshots: []
 
-icon: kb-orange.png
+icon: kb-purple.png
 
 #
 # define a set of similar methods that might be useful to the user

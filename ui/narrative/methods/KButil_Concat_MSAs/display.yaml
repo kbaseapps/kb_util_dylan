@@ -4,9 +4,10 @@
 name: Join Multiple Sequence Alignments (MSAs)
 tooltip: |
     Allows user to concatenate two (or more) MSAs
+
 screenshots: []
 
-icon: kb-orange.png
+icon: kb-cyan.png
 
 #
 # define a set of similar methods that might be useful to the user
