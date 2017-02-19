@@ -1278,6 +1278,8 @@ class kb_util_dylan:
                 #to get the full stack trace: traceback.format_exc()
             
             gId = genomeObj['id']
+            if gId == 'Unknown':
+                gId = genomeRef
             try:
                 already_included = elements[gId]
             except:
