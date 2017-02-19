@@ -1298,7 +1298,7 @@ class kb_util_dylan:
         except:
             provenance[0]['input_ws_objects'] = []
         provenance[0]['input_ws_objects'].extend(params['input_genome_refs'])
-        provenance[0]['input_ws_objects'].append(params['input_genomeset_name'])
+        provenance[0]['input_ws_objects'].append(params['input_genomeset_ref'])
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Add_Genomes_to_GenomeSet'
 
