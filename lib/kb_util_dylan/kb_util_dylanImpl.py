@@ -1206,6 +1206,9 @@ class kb_util_dylan:
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Add_Genomes_to_GenomeSet
+
+        # init
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
         console = []
         invalid_msgs = []
         self.log(console,'Running KButil_Add_Genomes_to_GenomeSet with params=')
@@ -1232,39 +1235,12 @@ class kb_util_dylan:
         # Build GenomeSet
         #
         elements = dict()
-        genome_seen = dict()
-
-        # add new genome
-        for genomeRef in params['input_genome_refs']:
-
-            try:
-                ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': genomeRef}])
-                genomeObj = objects[0]['data']
-                info = objects[0]['info']
-
-                type_name = info[2].split('.')[1].split('-')[0]
-                if type_name != 'Genome' and type != 'GenomeAnnotation':
-                    raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"'")
-
-            except Exception as e:
-                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
-                #to get the full stack trace: traceback.format_exc()
-            
-            gId = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
-            try:
-                already_included = elements[gId]
-            except:
-                elements[gId] = dict()
-                elements[gId]['ref'] = genomeRef  # the key line
-                self.log(console,"adding new element "+gId+" : "+genomeRef)  # DEBUG
 
 
-        # add rest of old GenomeSet
+        # add old GenomeSet
         #
         if 'input_genomeset_ref' in params and params['input_genomeset_ref'] != None:
             try:
-                ws = workspaceService(self.workspaceURL, token=ctx['token'])
                 objects = ws.get_objects([{'ref': params['input_genomeset_ref']}])
                 genomeSet = objects[0]['data']
                 info = objects[0]['info']
@@ -1285,6 +1261,30 @@ class kb_util_dylan:
                     elements[gId]['ref'] = genomeRef  # the key line
                     self.log(console,"adding element "+gId+" : "+genomeRef)  # DEBUG
             
+        # add new genome
+        for genomeRef in params['input_genome_refs']:
+
+            try:
+                objects = ws.get_objects([{'ref': genomeRef}])
+                genomeObj = objects[0]['data']
+                info = objects[0]['info']
+
+                type_name = info[2].split('.')[1].split('-')[0]
+                if type_name != 'Genome':
+                    raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"'")
+
+            except Exception as e:
+                raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                #to get the full stack trace: traceback.format_exc()
+            
+            gId = genomeObj['id']
+            try:
+                already_included = elements[gId]
+            except:
+                elements[gId] = dict()
+                elements[gId]['ref'] = genomeRef  # the key line
+                self.log(console,"adding new element "+gId+" : "+genomeRef)  # DEBUG
+
 
         # load the method provenance from the context object
         #
@@ -1297,8 +1297,8 @@ class kb_util_dylan:
             prov_defined = provenance[0]['input_ws_objects']
         except:
             provenance[0]['input_ws_objects'] = []
-        provenance[0]['input_ws_objects'].extend(params['input_genome_refs'])
         provenance[0]['input_ws_objects'].append(params['input_genomeset_ref'])
+        provenance[0]['input_ws_objects'].extend(params['input_genome_refs'])
         provenance[0]['service'] = 'kb_util_dylan'
         provenance[0]['method'] = 'KButil_Add_Genomes_to_GenomeSet'
 
