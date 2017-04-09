@@ -20,7 +20,7 @@ from kb_util_dylan.authclient import KBaseAuth as _KBaseAuth
 
 DEPLOY = 'KB_DEPLOYMENT_CONFIG'
 SERVICE = 'KB_SERVICE_NAME'
-AUTH = 'auth-server-url'
+AUTH = 'auth-service-url'
 
 # Note that the error fields do not match the 2.0 JSONRPC spec
 
@@ -109,7 +109,11 @@ class JSONRPCServiceCustom(JSONRPCService):
             # Exception was raised inside the method.
             newerr = JSONServerError()
             newerr.trace = traceback.format_exc()
-            newerr.data = e.message
+            if isinstance(e.message, basestring):
+                newerr.data = e.message
+            else:
+                # Some exceptions embed other exceptions as the message
+                newerr.data = repr(e.message)
             raise newerr
         return result
 
@@ -332,55 +336,55 @@ class Application(object):
         self.rpc_service.add(impl_kb_util_dylan.KButil_FASTQ_to_FASTA,
                              name='kb_util_dylan.KButil_FASTQ_to_FASTA',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_FASTQ_to_FASTA'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_FASTQ_to_FASTA'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Merge_FeatureSet_Collection,
                              name='kb_util_dylan.KButil_Merge_FeatureSet_Collection',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Merge_FeatureSet_Collection'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Merge_FeatureSet_Collection'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Merge_GenomeSets,
                              name='kb_util_dylan.KButil_Merge_GenomeSets',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Merge_GenomeSets'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Merge_GenomeSets'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Build_GenomeSet,
                              name='kb_util_dylan.KButil_Build_GenomeSet',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Build_GenomeSet'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Build_GenomeSet'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet,
                              name='kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Build_GenomeSet_from_FeatureSet'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Add_Genomes_to_GenomeSet,
                              name='kb_util_dylan.KButil_Add_Genomes_to_GenomeSet',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Add_Genomes_to_GenomeSet'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Add_Genomes_to_GenomeSet'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Concat_MSAs,
                              name='kb_util_dylan.KButil_Concat_MSAs',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Concat_MSAs'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Concat_MSAs'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Build_ReadsSet,
                              name='kb_util_dylan.KButil_Build_ReadsSet',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Build_ReadsSet'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Build_ReadsSet'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Split_Reads,
                              name='kb_util_dylan.KButil_Split_Reads',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Split_Reads'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Split_Reads'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Random_Subsample_Reads,
                              name='kb_util_dylan.KButil_Random_Subsample_Reads',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Random_Subsample_Reads'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Random_Subsample_Reads'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary,
                              name='kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet,
                              name='kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs,
                              name='kb_util_dylan.KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs',
                              types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs'] = 'required' # noqa
+        self.method_authentication['kb_util_dylan.KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.status,
                              name='kb_util_dylan.status',
                              types=[dict])
