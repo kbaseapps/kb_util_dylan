@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Build InSilico Metagenomic Reads Libraries
+name: Build InSilico Metagenomes from Isolate Reads
 tooltip: |
-    Combine Isolate Reads Libraries into InSilico Metagenomes following user-defined proportions
+    Create reads libraries for synthetic metagenomes from isolate reads libraries following user-defined proportions
 screenshots: []
 
 icon: kb-pink.png
@@ -46,4 +46,4 @@ parameters :
             Name for the Output Reads Library
 
 description : |
-    <p>This method allows the user to take fractions from multiple Isolate Reads Libraries to create artificial metagenomes.</p>
+    <p>This method allows the user to take fractions of isolate reads files and combine them into <i>in silico</i> metagenomesmerge following user-defined proportions.</p>

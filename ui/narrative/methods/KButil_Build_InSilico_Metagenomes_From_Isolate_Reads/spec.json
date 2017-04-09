@@ -5,7 +5,7 @@
     ],
     "contact": "help@kbase.us",
     "visible": true,
-    "categories": ["active","util","reads"],
+    "categories": ["active","util","reads","communities"],
     "widgets": {
         "input": null,
         "output": "kbaseReportView"
@@ -50,7 +50,7 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "Build_InSilico_Metagenomes_From_Isolate_Reads",
+            "method": "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
