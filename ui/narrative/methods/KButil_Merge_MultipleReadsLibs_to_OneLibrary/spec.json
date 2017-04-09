@@ -50,7 +50,7 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "KButil_Merge_MultipleReadsLibs_to_OneReadsLibrary",
+            "method": "KButil_Merge_MultipleReadsLibs_to_OneLibrary",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
