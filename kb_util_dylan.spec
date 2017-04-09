@@ -233,7 +233,6 @@ module kb_util_dylan {
     **
     **  Method for random subsampling of reads library
     */
-    
     typedef structure {
 	int            split_num;
 	int            reads_num;
@@ -276,6 +275,25 @@ module kb_util_dylan {
     funcdef KButil_Merge_ReadsSet_to_OneLibrary (KButil_Merge_ReadsSet_to_OneLibrary_Params params)  returns (KButil_Merge_ReadsSet_to_OneLibrary_Output) authentication required;
 
 
+    /* KButil_Merge_MultipleReadsLibs_to_OneLibrary()
+    **
+    **  Method for merging ReadsLibs into one library
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_refs;    /* ReadsLibraries */
+        data_obj_name  output_name;  /* ReadsLibrary */
+	string         desc;
+    } KButil_Merge_MultipleReadsLibs_to_OneLibrary_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Merge_MultipleReadsLibs_to_OneLibrary_Output;
+
+    funcdef KButil_Merge_MultipleReadsLibs_to_OneLibrary (KButil_Merge_MultipleReadsLibs_to_OneLibrary_Params params)  returns (KButil_Merge_MultipleReadsLibs_to_OneLibrary_Output) authentication required;
+
+
     /* KButil_Merge_MultipleReadsSets_to_OneReadsSet()
     **
     **  Method for merging multiple ReadsSets into one ReadsSet
@@ -312,6 +330,42 @@ module kb_util_dylan {
     } KButil_Extract_Unpaired_Reads_Output;
 
     funcdef KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs (KButil_Extract_Unpaired_Reads_Params params)  returns (KButil_Extract_Unpaired_Reads_Output) authentication required;
+
+
+    /* KButil_Translate_ReadsLibs_QualScores()
+    **
+    **  Method for Translating ReadsLibs Qual scores
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_refs;    /* ReadsLibraries */
+    } KButil_Translate_ReadsLibs_QualScores_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Translate_ReadsLibs_QualScores_Output;
+
+    funcdef KButil_Translate_ReadsLibs_QualScores (KButil_Translate_ReadsLibs_QualScores_Params params)  returns (KButil_Translate_ReadsLibs_QualScores_Output) authentication required;
+
+
+    /* KButil_Build_InSilico_Metagenomes_from_Isolate_Reads()
+    **
+    **  Method for Combining reads libs in user-defined proportions
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_refs;    /* ReadsLibraries */
+        data_obj_name  output_name;  /* ReadsLibrary */
+	string         desc;
+    } KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output;
+
+    funcdef KButil_Build_InSilico_Metagenomes_from_Isolate_Reads (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params params)  returns (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output) authentication required;
 
 };
 
