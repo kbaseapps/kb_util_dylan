@@ -352,6 +352,23 @@ public class KbUtilDylanClient {
     }
 
     /**
+     * <p>Original spec-file function name: KButil_Merge_MultipleReadsLibs_to_OneLibrary</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilMergeMultipleReadsLibsToOneLibraryParams KButilMergeMultipleReadsLibsToOneLibraryParams} (original type "KButil_Merge_MultipleReadsLibs_to_OneLibrary_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilMergeMultipleReadsLibsToOneLibraryOutput KButilMergeMultipleReadsLibsToOneLibraryOutput} (original type "KButil_Merge_MultipleReadsLibs_to_OneLibrary_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilMergeMultipleReadsLibsToOneLibraryOutput kButilMergeMultipleReadsLibsToOneLibrary(KButilMergeMultipleReadsLibsToOneLibraryParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilMergeMultipleReadsLibsToOneLibraryOutput>> retType = new TypeReference<List<KButilMergeMultipleReadsLibsToOneLibraryOutput>>() {};
+        List<KButilMergeMultipleReadsLibsToOneLibraryOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Merge_MultipleReadsLibs_to_OneLibrary", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
      * <p>Original spec-file function name: KButil_Merge_MultipleReadsSets_to_OneReadsSet</p>
      * <pre>
      * </pre>
@@ -382,6 +399,40 @@ public class KbUtilDylanClient {
         args.add(params);
         TypeReference<List<KButilExtractUnpairedReadsOutput>> retType = new TypeReference<List<KButilExtractUnpairedReadsOutput>>() {};
         List<KButilExtractUnpairedReadsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: KButil_Translate_ReadsLibs_QualScores</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilTranslateReadsLibsQualScoresParams KButilTranslateReadsLibsQualScoresParams} (original type "KButil_Translate_ReadsLibs_QualScores_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilTranslateReadsLibsQualScoresOutput KButilTranslateReadsLibsQualScoresOutput} (original type "KButil_Translate_ReadsLibs_QualScores_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilTranslateReadsLibsQualScoresOutput kButilTranslateReadsLibsQualScores(KButilTranslateReadsLibsQualScoresParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilTranslateReadsLibsQualScoresOutput>> retType = new TypeReference<List<KButilTranslateReadsLibsQualScoresOutput>>() {};
+        List<KButilTranslateReadsLibsQualScoresOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Translate_ReadsLibs_QualScores", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: KButil_Build_InSilico_Metagenomes_from_Isolate_Reads</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilBuildInSilicoMetagenomesFromIsolateReadsParams KButilBuildInSilicoMetagenomesFromIsolateReadsParams} (original type "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilBuildInSilicoMetagenomesFromIsolateReadsOutput KButilBuildInSilicoMetagenomesFromIsolateReadsOutput} (original type "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilBuildInSilicoMetagenomesFromIsolateReadsOutput kButilBuildInSilicoMetagenomesFromIsolateReads(KButilBuildInSilicoMetagenomesFromIsolateReadsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilBuildInSilicoMetagenomesFromIsolateReadsOutput>> retType = new TypeReference<List<KButilBuildInSilicoMetagenomesFromIsolateReadsOutput>>() {};
+        List<KButilBuildInSilicoMetagenomesFromIsolateReadsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 

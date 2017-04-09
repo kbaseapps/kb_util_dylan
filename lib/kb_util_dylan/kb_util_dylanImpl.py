@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.3"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "3e41fd3a709f91397e611c887c73f78a99db7854"
+    GIT_COMMIT_HASH = "4b3e1d53075ae83917577e030355981a684d8288"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -3164,6 +3164,38 @@ class kb_util_dylan:
         # return the results
         return [returnVal]
 
+    def KButil_Merge_MultipleReadsLibs_to_OneLibrary(self, ctx, params):
+        """
+        :param params: instance of type
+           "KButil_Merge_MultipleReadsLibs_to_OneLibrary_Params"
+           (KButil_Merge_MultipleReadsLibs_to_OneLibrary() ** **  Method for
+           merging ReadsLibs into one library) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_refs" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type
+           "KButil_Merge_MultipleReadsLibs_to_OneLibrary_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Merge_MultipleReadsLibs_to_OneLibrary
+        #END KButil_Merge_MultipleReadsLibs_to_OneLibrary
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Merge_MultipleReadsLibs_to_OneLibrary return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
     def KButil_Merge_MultipleReadsSets_to_OneReadsSet(self, ctx, params):
         """
         :param params: instance of type
@@ -4009,6 +4041,70 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Translate_ReadsLibs_QualScores(self, ctx, params):
+        """
+        :param params: instance of type
+           "KButil_Translate_ReadsLibs_QualScores_Params"
+           (KButil_Translate_ReadsLibs_QualScores() ** **  Method for
+           Translating ReadsLibs Qual scores) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_refs" of type "data_obj_ref"
+        :returns: instance of type
+           "KButil_Translate_ReadsLibs_QualScores_Output" -> structure:
+           parameter "report_name" of type "data_obj_name", parameter
+           "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Translate_ReadsLibs_QualScores
+        #END KButil_Translate_ReadsLibs_QualScores
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Translate_ReadsLibs_QualScores return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Build_InSilico_Metagenomes_from_Isolate_Reads(self, ctx, params):
+        """
+        :param params: instance of type
+           "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params"
+           (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads() ** ** 
+           Method for Combining reads libs in user-defined proportions) ->
+           structure: parameter "workspace_name" of type "workspace_name" (**
+           The workspace object refs are of form: ** **    objects =
+           ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_refs" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type
+           "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Build_InSilico_Metagenomes_from_Isolate_Reads
+        #END KButil_Build_InSilico_Metagenomes_from_Isolate_Reads
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Build_InSilico_Metagenomes_from_Isolate_Reads return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]

@@ -377,6 +377,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Merge_ReadsSet_to_OneLibrary'] = 'required'  # noqa
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Merge_MultipleReadsLibs_to_OneLibrary,
+                             name='kb_util_dylan.KButil_Merge_MultipleReadsLibs_to_OneLibrary',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Merge_MultipleReadsLibs_to_OneLibrary'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet,
                              name='kb_util_dylan.KButil_Merge_MultipleReadsSets_to_OneReadsSet',
                              types=[dict])
@@ -385,6 +389,14 @@ class Application(object):
                              name='kb_util_dylan.KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs'] = 'required'  # noqa
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Translate_ReadsLibs_QualScores,
+                             name='kb_util_dylan.KButil_Translate_ReadsLibs_QualScores',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Translate_ReadsLibs_QualScores'] = 'required'  # noqa
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads,
+                             name='kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.status,
                              name='kb_util_dylan.status',
                              types=[dict])
