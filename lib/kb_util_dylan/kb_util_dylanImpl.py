@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.3"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "4b3e1d53075ae83917577e030355981a684d8288"
+    GIT_COMMIT_HASH = "b3880ba1a568d50f6c387f67747c227c93231ec7"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
