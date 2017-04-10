@@ -3187,6 +3187,239 @@ class kb_util_dylan:
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Merge_MultipleReadsLibs_to_OneLibrary
+        console = []
+        report = ''
+        self.log(console, 'Running KButil_Merge_MultipleReadsLibs_to_OneLibrary with parameters: ')
+        self.log(console, "\n"+pformat(params))
+
+        token = ctx['token']
+        wsClient = workspaceService(self.workspaceURL, token=token)
+        headers = {'Authorization': 'OAuth '+token}
+        env = os.environ.copy()
+        env['KB_AUTH_TOKEN'] = token
+
+        #SERVICE_VER = 'dev'  # DEBUG
+        SERVICE_VER = 'release'
+
+        # param checks
+        required_params = ['workspace_name',
+                           'input_refs', 
+                           'output_name'
+                           ]
+        for required_param in required_params:
+            if required_param not in params or params[required_param] == None:
+                raise ValueError ("Must define required param: '"+required_param+"'")
+            
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
+
+        if len(params['input_refs']) < 2:
+            self.log(console,"Must provide at least two ReadsLibs or ReadsSets")
+            self.log(invalid_msgs,"Must provide at least two ReadsLibs or ReadsSets")
+
+        # load provenance
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects']=[str(params['input_ref'])]
+
+        # get set
+        #
+        readsSet_ref_list = []
+        readsSet_names_list = []
+        for reads_ref in params['input_refs']:
+            try:
+                # object_info tuple
+                [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+                
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':reads_ref}]})[0]
+                input_reads_obj_type = input_reads_obj_info[TYPE_I]
+                input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+                #input_reads_obj_version = input_reads_obj_info[VERSION_I]  # this is object version, not type version
+
+            except Exception as e:
+                raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
+
+            acceptable_types = ["KBaseSets.ReadsSet", "KBaseFile.PairedEndLibrary"]
+            if input_reads_obj_type not in acceptable_types:
+                raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+
+            if input_reads_obj_type != "KBaseSets.ReadsSet":  # readsLib
+                readsSet_ref_list.append(reads_ref)
+
+            else:  # readsSet
+                try:
+                    setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
+                    input_readsSet_obj = setAPI_Client.get_reads_set_v1 ({'ref':reads_ref,'include_item_info':1})
+                except Exception as e:
+                    raise ValueError('SetAPI FAILURE: Unable to get read library set object from workspace: (' + str(reads_ref)+")\n" + str(e))
+                
+                for readsLibrary_obj in input_readsSet_obj['data']['items']:
+                    readsSet_ref_list.append(readsLibrary_obj['ref'])
+#                    NAME_I = 1
+#                    readsSet_names_list.append(readsLibrary_obj['info'][NAME_I])
+
+
+        # check type of readsLibrary memebers of set
+        #
+        report = ''
+        read_library_type = None
+        for input_reads_library_ref in readsSet_ref_list:
+
+            # make sure library types are consistent
+            try:
+                # object_info tuple
+                [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':params['input_ref']}]})[0]
+                input_reads_obj_type = input_reads_obj_info[TYPE_I]
+                input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+                readsSet_names_list.append(input_reads_obj_info[NAME_I])
+
+            except Exception as e:
+                raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
+            
+            if read_library_type == None:
+                read_library_type = input_reads_obj_type
+            elif input_reads_obj_type != read_library_type:
+                raise ValueError ("incompatible read library types in ReadsSet "+params['input_ref'])
+            
+        # combine read libraries
+        #
+        self.log (console, "CREATING COMBINED INPUT FASTQ FILES")
+
+        # make dir
+        timestamp = int((datetime.utcnow() - datetime.utcfromtimestamp(0)).total_seconds()*1000)
+        input_dir = os.path.join(self.scratch,'input.'+str(timestamp))
+        if not os.path.exists(input_dir):
+            os.makedirs(input_dir)
+
+        # connect to ReadsUtils Client
+        try:
+            readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
+        except:
+            raise ValueError("Unable to get readsUtils_Client\n" + str(e))
+
+        # start combined file
+        read_buf_size  = 65536
+        write_buf_size = 65536
+        combined_input_fwd_path = os.path.join (input_dir, 'input_reads_fwd.fastq')
+        combined_input_rev_path = os.path.join (input_dir, 'input_reads_rev.fastq')
+        combined_input_fwd_handle = open (combined_input_fwd_path, 'w', write_buf_size)
+        combined_input_rev_handle = open (combined_input_rev_path, 'w', write_buf_size)
+
+
+        # add libraries, one at a time
+        sequencing_tech = None
+        for this_input_reads_ref in readsSet_ref_list:
+            self.log (console, "DOWNLOADING FASTQ FILES FOR ReadsSet member: "+str(this_input_reads_ref))
+            try:
+                readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [this_input_reads_ref],
+                                                                  'interleaved': 'false'
+                                                                  })
+            except Exception as e:
+                raise ValueError('Unable to get reads object from workspace: (' + this_input_reads_ref +")\n" + str(e))
+
+            this_input_fwd_path = readsLibrary['files'][this_input_reads_ref]['files']['fwd']
+
+            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+                this_input_rev_path = readsLibrary['files'][this_input_reads_ref]['files']['rev']
+
+            this_sequencing_tech = readsLibrary['files'][this_input_reads_ref]['sequencing_tech']
+            if sequencing_tech == None:
+                sequencing_tech = this_sequencing_tech
+            elif this_sequencing_tech != sequencing_tech:
+                sequencing_tech = 'N/A'
+
+
+            # append fwd
+            self.log (console, "APPENDING FASTQ FILES FOR ReadsSet member: "+str(this_input_reads_ref))
+            this_input_path = this_input_fwd_path
+            cat_file_handle = combined_input_fwd_handle
+            with open (this_input_path, 'r', read_buf_size) as this_input_handle:
+                while True:
+                    read_data = this_input_handle.read(read_buf_size)
+                    if read_data:
+                        cat_file_handle.write(read_data)
+                    else:
+                        break
+            os.remove (this_input_path)  # create space since we no longer need the piece file
+
+            # append rev
+            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+                this_input_path = this_input_rev_path
+                cat_file_handle = combined_input_rev_handle
+                with open (this_input_path, 'r', read_buf_size) as this_input_handle:
+                    while True:
+                        read_data = this_input_handle.read(read_buf_size)
+                        if read_data:
+                            cat_file_handle.write(read_data)
+                        else:
+                            break
+                os.remove (this_input_path)  # create space since we no longer need the piece file
+
+        combined_input_fwd_handle.close()
+        combined_input_rev_handle.close()
+
+
+        # upload reads
+        #
+        self.log (console, "UPLOADING MERGED READS LIB")  # DEBUG
+        if not os.path.isfile (combined_input_fwd_path) \
+                or os.path.getsize (combined_input_fwd_path) == 0:
+            raise ValueError ("failed to create fwd read library output")
+        if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+            if not os.path.isfile (combined_input_rev_path) \
+                or os.path.getsize (combined_input_rev_path) == 0:
+                    
+                raise ValueError ("failed to create rev read library output")
+
+        output_obj_name = params['output_name']
+        self.log(console, 'Uploading reads library: '+output_obj_name)
+
+        if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+            reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                  'name': output_obj_name,
+                                                                  # remove sequencing_tech when source_reads_ref is working
+                                                                  'sequencing_tech': sequencing_tech,
+                                                                  'source_reads_ref': readsSet_ref_list[0],
+                                                                  'fwd_file': combined_input_fwd_path,
+                                                                  'rev_file': combined_input_rev_path
+                                                                  })['obj_ref']
+        else:
+            reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                  'name': output_obj_name,
+                                                                  # remove sequencing_tech when source_reads_ref is working
+                                                                  'sequencing_tech': sequencing_tech,
+                                                                  'source_reads_ref': readsSet_ref_list[0],
+                                                                  'fwd_file': combined_input_fwd_path,
+                                                                  })['obj_ref']
+            
+
+        # build report message
+        report += "NUM READS LIBRARIES COMBINED INTO ONE READS LIBRARY: " + str(len(readsSet_ref_list))+"\n"
+
+        # build report
+        #
+        self.log (console, "SAVING REPORT")  # DEBUG        
+        reportObj = {'objects_created':[], 
+                     'text_message': report}
+
+        reportObj['objects_created'].append({'ref':reads_library_ref,
+                                             'description':params['desc']})
+
+
+        # save report object
+        #
+        report = KBaseReport(self.callbackURL, token=ctx['token'], service_ver=SERVICE_VER)
+        report_info = report.create({'report':reportObj, 'workspace_name':params['workspace_name']})
+
+        returnVal = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
         #END KButil_Merge_MultipleReadsLibs_to_OneLibrary
 
         # At some point might do deeper type checking...
@@ -4067,6 +4300,283 @@ class kb_util_dylan:
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Translate_ReadsLibs_QualScores
+        console = []
+        report = ''
+        self.log(console, 'Running KButil_Translate_ReadsLibs_QualScores with parameters: ')
+        self.log(console, "\n"+pformat(params))
+
+        token = ctx['token']
+        wsClient = workspaceService(self.workspaceURL, token=token)
+        headers = {'Authorization': 'OAuth '+token}
+        env = os.environ.copy()
+        env['KB_AUTH_TOKEN'] = token
+
+        # internal Methods
+        def q33(q64): return chr(ord(q64)-31)
+
+        #SERVICE_VER = 'dev'  # DEBUG
+        SERVICE_VER = 'release'
+
+        # param checks
+        required_params = ['workspace_name',
+                           'input_refs', 
+                           ]
+        for required_param in required_params:
+            if required_param not in params or params[required_param] == None:
+                raise ValueError ("Must define required param: '"+required_param+"'")
+            
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
+
+        if len(params['input_refs']) < 2:
+            self.log(console,"Must provide at least two ReadsLibs or ReadsSets")
+            self.log(invalid_msgs,"Must provide at least two ReadsLibs or ReadsSets")
+
+        # load provenance
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects']=[str(params['input_ref'])]
+
+        # Determine whether read library or read set is input object
+        #
+        first_input_ref = params['input_refs']
+
+
+        # get set
+        #
+        readsSet_ref_list = []
+        readsSet_names_list = []
+        for reads_ref in params['input_refs']:
+            try:
+                # object_info tuple
+                [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+                
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':reads_ref}]})[0]
+                input_reads_obj_type = input_reads_obj_info[TYPE_I]
+                input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+                #input_reads_obj_version = input_reads_obj_info[VERSION_I]  # this is object version, not type version
+
+            except Exception as e:
+                raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
+            
+            acceptable_types = ["KBaseSets.ReadsSet", "KBaseFile.PairedEndLibrary"]
+            if input_reads_obj_type not in acceptable_types:
+                raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+            
+            if input_reads_obj_type != "KBaseSets.ReadsSet":  # readsLib
+                readsSet_ref_list.append(reads_ref)
+                
+            else:  # readsSet
+                try:
+                    setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
+                    input_readsSet_obj = setAPI_Client.get_reads_set_v1 ({'ref':reads_ref,'include_item_info':1})
+                except Exception as e:
+                    raise ValueError('SetAPI FAILURE: Unable to get read library set object from workspace: (' + str(reads_ref)+")\n" + str(e))
+                
+                for readsLibrary_obj in input_readsSet_obj['data']['items']:
+                    readsSet_ref_list.append(readsLibrary_obj['ref'])
+#                    NAME_I = 1
+#                    readsSet_names_list.append(readsLibrary_obj['info'][NAME_I])
+        # add names
+        for reads_ref in readsSet_ref_list:
+            try:
+                # object_info tuple
+                [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+                
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':reads_ref}]})[0]
+                input_reads_obj_name = input_reads_obj_info[NAME_I]
+                #input_reads_obj_type = input_reads_obj_info[TYPE_I]
+                #input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+            except Exception as e:
+                raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
+
+            readsSet_names_list.append(input_reads_obj_name)
+
+
+        # translate qual scores for each read library
+        #
+        self.log (console, "CREATING Translated FASTQ FILES")
+
+        # make dir
+        timestamp = int((datetime.utcnow() - datetime.utcfromtimestamp(0)).total_seconds()*1000)
+        input_dir = os.path.join(self.scratch,'input.'+str(timestamp))
+        if not os.path.exists(input_dir):
+            os.makedirs(input_dir)
+
+        # connect to ReadsUtils Client
+        try:
+            readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
+        except:
+            raise ValueError("Unable to get readsUtils_Client\n" + str(e))
+
+
+        # add libraries, one at a time
+        #
+        new_objects = []
+        translated_cnt = 0
+        for reads_i,this_input_reads_ref in enumerate(readsSet_ref_list):
+            self.log (console, "DOWNLOADING FASTQ FILES FOR ReadsSet member: "+readsSet_names_list[reads_i]+" ("+str(this_input_reads_ref)+")")
+            try:
+                readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [this_input_reads_ref],
+                                                                  'interleaved': 'false'
+                                                                  })
+            except Exception as e:
+                raise ValueError('Unable to get reads object from workspace: (' + this_input_reads_ref +")\n" + str(e))
+
+            this_input_fwd_path = readsLibrary['files'][this_input_reads_ref]['files']['fwd']
+
+            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+                this_input_rev_path = readsLibrary['files'][this_input_reads_ref]['files']['rev']
+
+            this_sequencing_tech = readsLibrary['files'][this_input_reads_ref]['sequencing_tech']
+            if sequencing_tech == None:
+                sequencing_tech = this_sequencing_tech
+            elif this_sequencing_tech != sequencing_tech:
+                sequencing_tech = 'N/A'
+
+            # read through and translate qual scores
+            self.log (console, "APPENDING FASTQ FILES FOR ReadsSet member: "+str(this_input_reads_ref))
+            read_buf_size  = 65536
+            write_buf_size = 65536
+
+            qual33_fwd_path = this_input_fwd_path + '.qual33'
+            qual33_fwd_handle = open (qual33_fwd_path, 'w', write_buf_size)
+
+            input_is_already_phred33 = False
+            this_input_path = this_input_fwd_path
+            with open (this_input_path, 'r', read_buf_size) as this_input_handle:
+                while True:
+                    buf = []
+                    line = this_input_handle.readline()
+                    if not line:
+                        break
+                    if input_is_already_phred33:
+                        break
+                    if line.startswith('@'):
+                        buf.append(line)  # header
+                        buf.append(this_input_handle.readline())  # seq
+                        buf.append(this_input_handle.readline())  # '+'
+
+                        qual_line = this_input_handle.readline()
+                        qual_line.rstrip()
+                        q33_line = ''
+                        for q64 in qual_line:
+                            q64_ascii = ord(q64)
+                            if q64_ascii < 64:
+                                input_is_already_phred33 = True
+                                break
+                            q33_line += chr(q64_ascii - 31)
+                        buf.append(q33_line)
+                    q33_fwd_handle.write("\n".join(buf)+"\n")
+
+            q33_fwd_handle.close()
+            os.remove (this_input_path)  # create space since we no longer need the piece file
+
+            # append rev
+            if input_reads_obj_type == "KBaseFile.PairedEndLibrary" and \
+                    not input_is_already_phred33:
+
+                qual33_rev_path = this_input_rev_path + '.qual33'
+                qual33_rev_handle = open (qual33_rev_path, 'w', write_buf_size)
+                this_input_path = this_input_rev_path
+
+            with open (this_input_path, 'r', read_buf_size) as this_input_handle:
+                while True:
+                    buf = []
+                    line = this_input_handle.readline()
+                    if not line:
+                        break
+                    if input_is_already_phred33:
+                        break
+                    if line.startswith('@'):
+                        buf.append(line)  # header
+                        buf.append(this_input_handle.readline())  # seq
+                        buf.append(this_input_handle.readline())  # '+'
+
+                        qual_line = this_input_handle.readline()
+                        qual_line.rstrip()
+                        q33_line = ''
+                        for q64 in qual_line:
+                            q64_ascii = ord(q64)
+                            if q64_ascii < 64:
+                                input_is_already_phred33 = True
+                                break
+                            q33_line += chr(q64_ascii - 31)
+                        buf.append(q33_line)
+                    q33_rev_handle.write("\n".join(buf)+"\n")
+
+            q33_rev_handle.close()
+            os.remove (this_input_path)  # create space since we no longer need the piece file
+
+            # upload reads
+            #
+            if input_is_already_phred33:
+                self.log(console, "WARNING: "+readsSet_names_list[reads_i]+" ("+str(this_input_reads_ref)+") is already phred33.  Skipping.")
+                continue
+
+            translated_cnt += 1
+            self.log (console, "UPLOADING Translated 64->33 READS LIB")  # DEBUG
+            if not os.path.isfile (q33_fwd_path) \
+                    or os.path.getsize (q33_fwd_path) == 0:
+                raise ValueError ("failed to create fwd read library output")
+            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+                if not os.path.isfile (q33_rev_path) \
+                        or os.path.getsize (q33_rev_path) == 0:
+                    
+                    raise ValueError ("failed to create rev read library output")
+
+            output_obj_name = readsSet_names_list[reads_i]+".phred33"
+            self.log(console, 'Uploading reads library: '+output_obj_name)
+
+            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+                reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                      'name': output_obj_name,
+                                                                      # remove sequencing_tech when source_reads_ref is working
+                                                                      'sequencing_tech': sequencing_tech,
+                                                                      'source_reads_ref': readsSet_ref_list[0],
+                                                                      'fwd_file': q33_fwd_path,
+                                                                      'rev_file': q33_rev_path
+                                                                      })['obj_ref']
+            else:
+                reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
+                                                                      'name': output_obj_name,
+                                                                      # remove sequencing_tech when source_reads_ref is working
+                                                                      'sequencing_tech': sequencing_tech,
+                                                                      'source_reads_ref': readsSet_ref_list[0],
+                                                                      'fwd_file': q33_fwd_path,
+                                                                      })['obj_ref']
+            
+
+            # add object to list
+            desc = readsSet_names_list[reads_i]+' translated to phred33'
+            new_objects.append({'ref':reads_library_ref,
+                                'description':desc})
+
+
+        # build report message
+        report += "NUM READS LIBRARIES INPUT: " + str(len(readsSet_ref_list))+"\n"
+        report += "NUM READS LIBRARIES TRANSLATED: " + str(translated_cnt)+"\n"
+
+
+        # build report
+        #
+        self.log (console, "SAVING REPORT")  # DEBUG        
+        reportObj = {'objects_created':new_objects, 
+                     'text_message': report}
+
+
+        # save report object
+        #
+        report = KBaseReport(self.callbackURL, token=ctx['token'], service_ver=SERVICE_VER)
+        report_info = report.create({'report':reportObj, 'workspace_name':params['workspace_name']})
+
+        returnVal = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
         #END KButil_Translate_ReadsLibs_QualScores
 
         # At some point might do deeper type checking...
