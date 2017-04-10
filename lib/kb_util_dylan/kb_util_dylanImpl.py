@@ -52,9 +52,9 @@ class kb_util_dylan:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "0.0.3"
-    GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "b3880ba1a568d50f6c387f67747c227c93231ec7"
+    VERSION = "0.0.1"
+    GIT_URL = ""
+    GIT_COMMIT_HASH = ""
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
