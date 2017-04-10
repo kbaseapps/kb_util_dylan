@@ -464,7 +464,7 @@ class Application(object):
                                 ctx['user_id'] = user
                                 ctx['authenticated'] = 1
                                 ctx['token'] = token
-                            except Exception, e:
+                            except Exception as e:
                                 if auth_req == 'required':
                                     err = JSONServerError()
                                     err.data = \
