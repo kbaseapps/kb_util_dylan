@@ -4435,7 +4435,7 @@ class kb_util_dylan:
                 this_input_rev_path = readsLibrary['files'][this_input_reads_ref]['files']['rev']
 
             # read through and translate qual scores
-            self.log (console, "APPENDING FASTQ FILES FOR ReadsSet member: "+str(this_input_reads_ref))
+            self.log (console, "TRANSLATING FWD FASTQ FILE FOR ReadsSet member: "+str(this_input_reads_ref))
             read_buf_size  = 65536
             write_buf_size = 65536
 
@@ -4473,40 +4473,44 @@ class kb_util_dylan:
             os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # append rev
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary" and \
-                    not input_is_already_phred33:
+            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+                if input_is_already_phred33:
+                    continue
+                
+                self.log (console, "TRANSLATING REV FASTQ FILE FOR ReadsSet member: "+str(this_input_reads_ref))
 
                 qual33_rev_path = this_input_rev_path + '.qual33'
                 qual33_rev_handle = open (qual33_rev_path, 'w', write_buf_size)
                 this_input_path = this_input_rev_path
 
-            with open (this_input_path, 'r', read_buf_size) as this_input_handle:
-                while True:
-                    buf = []
-                    line = this_input_handle.readline()
-                    if not line:
-                        break
-                    if input_is_already_phred33:
-                        break
-                    if line.startswith('@'):
-                        buf.append(line)  # header
-                        buf.append(this_input_handle.readline())  # seq
-                        buf.append(this_input_handle.readline())  # '+'
+                with open (this_input_path, 'r', read_buf_size) as this_input_handle:
+                    while True:
+                        buf = []
+                        line = this_input_handle.readline()
+                        if not line:
+                            break
+                        if input_is_already_phred33:
+                            break
+                        if line.startswith('@'):
+                            buf.append(line)  # header
+                            buf.append(this_input_handle.readline())  # seq
+                            buf.append(this_input_handle.readline())  # '+'
+                            
+                            qual_line = this_input_handle.readline()
+                            qual_line.rstrip()
+                            q33_line = ''
+                            for q64 in qual_line:
+                                q64_ascii = ord(q64)
+                                if q64_ascii < 64:
+                                    input_is_already_phred33 = True
+                                    break
+                                q33_line += chr(q64_ascii - 31)
+                            buf.append(q33_line)
+                            self.log (console, q33_line)  # DEBUG
+                            qual33_rev_handle.write("\n".join(buf)+"\n")
 
-                        qual_line = this_input_handle.readline()
-                        qual_line.rstrip()
-                        q33_line = ''
-                        for q64 in qual_line:
-                            q64_ascii = ord(q64)
-                            if q64_ascii < 64:
-                                input_is_already_phred33 = True
-                                break
-                            q33_line += chr(q64_ascii - 31)
-                        buf.append(q33_line)
-                    qual33_rev_handle.write("\n".join(buf)+"\n")
-
-            qual33_rev_handle.close()
-            os.remove (this_input_path)  # create space since we no longer need the piece file
+                qual33_rev_handle.close()
+                os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # upload reads
             #
