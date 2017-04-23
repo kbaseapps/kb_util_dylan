@@ -4469,7 +4469,9 @@ class kb_util_dylan:
                                 break
                             q33_line += chr(q64_ascii - 31)
                         buf.append(q33_line)
-                    qual33_fwd_handle.write("\n".join(buf)+"\n")
+                        self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
+                        self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
+                        qual33_fwd_handle.write("\n".join(buf)+"\n")
 
             qual33_fwd_handle.close()
             os.remove (this_input_path)  # create space since we no longer need the piece file
@@ -4507,7 +4509,8 @@ class kb_util_dylan:
                                     break
                                 q33_line += chr(q64_ascii - 31)
                             buf.append(q33_line)
-                            self.log (console, q33_line)  # DEBUG
+                            self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
+                            self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
                             qual33_rev_handle.write("\n".join(buf)+"\n")
 
                 qual33_rev_handle.close()
