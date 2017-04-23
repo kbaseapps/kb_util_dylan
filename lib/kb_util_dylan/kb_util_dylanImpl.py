@@ -4371,7 +4371,7 @@ class kb_util_dylan:
             
             if input_reads_obj_type != "KBaseSets.ReadsSet":  # readsLib
                 readsSet_ref_list.append(reads_ref)
-                
+
             else:  # readsSet
                 try:
                     setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
@@ -4383,7 +4383,8 @@ class kb_util_dylan:
                     readsSet_ref_list.append(readsLibrary_obj['ref'])
 #                    NAME_I = 1
 #                    readsSet_names_list.append(readsLibrary_obj['info'][NAME_I])
-        # add names
+        # add names and types
+        reads_obj_types_list = []
         for reads_ref in readsSet_ref_list:
             try:
                 # object_info tuple
@@ -4391,12 +4392,14 @@ class kb_util_dylan:
                 
                 input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':reads_ref}]})[0]
                 input_reads_obj_name = input_reads_obj_info[NAME_I]
-                #input_reads_obj_type = input_reads_obj_info[TYPE_I]
-                #input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+                input_readsLib_obj_type = input_reads_obj_info[TYPE_I]
+                input_readsLib_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+
             except Exception as e:
                 raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
 
-            readsSet_names_list.append(input_reads_obj_name)
+            readsSet_names_list.append (input_reads_obj_name)
+            reads_obj_types_list.append (input_readsLib_obj_type)
 
 
         # translate qual scores for each read library
@@ -4430,8 +4433,7 @@ class kb_util_dylan:
                 raise ValueError('Unable to get reads object from workspace: (' + this_input_reads_ref +")\n" + str(e))
 
             this_input_fwd_path = readsLibrary['files'][this_input_reads_ref]['files']['fwd']
-
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+            if reads_obj_types_list[reads_i] == "KBaseFile.PairedEndLibrary":
                 this_input_rev_path = readsLibrary['files'][this_input_reads_ref]['files']['rev']
 
             # read through and translate qual scores
@@ -4473,9 +4475,8 @@ class kb_util_dylan:
             os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # append rev
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
-                if input_is_already_phred33:
-                    continue
+            if reads_obj_types_list[reads_i] == "KBaseFile.PairedEndLibrary" and \
+                    not input_is_already_phred33:
                 
                 self.log (console, "TRANSLATING REV FASTQ FILE FOR ReadsSet member: "+str(this_input_reads_ref))
 
@@ -4523,7 +4524,7 @@ class kb_util_dylan:
             if not os.path.isfile (qual33_fwd_path) \
                     or os.path.getsize (qual33_fwd_path) == 0:
                 raise ValueError ("failed to create fwd read library output")
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+            if reads_obj_types_list[reads_i] == "KBaseFile.PairedEndLibrary":
                 if not os.path.isfile (qual33_rev_path) \
                         or os.path.getsize (qual33_rev_path) == 0:
                     
@@ -4532,7 +4533,7 @@ class kb_util_dylan:
             output_obj_name = readsSet_names_list[reads_i]+".phred33"
             self.log(console, 'Uploading reads library: '+output_obj_name)
 
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+            if reads_obj_types_list[reads_i] == "KBaseFile.PairedEndLibrary":
                 reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                       'name': output_obj_name,
                                                                       # remove sequencing_tech when source_reads_ref is working
