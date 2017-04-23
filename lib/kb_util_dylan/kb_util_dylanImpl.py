@@ -4473,6 +4473,7 @@ class kb_util_dylan:
                                 break
                             q33_line += chr(q64_ascii - 31)
                         buf.append(q33_line)
+                        self.log (console, "TRNS_LINE: "+trans_report)  # DEBUG
                         self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
                         raise ValueError ("EXITING")  # DEBUG
                         qual33_fwd_handle.write("\n".join(buf)+"\n")
