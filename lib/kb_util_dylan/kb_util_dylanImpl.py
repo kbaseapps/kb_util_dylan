@@ -4313,7 +4313,7 @@ class kb_util_dylan:
         env['KB_AUTH_TOKEN'] = token
 
         # internal Methods
-        def q33(q64): return chr(ord(q64)-31)
+        def qual33(qual64): return chr(ord(qual64)-31)
 
         #SERVICE_VER = 'dev'  # DEBUG
         SERVICE_VER = 'release'
@@ -4467,9 +4467,9 @@ class kb_util_dylan:
                                 break
                             q33_line += chr(q64_ascii - 31)
                         buf.append(q33_line)
-                    q33_fwd_handle.write("\n".join(buf)+"\n")
+                    qual33_fwd_handle.write("\n".join(buf)+"\n")
 
-            q33_fwd_handle.close()
+            qual33_fwd_handle.close()
             os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # append rev
@@ -4503,9 +4503,9 @@ class kb_util_dylan:
                                 break
                             q33_line += chr(q64_ascii - 31)
                         buf.append(q33_line)
-                    q33_rev_handle.write("\n".join(buf)+"\n")
+                    qual33_rev_handle.write("\n".join(buf)+"\n")
 
-            q33_rev_handle.close()
+            qual33_rev_handle.close()
             os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # upload reads
@@ -4516,12 +4516,12 @@ class kb_util_dylan:
 
             translated_cnt += 1
             self.log (console, "UPLOADING Translated 64->33 READS LIB")  # DEBUG
-            if not os.path.isfile (q33_fwd_path) \
-                    or os.path.getsize (q33_fwd_path) == 0:
+            if not os.path.isfile (qual33_fwd_path) \
+                    or os.path.getsize (qual33_fwd_path) == 0:
                 raise ValueError ("failed to create fwd read library output")
             if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
-                if not os.path.isfile (q33_rev_path) \
-                        or os.path.getsize (q33_rev_path) == 0:
+                if not os.path.isfile (qual33_rev_path) \
+                        or os.path.getsize (qual33_rev_path) == 0:
                     
                     raise ValueError ("failed to create rev read library output")
 
@@ -4534,8 +4534,8 @@ class kb_util_dylan:
                                                                       # remove sequencing_tech when source_reads_ref is working
                                                                       #'sequencing_tech': sequencing_tech,
                                                                       'source_reads_ref': readsSet_ref_list[0],
-                                                                      'fwd_file': q33_fwd_path,
-                                                                      'rev_file': q33_rev_path
+                                                                      'fwd_file': qual33_fwd_path,
+                                                                      'rev_file': qual33_rev_path
                                                                       })['obj_ref']
             else:
                 reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
@@ -4543,7 +4543,7 @@ class kb_util_dylan:
                                                                       # remove sequencing_tech when source_reads_ref is working
                                                                       #'sequencing_tech': sequencing_tech,
                                                                       'source_reads_ref': readsSet_ref_list[0],
-                                                                      'fwd_file': q33_fwd_path,
+                                                                      'fwd_file': qual33_fwd_path,
                                                                       })['obj_ref']
             
 
