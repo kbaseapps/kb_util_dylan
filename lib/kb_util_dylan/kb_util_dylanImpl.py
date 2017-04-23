@@ -4466,7 +4466,7 @@ class kb_util_dylan:
                         #self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
                         for q64 in qual_line:
                             q64_ascii = ord(q64)
-                            trans_report += q64+'('+str(q64_ascii)+')'
+                            #trans_report += q64+'('+str(q64_ascii)+')'
                             if q64_ascii < 64:
                                 input_is_already_phred33 = True
                                 break
