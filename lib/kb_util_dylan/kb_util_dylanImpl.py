@@ -4462,6 +4462,7 @@ class kb_util_dylan:
                         qual_line = this_input_handle.readline()
                         qual_line.rstrip()
                         q33_line = ''
+                        self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
                         for q64 in qual_line:
                             q64_ascii = ord(q64)
                             if q64_ascii < 64:
@@ -4469,7 +4470,6 @@ class kb_util_dylan:
                                 break
                             q33_line += chr(q64_ascii - 31)
                         buf.append(q33_line)
-                        self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
                         self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
                         qual33_fwd_handle.write("\n".join(buf)+"\n")
 
@@ -4502,6 +4502,7 @@ class kb_util_dylan:
                             qual_line = this_input_handle.readline()
                             qual_line.rstrip()
                             q33_line = ''
+                            self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
                             for q64 in qual_line:
                                 q64_ascii = ord(q64)
                                 if q64_ascii < 64:
@@ -4509,7 +4510,6 @@ class kb_util_dylan:
                                     break
                                 q33_line += chr(q64_ascii - 31)
                             buf.append(q33_line)
-                            self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
                             self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
                             qual33_rev_handle.write("\n".join(buf)+"\n")
 
