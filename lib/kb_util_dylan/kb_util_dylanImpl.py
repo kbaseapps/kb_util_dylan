@@ -4463,6 +4463,7 @@ class kb_util_dylan:
                         qual_line.rstrip()
                         q33_line = ''
                         self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
+                        raise ValueError ("EXITING")  # DEBUG
                         for q64 in qual_line:
                             q64_ascii = ord(q64)
                             if q64_ascii < 64:
