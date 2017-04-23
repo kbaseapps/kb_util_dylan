@@ -4459,12 +4459,11 @@ class kb_util_dylan:
                         buf.append(this_input_handle.readline())  # seq
                         buf.append(this_input_handle.readline())  # '+'
 
-                        qual_line = this_input_handle.readline()
-                        qual_line.rstrip()
+                        qual_line = this_input_handle.readline().rstrip()
                         q33_line = ''
                         #def qual33(qual64): return chr(ord(qual64)-31)
-                        trans_report = ''  # DEBUG
-                        self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
+                        #trans_report = ''  # DEBUG
+                        #self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
                         for q64 in qual_line:
                             q64_ascii = ord(q64)
                             trans_report += q64+'('+str(q64_ascii)+')'
@@ -4472,11 +4471,10 @@ class kb_util_dylan:
                                 input_is_already_phred33 = True
                                 break
                             q33_line += chr(q64_ascii - 31)
-                        buf.append(q33_line)
-                        self.log (console, "TRNS_LINE: "+trans_report)  # DEBUG
-                        self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
-                        raise ValueError ("EXITING")  # DEBUG
-                        qual33_fwd_handle.write("\n".join(buf)+"\n")
+                        buf.append(q33_line+"\n")
+                        #self.log (console, "TRNS_LINE: "+trans_report)  # DEBUG
+                        #self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
+                        qual33_fwd_handle.write(''.join(buf))
 
             qual33_fwd_handle.close()
             os.remove (this_input_path)  # create space since we no longer need the piece file
@@ -4504,8 +4502,7 @@ class kb_util_dylan:
                             buf.append(this_input_handle.readline())  # seq
                             buf.append(this_input_handle.readline())  # '+'
                             
-                            qual_line = this_input_handle.readline()
-                            qual_line.rstrip()
+                            qual_line = this_input_handle.readline().rstrip()
                             q33_line = ''
                             self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
                             for q64 in qual_line:
@@ -4514,9 +4511,9 @@ class kb_util_dylan:
                                     input_is_already_phred33 = True
                                     break
                                 q33_line += chr(q64_ascii - 31)
-                            buf.append(q33_line)
+                            buf.append(q33_line+"\n")
                             self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
-                            qual33_rev_handle.write("\n".join(buf)+"\n")
+                            qual33_rev_handle.write(''.join(buf))
 
                 qual33_rev_handle.close()
                 os.remove (this_input_path)  # create space since we no longer need the piece file
