@@ -4301,6 +4301,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Translate_ReadsLibs_QualScores
         console = []
+        invalid_msgs = []
         report = ''
         self.log(console, 'Running KButil_Translate_ReadsLibs_QualScores with parameters: ')
         self.log(console, "\n"+pformat(params))
@@ -4332,9 +4333,6 @@ class kb_util_dylan:
                 clean_input_refs.append(ref)
         params['input_refs'] = clean_input_refs
 
-        if len(params['input_refs']) < 2:
-            self.log(console,"Must provide at least two ReadsLibs or ReadsSets")
-            self.log(invalid_msgs,"Must provide at least two ReadsLibs or ReadsSets")
 
         # load provenance
         provenance = [{}]
