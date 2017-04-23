@@ -4462,16 +4462,19 @@ class kb_util_dylan:
                         qual_line = this_input_handle.readline()
                         qual_line.rstrip()
                         q33_line = ''
+                        #def qual33(qual64): return chr(ord(qual64)-31)
+                        trans_report = ''  # DEBUG
                         self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
-                        raise ValueError ("EXITING")  # DEBUG
                         for q64 in qual_line:
                             q64_ascii = ord(q64)
+                            trans_report += q64+'('+str(q64_ascii)+')'
                             if q64_ascii < 64:
                                 input_is_already_phred33 = True
                                 break
                             q33_line += chr(q64_ascii - 31)
                         buf.append(q33_line)
                         self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
+                        raise ValueError ("EXITING")  # DEBUG
                         qual33_fwd_handle.write("\n".join(buf)+"\n")
 
             qual33_fwd_handle.close()
