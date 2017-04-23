@@ -4434,12 +4434,6 @@ class kb_util_dylan:
             if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
                 this_input_rev_path = readsLibrary['files'][this_input_reads_ref]['files']['rev']
 
-            this_sequencing_tech = readsLibrary['files'][this_input_reads_ref]['sequencing_tech']
-            if sequencing_tech == None:
-                sequencing_tech = this_sequencing_tech
-            elif this_sequencing_tech != sequencing_tech:
-                sequencing_tech = 'N/A'
-
             # read through and translate qual scores
             self.log (console, "APPENDING FASTQ FILES FOR ReadsSet member: "+str(this_input_reads_ref))
             read_buf_size  = 65536
