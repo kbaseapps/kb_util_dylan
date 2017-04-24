@@ -3,7 +3,7 @@
 #
 name: Build InSilico Metagenomes from Isolate Reads
 tooltip: |
-    Create reads libraries for synthetic metagenomes from isolate reads libraries following user-defined proportions
+    Split Reads Libraries into a set of randomly subsampled Reads Libraries following population proportions
 screenshots: []
 
 icon: kb-pink.png
@@ -31,19 +31,41 @@ parameters :
         ui-name : |
             Description
         short-hint : |
-            Describe Purpose or Contents of Output ReadsLibrary
+            Describe Purpose or Contents of Output ReadsSet
         placeholder: |
             Enter Description
     input_refs:
         ui-name : |
-            Input reads libraries
+            Reads libraries
         short-hint : |
-            Reads Lib Names here (SingleEndLibrary or PairedEndLibrary, but not both)
+            Reads Library Name here (PairedEndLibraries or ReadsSet of PELibs)
     output_name:
         ui-name : |
-            Output reads lib name
+            Output readsSet name
         short-hint : |
-            Name for the Output Reads Library
+            Name for the Output ReadsSet
+    reads_num:
+        ui-name : |
+            Num reads
+        short-hint : |
+            Number of reads to put into each library sample
+    population_percs:
+        ui-name : |
+            Perc reads per sample (1-100)
+        short-hint : |
+            Percentage of original reads library to put into each sample library
+    seed:
+        ui-name : |
+            Random Seed (optional)
+        short-hint : |
+            Specify seed for Randomizer if you want repeatable results
+
+parameter-groups :
+    subsample_fraction :
+        ui-name: |
+            Subsample Fraction
+        short-hint : |
+            Provide number of reads per sublibrary and percentage of that output library for each genome/readsLib
 
 description : |
-    <p>This method allows the user to take fractions of isolate reads files and combine them into <i>in silico</i> metagenomesmerge following user-defined proportions.</p>
+    <p>This method allows the user to randomly subsample Reads Libraries into Reads Libraries that correspond to population percentages, organized into a ReadsSet.</p>

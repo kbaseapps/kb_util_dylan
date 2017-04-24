@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.3"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "a0325f748e60c2044dfd63e3e29b101d76bde617"
+    GIT_COMMIT_HASH = "5475f7ba6b776c8e770cbfecf248bc9697562eff"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -4680,9 +4680,7 @@ class kb_util_dylan:
     def KButil_Build_InSilico_Metagenomes_from_Isolate_Reads(self, ctx, params):
         """
         :param params: instance of type
-           "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params"
-           (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads() ** ** 
-           Method for Combining reads libs in user-defined proportions) ->
+           "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params" ->
            structure: parameter "workspace_name" of type "workspace_name" (**
            The workspace object refs are of form: ** **    objects =
            ws.get_objects([{'ref':
@@ -4692,7 +4690,13 @@ class kb_util_dylan:
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
            parameter "input_refs" of type "data_obj_ref", parameter
-           "output_name" of type "data_obj_name", parameter "desc" of String
+           "output_name" of type "data_obj_name", parameter
+           "subsample_fraction" of type "InSilico_Reads_Options"
+           (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads() ** ** 
+           Method for Combining reads libs in user-defined proportions) ->
+           structure: parameter "reads_num" of Long, parameter
+           "population_percs" of String, parameter "desc" of String,
+           parameter "seed" of Long
         :returns: instance of type
            "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output" ->
            structure: parameter "report_name" of type "data_obj_name",

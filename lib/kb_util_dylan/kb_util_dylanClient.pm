@@ -1701,10 +1701,15 @@ KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params is a reference to a 
 	workspace_name has a value which is a kb_util_dylan.workspace_name
 	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
+	subsample_fraction has a value which is a kb_util_dylan.InSilico_Reads_Options
 	desc has a value which is a string
+	seed has a value which is an int
 workspace_name is a string
 data_obj_ref is a string
 data_obj_name is a string
+InSilico_Reads_Options is a reference to a hash where the following keys are defined:
+	reads_num has a value which is an int
+	population_percs has a value which is a string
 KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
@@ -1721,10 +1726,15 @@ KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params is a reference to a 
 	workspace_name has a value which is a kb_util_dylan.workspace_name
 	input_refs has a value which is a kb_util_dylan.data_obj_ref
 	output_name has a value which is a kb_util_dylan.data_obj_name
+	subsample_fraction has a value which is a kb_util_dylan.InSilico_Reads_Options
 	desc has a value which is a string
+	seed has a value which is an int
 workspace_name is a string
 data_obj_ref is a string
 data_obj_name is a string
+InSilico_Reads_Options is a reference to a hash where the following keys are defined:
+	reads_num has a value which is an int
+	population_percs has a value which is a string
 KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output is a reference to a hash where the following keys are defined:
 	report_name has a value which is a kb_util_dylan.data_obj_name
 	report_ref has a value which is a kb_util_dylan.data_obj_ref
@@ -3179,7 +3189,7 @@ report_ref has a value which is a kb_util_dylan.data_obj_ref
 
 
 
-=head2 KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params
+=head2 InSilico_Reads_Options
 
 =over 4
 
@@ -3198,10 +3208,44 @@ KButil_Build_InSilico_Metagenomes_from_Isolate_Reads()
 
 <pre>
 a reference to a hash where the following keys are defined:
+reads_num has a value which is an int
+population_percs has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+reads_num has a value which is an int
+population_percs has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
 input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
+subsample_fraction has a value which is a kb_util_dylan.InSilico_Reads_Options
 desc has a value which is a string
+seed has a value which is an int
 
 </pre>
 
@@ -3213,7 +3257,9 @@ a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
 input_refs has a value which is a kb_util_dylan.data_obj_ref
 output_name has a value which is a kb_util_dylan.data_obj_name
+subsample_fraction has a value which is a kb_util_dylan.InSilico_Reads_Options
 desc has a value which is a string
+seed has a value which is an int
 
 
 =end text

@@ -354,10 +354,17 @@ module kb_util_dylan {
     **  Method for Combining reads libs in user-defined proportions
     */
     typedef structure {
+	int            reads_num;
+	string         population_percs;
+    } InSilico_Reads_Options;
+    typedef structure {
         workspace_name workspace_name;
-	data_obj_ref   input_refs;    /* ReadsLibraries */
-        data_obj_name  output_name;  /* ReadsLibrary */
+	data_obj_ref   input_refs;    /* ReadsLibrary */
+        data_obj_name  output_name;   /* ReadsSet */
+	InSilico_Reads_Options subsample_fraction;
+	/*bool           reads_uniq;*/  /* sampling without replacement */
 	string         desc;
+	int            seed;
     } KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params;
 
     typedef structure {
