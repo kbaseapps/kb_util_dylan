@@ -349,9 +349,14 @@ class kb_util_dylan:
         header = None
         last_header = None
         last_seq_buf = None
-        last_line_was_header = False
+        rec_line_i = -1
         for line in input_file_handle:
-            if line.startswith('@'):
+            rec_line_i += 1
+            if rec_line_i == 3:
+                rec_line_i = -1
+            elif rec_line_i == 0:
+                if not line.startswith('@'):
+                    raise ValueError ("badly formatted rec line: '"+line+"'")
                 seq_cnt += 1
                 header = line[1:]
                 if last_header != None:
@@ -359,12 +364,8 @@ class kb_util_dylan:
                     output_file_handle.write(last_seq_buf)
                 last_seq_buf = None
                 last_header = header
-                last_line_was_header = True
-            elif last_line_was_header:
+            elif rec_line_i == 1:
                 last_seq_buf = line
-                last_line_was_header = False
-            else:
-                continue
         if last_header != None:
             output_file_handle.write('>'+last_header)
             output_file_handle.write(last_seq_buf)
@@ -2523,12 +2524,19 @@ class kb_util_dylan:
 #            rec_cnt = 0  # DEBUG
             self.log (console, "GETTING IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
                         read_id = re.sub ("[\/\.\_\-\:\;][012lrLRfrFR53]\'*$", "", read_id)
                         fwd_ids[read_id] = True
+
                         # DEBUG
 #                        if rec_cnt % 100 == 0:
 #                            self.log(console,"read_id: '"+str(read_id)+"'")
@@ -2538,14 +2546,21 @@ class kb_util_dylan:
             # read reverse to determine paired
             self.log (console, "DETERMINING PAIRED IDS")  # DEBUG
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
                         read_id = re.sub ("[\/\.\_\-\:\;][012lrLRfrFR53]\'*$", "", read_id)
                         if fwd_ids[read_id]:
                             paired_ids[read_id] = True
                             paired_ids_list.append(read_id)
+
                         # DEBUG
 #                        if rec_cnt % 100 == 0:
 #                            self.log(console,"read_id: '"+str(read_id)+"'")
@@ -2588,8 +2603,14 @@ class kb_util_dylan:
             capture_type_paired = False
 
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             if capture_type_paired:
                                 lib_i = paired_lib_i[last_read_id]
@@ -2644,8 +2665,14 @@ class kb_util_dylan:
             capture_type_paired = False
 
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             if capture_type_paired:
                                 lib_i = paired_lib_i[last_read_id]
@@ -2741,8 +2768,14 @@ class kb_util_dylan:
             # get "paired" ids
             self.log (console, "DETERMINING IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
                         read_id = re.sub ("[\/\.\_\-\:\;][012lrLRfrFR53]\'*$", "", read_id)
@@ -2795,8 +2828,14 @@ class kb_util_dylan:
             paired_cnt = 0
             recs_beep_n = 100000
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         total_paired_reads += 1
                         if last_read_id != None:
                             try:
