@@ -4720,7 +4720,7 @@ class kb_util_dylan:
         
         #SERVICE_VER = 'dev'  # DEBUG
         SERVICE_VER = 'release'
-
+        
         # init randomizer
         if 'seed' in params and params['seed'] != None:
             random.seed(params['seed'])
@@ -4729,12 +4729,12 @@ class kb_util_dylan:
 
         # param checks
         required_params = ['workspace_name',
-                           'input_ref', 
+                           'input_refs', 
                            'output_name'
                            ]
-        for required_param in required_params:
-            if required_param not in params or params[required_param] == None:
-                raise ValueError ("Must define required param: '"+required_param+"'")
+        for param in required_params:
+            if param not in params or params[param] == None:
+                raise ValueError ("Must define required param: '"+param+"'")
             
 #        # and param defaults
 #        defaults = { 'split_num': 10
@@ -4742,39 +4742,49 @@ class kb_util_dylan:
 #        for arg in defaults.keys():
 #            if arg not in params or params[arg] == None or params[arg] == '':
 #                params[arg] = defaults[arg]
-
-        if 'subsample_fraction' not in params or params['subsample_fraction'] == None:
-            raise ValueError ("Missing subsample_fraction params")
-        if 'split_num' not in params['subsample_fraction'] or params['subsample_fraction']['split_num'] == None or params['subsample_fraction']['split_num'] < 0:
-            raise ValueError ("Missing split_num")
-
-        # use split_num to create reads_perc if neither reads_num or reads_perc defined
-        use_reads_num  = False
-        use_reads_perc = False
-        if ('reads_num' in params['subsample_fraction'] and params['subsample_fraction']['reads_num'] != None and params['subsample_fraction']['reads_num'] > 0):
-            self.log (console, "Ignoring reads_perc and just using reads_num: "+str(params['subsample_fraction']['reads_num']))
-            use_reads_num  = True
             
-        elif ('reads_perc' in params['subsample_fraction'] and params['subsample_fraction']['reads_perc'] != None and params['subsample_fraction']['reads_perc'] > 0 and params['subsample_fraction']['reads_perc'] <= 100):
-            self.log (console, "Ignoring reads_num and just using reads_perc: "+str(params['subsample_fraction']['reads_perc']))
-            use_reads_perc = True
+        required_group_params = {'subsample_fraction': ['reads_num',
+                                                        'population_percs'
+                                                        ]
+                                 }
+        for group in required_group_params.keys():
+            if group not in params or params[group] == None:
+                raise ValueError ("Must define required param group: '"+group+"'")
+            for param in required_params[group]:
+                if param not in params[group] or params[group][param] == None or params[group][param] == '':
+                    raise ValueError ("Must define required group: '"+group+"' param: '"+param+"'")
+                
+        # use population_percs to create split_num equivalent 'num_out_samples'
+        #
+        sample_percs = []
+        num_out_samples = 0
+        for line in params['subsample_fraction']['population_percs'].split("\n"):
+            line = line.strip()
+            if line == '':
+                continue
+            if line.startswith("Genome\t") or line.startswith("genome\t"):
+                continue
+            rec = re.split("\s", line)
+            if len(rec) < 2:
+                raise ValueError ("Badly formatted population_percs param.  Bad line '"+line+"'")
+            genome_id = rec[0]  # discarded
+            sample_percs.append(rec[1:])  # note these are still strings potentially with a trailing '%'
+            if num_out_samples == 0:
+                num_out_samples = len(rec)-1
+            elif num_out_samples != len(rec)-1:
+                raise ValueError ("Badly formatted population_percs param.  Inconsistent number of sample rows in line '"+line+"'")
+        #params['subsample_fraction']['split_num'] = num_out_samples
 
-        elif ('reads_num' not in params['subsample_fraction'] or params['subsample_fraction']['reads_num'] == None or params['subsample_fraction']['reads_num'] <= 0) \
-                and ('reads_perc' not in params['subsample_fraction'] or params['subsample_fraction']['reads_perc'] == None or params['subsample_fraction']['reads_perc'] <= 0):
-
-            params['subsample_fraction']['reads_perc'] = int(100.0 * 1.0/params['subsample_fraction']['split_num'])
-            use_reads_perc = True
-
-        else:
-            raise ValueError ("Badly configured subsample_fraction params")
-            
 
         # load provenance
         provenance = [{}]
         if 'provenance' in ctx:
             provenance = ctx['provenance']
-        provenance[0]['input_ws_objects']=[str(params['input_ref'])]
+        provenance[0]['input_ws_objects']=[]
+        for input_ref in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(input_ref)
 
+# HERE
 
         # Determine whether read library is of correct type
         #
