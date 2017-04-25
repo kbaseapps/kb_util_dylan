@@ -3252,6 +3252,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Merge_MultipleReadsLibs_to_OneLibrary
         console = []
+        invalid_msgs = []
         report = ''
         self.log(console, 'Running KButil_Merge_MultipleReadsLibs_to_OneLibrary with parameters: ')
         self.log(console, "\n"+pformat(params))
@@ -3290,7 +3291,9 @@ class kb_util_dylan:
         if 'provenance' in ctx:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
-        provenance[0]['input_ws_objects']=[str(params['input_ref'])]
+        provenance[0]['input_ws_objects']=[]
+        for input_ref in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(input_ref)
 
         # get set
         #
