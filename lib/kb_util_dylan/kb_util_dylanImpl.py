@@ -3384,6 +3384,8 @@ class kb_util_dylan:
         # add libraries, one at a time
         sequencing_tech = None
         for this_input_reads_ref in readsSet_ref_list:
+            clean_ref = re.sub("\/", "_", this_input_reads_ref)
+            
             self.log (console, "DOWNLOADING FASTQ FILES FOR ReadsSet member: "+str(this_input_reads_ref))
             try:
                 readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [this_input_reads_ref],
@@ -3409,12 +3411,23 @@ class kb_util_dylan:
             this_input_path = this_input_fwd_path
             cat_file_handle = combined_input_fwd_handle
             with open (this_input_path, 'r', read_buf_size) as this_input_handle:
-                while True:
-                    read_data = this_input_handle.read(read_buf_size)
-                    if read_data:
-                        cat_file_handle.write(read_data)
-                    else:
-                        break
+                #while True:
+                #    read_data = this_input_handle.read(read_buf_size)
+                #    if read_data:
+                #        cat_file_handle.write(read_data)
+                #    else:
+                #        break
+                rec_line_i = -1
+                for line in this_input_handle:
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
+                        
+                        line = '@'+clean_ref+':'+line[1:]
+                    cat_file_handle.write(line)
             os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # append rev
@@ -3422,12 +3435,23 @@ class kb_util_dylan:
                 this_input_path = this_input_rev_path
                 cat_file_handle = combined_input_rev_handle
                 with open (this_input_path, 'r', read_buf_size) as this_input_handle:
-                    while True:
-                        read_data = this_input_handle.read(read_buf_size)
-                        if read_data:
-                            cat_file_handle.write(read_data)
-                        else:
-                            break
+                    #while True:
+                    #    read_data = this_input_handle.read(read_buf_size)
+                    #    if read_data:
+                    #        cat_file_handle.write(read_data)
+                    #    else:
+                    #        break
+                    rec_line_i = -1
+                    for line in this_input_handle:
+                        rec_line_i += 1
+                        if rec_line_i == 3:
+                            rec_line_i = -1
+                        elif rec_line_i == 0:
+                            if not line.startswith('@'):
+                                raise ValueError ("badly formatted rec line: '"+line+"'")
+                        
+                            line = '@'+clean_ref+':'+line[1:]
+                        cat_file_handle.write(line)
                 os.remove (this_input_path)  # create space since we no longer need the piece file
 
         combined_input_fwd_handle.close()
