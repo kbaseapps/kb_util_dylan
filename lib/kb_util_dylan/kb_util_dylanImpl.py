@@ -3343,18 +3343,18 @@ class kb_util_dylan:
                 # object_info tuple
                 [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
 
-                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':params['input_ref']}]})[0]
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':input_reads_library_ref}]})[0]
                 input_reads_obj_type = input_reads_obj_info[TYPE_I]
                 input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
                 readsSet_names_list.append(input_reads_obj_info[NAME_I])
 
             except Exception as e:
-                raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
+                raise ValueError('Unable to get read library object from workspace: (' + input_reads_library_ref +')' + str(e))
             
             if read_library_type == None:
                 read_library_type = input_reads_obj_type
             elif input_reads_obj_type != read_library_type:
-                raise ValueError ("incompatible read library types in ReadsSet "+params['input_ref'])
+                raise ValueError ("incompatible read library types in ReadsSet "+input_reads_library_ref)
             
         # combine read libraries
         #
