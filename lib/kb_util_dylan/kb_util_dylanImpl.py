@@ -3187,6 +3187,7 @@ class kb_util_dylan:
                                                                   # remove sequencing_tech when source_reads_ref is working
                                                                   #'sequencing_tech': sequencing_tech,
                                                                   'source_reads_ref': readsSet_ref_list[0],
+                                                                  'single_genome': 0,
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   'rev_file': combined_input_rev_path
                                                                   })['obj_ref']
@@ -3196,6 +3197,7 @@ class kb_util_dylan:
                                                                   # remove sequencing_tech when source_reads_ref is working
                                                                   #'sequencing_tech': sequencing_tech,
                                                                   'source_reads_ref': readsSet_ref_list[0],
+                                                                  'single_genome': 0,
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   })['obj_ref']
             
@@ -3479,6 +3481,7 @@ class kb_util_dylan:
                                                                   # remove sequencing_tech when source_reads_ref is working
                                                                   #'sequencing_tech': sequencing_tech,
                                                                   'source_reads_ref': readsSet_ref_list[0],
+                                                                  'single_genome': 0,
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   'rev_file': combined_input_rev_path
                                                                   })['obj_ref']
@@ -3488,6 +3491,7 @@ class kb_util_dylan:
                                                                   # remove sequencing_tech when source_reads_ref is working
                                                                   #'sequencing_tech': sequencing_tech,
                                                                   'source_reads_ref': readsSet_ref_list[0],
+                                                                  'single_genome': 0,
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   })['obj_ref']
             
