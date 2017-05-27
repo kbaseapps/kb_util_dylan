@@ -354,7 +354,6 @@ module kb_util_dylan {
     **  Method for getting a fasta file of genes from reference genomes with a certain annotation
     */
     typedef structure {
-    typedef structure {
         workspace_name workspace_name;
 	string  annotation_string;
 	bool    substr_flag;

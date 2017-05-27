@@ -420,6 +420,23 @@ public class KbUtilDylanClient {
     }
 
     /**
+     * <p>Original spec-file function name: KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilGetFASTAForKBaseReferenceGenesByDescAnnotationParams KButilGetFASTAForKBaseReferenceGenesByDescAnnotationParams} (original type "KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilGetFASTAForKBaseReferenceGenesByDescAnnotationOutput KButilGetFASTAForKBaseReferenceGenesByDescAnnotationOutput} (original type "KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilGetFASTAForKBaseReferenceGenesByDescAnnotationOutput kButilGetFASTAForKBaseReferenceGenesByDescAnnotation(KButilGetFASTAForKBaseReferenceGenesByDescAnnotationParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilGetFASTAForKBaseReferenceGenesByDescAnnotationOutput>> retType = new TypeReference<List<KButilGetFASTAForKBaseReferenceGenesByDescAnnotationOutput>>() {};
+        List<KButilGetFASTAForKBaseReferenceGenesByDescAnnotationOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
      * <p>Original spec-file function name: KButil_Build_InSilico_Metagenomes_from_Isolate_Reads</p>
      * <pre>
      * </pre>

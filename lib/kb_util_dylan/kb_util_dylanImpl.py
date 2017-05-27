@@ -54,7 +54,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "0.0.3"
     GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "5475f7ba6b776c8e770cbfecf248bc9697562eff"
+    GIT_COMMIT_HASH = "97443524977225d5cf4adea9a986ca0e4ba14e91"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -4705,6 +4705,40 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_Translate_ReadsLibs_QualScores return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation(self, ctx, params):
+        """
+        :param params: instance of type
+           "KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Para
+           ms"
+           (KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation()
+           ** **  Method for getting a fasta file of genes from reference
+           genomes with a certain annotation) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "annotation_string" of String, parameter "substr_flag"
+           of type "bool", parameter "seq_type" of String
+        :returns: instance of type
+           "KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Outp
+           ut" -> structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation
+        #END KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]

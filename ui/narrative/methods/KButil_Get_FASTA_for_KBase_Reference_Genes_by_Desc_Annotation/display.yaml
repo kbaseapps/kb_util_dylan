@@ -27,7 +27,7 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    desc:
+    annotation_string:
         ui-name : |
             Annotation
         short-hint : |

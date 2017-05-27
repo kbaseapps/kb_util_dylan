@@ -393,6 +393,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Translate_ReadsLibs_QualScores',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Translate_ReadsLibs_QualScores'] = 'required'  # noqa
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation,
+                             name='kb_util_dylan.KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads,
                              name='kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads',
                              types=[dict])
