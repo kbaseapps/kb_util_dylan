@@ -358,7 +358,7 @@ module kb_util_dylan {
         workspace_name workspace_name;
 	string  annotation_string;
 	bool    substr_flag;
-	bool    dna_seq;
+	string  seq_type;
     } KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Params;
 
     typedef structure {

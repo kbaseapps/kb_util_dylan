@@ -5,14 +5,14 @@
     ],
     "contact": "help@kbase.us",
     "visible": true,
-    "categories": ["active","util","reads","communities"],
+    "categories": ["active","util","comparative_genomics"],
     "widgets": {
         "input": null,
         "output": "kbaseReportView"
     },
     "parameters": [ 
         {
-            "id": "desc",
+            "id": "annotation_string",
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
@@ -23,52 +23,18 @@
             }
         },
         {
-            "id": "input_refs",
-            "optional": false,
-            "advanced": false,
-            "allow_multiple": true,
-            "default_values": [ "" ],
-            "field_type": "text",
-            "text_options": {
-                "valid_ws_types": [ "KBaseFile.PairedEndLibrary" ]
-            }
-        },
-        {
-            "id": "output_name",
-            "optional": false,
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [ "" ],
-            "field_type": "text",
-            "text_options": {
-                "valid_ws_types": [ "KBaseSets.ReadsSet" ],
-		"is_output_name": true
-            }
-        },
-        {
-            "id": "reads_num",
+            "id": "substr_flag",
             "optional": true,
-            "advanced": false,
+            "advanced": true,
             "allow_multiple": false,
-            "default_values": [ "10000" ],
+            "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
 		"validate_as": "int"
             }
-        },
+        }
         {
-            "id": "population_percs",
-            "optional": false,
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": [ "Genome\tSmpl_1\tSmpl_2\tSmpl_3\tetc.\ngenome-1\t10.0%\t10.0%\t10.0%\ngenome-2\t10.0%\t10.0%\t10.0%\ngenome-3\t10.0%\t10.0%\t10.0%\ngenome-4\t10.0%\t10.0%\t10.0%\ngenome-5\t10.0%\t10.0%\t10.0%\ngenome-6\t10.0%\t10.0%\t10.0%\ngenome-7\t10.0%\t10.0%\t10.0%\ngenome-8\t10.0%\t10.0%\t10.0%\ngenome-9\t10.0%\t10.0%\t10.0%\ngenome-10\t10.0%\t10.0%\t10.0%\n" ],
-            "field_type": "textarea",
-            "textarea_options": {
-		"n_rows": "11"
-            }
-        },
-        {
-            "id": "seed",
+            "id": "seq_type",
             "optional": true,
             "advanced": true,
             "allow_multiple": false,
