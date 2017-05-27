@@ -24,35 +24,51 @@
         },
         {
             "id": "substr_flag",
-            "optional": true,
-            "advanced": true,
+            "optional": false,
+            "advanced": false,
             "allow_multiple": false,
-            "default_values": [ "" ],
-            "field_type": "text",
-            "text_options": {
-		"validate_as": "int"
+            "default_values": [ "0" ],
+            "field_type": "dropdown",
+            "dropdown_options": {
+                "options": [
+                                {
+                                        "value": "0",
+                                        "display": "require full length match",
+                                        "id": "fulllen",
+                                        "ui-name": "fulllen"
+                                },
+                                {
+                                        "value": "1",
+                                        "display": "sub match OK",
+                                        "id": "sub",
+                                        "ui-name": "sub"
+                                }
+                           ]
             }
-        }
+        },
         {
             "id": "seq_type",
-            "optional": true,
-            "advanced": true,
-            "allow_multiple": false,
-            "default_values": [ "" ],
-            "field_type": "text",
-            "text_options": {
-		"validate_as": "int"
-            }
-        }
-    ],
-
-    "parameter-groups": [
-     	{
-	    "id": "subsample_fraction",
-            "parameters": ["reads_num", "population_percs"],
             "optional": false,
+            "advanced": false,
             "allow_multiple": false,
-            "with_border": true
+            "default_values": [ "DNA" ],
+            "field_type": "dropdown",
+            "dropdown_options": {
+                "options": [
+                                {
+                                        "value": "DNA",
+                                        "display": "DNA",
+                                        "id": "DNA",
+                                        "ui-name": "DNA"
+                                },
+                                {
+                                        "value": "AA",
+                                        "display": "Protein",
+                                        "id": "AA",
+                                        "ui-name": "AA"
+                                }
+                           ]
+            }
         }
     ],
 
@@ -60,32 +76,23 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads",
+            "method": "KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
                     "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "desc",
-                    "target_property": "desc"
+                    "input_parameter": "annotation_string",
+                    "target_property": "annotation_string"
                 },
                 {
-                    "input_parameter": "input_refs",
-                    "target_property": "input_refs",
-		    "target_type_transform": "list<resolved-ref>"
+                    "input_parameter": "substr_flag",
+                    "target_property": "substr_flag"
                 },
                 {
-                    "input_parameter": "output_name",
-                    "target_property": "output_name"
-                },
-                {
-                    "input_parameter": "seed",
-                    "target_property": "seed"
-                },
-                {
-                    "input_parameter": "subsample_fraction",
-                    "target_property": "subsample_fraction"
+                    "input_parameter": "seq_type",
+                    "target_property": "seq_type"
                 }
             ],
             "output_mapping": [

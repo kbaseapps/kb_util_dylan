@@ -1,12 +1,12 @@
 #
 # define display information
 #
-name: Build InSilico Metagenomes from Isolate Reads
+name: Get FASTA for KBase Reference Genes by Desc Annotation
 tooltip: |
-    Split Reads Libraries into a set of randomly subsampled Reads Libraries following population proportions
+    Obtain a FASTA file that contains DNA or Protein sequences for genes in the KBase Microbial Reference DB that match a descriptive functional annotation
 screenshots: []
 
-icon: kb-pink.png
+icon: kb-orange.png
 
 #
 # define a set of similar methods that might be useful to the user
@@ -29,43 +29,21 @@ suggestions:
 parameters :
     desc:
         ui-name : |
-            Description
+            Annotation
         short-hint : |
-            Describe Purpose or Contents of Output ReadsSet
+            Descriptive Functional Annotation to match
         placeholder: |
-            Enter Description
-    input_refs:
+            Enter Descriptive Annotation
+    substr_flag:
         ui-name : |
-            Reads libraries
+            Full Match?
         short-hint : |
-            Reads Library Name here (PairedEndLibraries or ReadsSet of PELibs)
-    output_name:
+            Should match require full length or allow an internal portion
+    seq_type:
         ui-name : |
-            Output readsSet name
+            Translate gene?
         short-hint : |
-            Name for the Output ReadsSet
-    reads_num:
-        ui-name : |
-            Num reads
-        short-hint : |
-            Number of reads to put into each library sample
-    population_percs:
-        ui-name : |
-            Perc reads per sample (1-100)
-        short-hint : |
-            Percentage of original reads library to put into each sample library
-    seed:
-        ui-name : |
-            Random Seed (optional)
-        short-hint : |
-            Specify seed for Randomizer if you want repeatable results
-
-parameter-groups :
-    subsample_fraction :
-        ui-name: |
-            Subsample Fraction
-        short-hint : |
-            Provide number of reads per sublibrary and percentage of that output library for each genome/readsLib
+            FASTA should be DNA or Protein sequence (note: only applies to protein coding genes)
 
 description : |
-    <p>This method allows the user to randomly subsample Reads Libraries into Reads Libraries that correspond to population percentages, organized into a ReadsSet.</p>
+    <p>This method allows the user to obtain a FASTA file for download of genes from the KBase Microbial Reference DB.</p>
