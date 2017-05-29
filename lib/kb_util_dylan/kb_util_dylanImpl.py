@@ -4734,6 +4734,8 @@ class kb_util_dylan:
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation
+
+
         #END KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation
 
         # At some point might do deeper type checking...
