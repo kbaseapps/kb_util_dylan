@@ -348,50 +348,5 @@ module kb_util_dylan {
 
     funcdef KButil_Translate_ReadsLibs_QualScores (KButil_Translate_ReadsLibs_QualScores_Params params)  returns (KButil_Translate_ReadsLibs_QualScores_Output) authentication required;
 
-
-    /* KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation()
-    **
-    **  Method for getting a fasta file of genes from reference genomes with a certain annotation
-    */
-    typedef structure {
-        workspace_name workspace_name;
-	string  annotation_string;
-	bool    substr_flag;
-	string  seq_type;
-    } KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Params;
-
-    typedef structure {
-	data_obj_name report_name;
-	data_obj_ref  report_ref;
-    } KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Output;
-
-    funcdef KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation (KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Params params)  returns (KButil_Get_FASTA_for_KBase_Reference_Genes_by_Desc_Annotation_Output) authentication required;
-
-
-    /* KButil_Build_InSilico_Metagenomes_from_Isolate_Reads()
-    **
-    **  Method for Combining reads libs in user-defined proportions
-    */
-    typedef structure {
-	int            reads_num;
-	string         population_percs;
-    } InSilico_Reads_Options;
-    typedef structure {
-        workspace_name workspace_name;
-	data_obj_ref   input_refs;    /* ReadsLibrary */
-        data_obj_name  output_name;   /* ReadsSet */
-	InSilico_Reads_Options subsample_fraction;
-	/*bool           reads_uniq;*/  /* sampling without replacement */
-	string         desc;
-	int            seed;
-    } KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params;
-
-    typedef structure {
-	data_obj_name report_name;
-	data_obj_ref  report_ref;
-    } KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output;
-
-    funcdef KButil_Build_InSilico_Metagenomes_from_Isolate_Reads (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params params)  returns (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output) authentication required;
-
 };
 
