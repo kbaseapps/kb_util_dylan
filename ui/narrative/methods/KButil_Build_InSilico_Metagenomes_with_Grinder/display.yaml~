@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Randomly Subsample Reads
+name: Build InSilico Metagenomes with Grinder v0.5.4
 tooltip: |
-    Split a Reads Library into a set of randomly subsampled Reads Libraries
+    Generate In Silico reads from microbial genomes following input proportions
 screenshots: []
 
 icon: kb-pink.png
@@ -34,29 +34,24 @@ parameters :
             Describe Purpose or Contents of Output ReadsSet
         placeholder: |
             Enter Description
-    input_ref:
+    input_refs:
         ui-name : |
-            Reads library
+            Reads libraries
         short-hint : |
-            Reads Library Name here (SingleEndLibrary or PairedEndLibrary)
+            Reads Library Name here (PairedEndLibraries or ReadsSet of PELibs)
     output_name:
         ui-name : |
             Output readsSet name
         short-hint : |
             Name for the Output ReadsSet
-    split_num:
-        ui-name : |
-            Split number
-        short-hint : |
-            Number of Split Outputs
     reads_num:
         ui-name : |
             Num reads
         short-hint : |
             Number of reads to put into each library sample
-    reads_perc:
+    population_percs:
         ui-name : |
-            or Perc reads (1-100)
+            Perc reads per sample (1-100)
         short-hint : |
             Percentage of original reads library to put into each sample library
     seed:
@@ -70,7 +65,26 @@ parameter-groups :
         ui-name: |
             Subsample Fraction
         short-hint : |
-            Either provide number of reads per sublibrary or percentage of original library (or just number of split libraries to capture all reads)
+            Provide number of reads per sublibrary and percentage of that output library for each genome/readsLib
 
 description : |
-    <p>This method allows the user to split a Reads Library into a randomly subsampled Reads Libraries, organized into a ReadsSet.</p>
+    <p>This method allows the user to generate In Silico reads using the Grinder method (v0.5.4).  This is especially useful in benchmarking methods applied to reads, such as assembly.</p>
+
+publications:
+    -
+        pmid : 20224823
+        display-text : |
+            'Price MN, Dehal PS, and Arkin AP. (2010) FastTree 2 -- Approximately Maximum-Likelihood Trees for Large Alignments. PLoS ONE, 5(3):e9490. doi:10.1371/journal.pone.0009490'
+        link: http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0009490
+    -
+        pmid : 19377059
+        display-text : |
+            'Price MN, Dehal PS, Arkin AP. (2009) FastTree: computing large minimum evolution trees with profiles instead of a distance matrix. Mol Biol Evol. 2009 Jul;26(7):1641-50. doi: 10.1093/molbev/msp077.'
+        link: https://www.ncbi.nlm.nih.gov/pubmed/19377059
+    -
+        pmid : 26921390 
+        display-text : |
+            'Huerta-Cepas J, Serra F, and Bork P. (2016) ETE 3: Reconstruction, analysis and visualization of phylogenomic data. Mol Biol Evol 2016; doi: 10.1093/molbev/msw046'
+        link: https://www.ncbi.nlm.nih.gov/pubmed/26921390
+    -
+        link: http://etetoolkit.org

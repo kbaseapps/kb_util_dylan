@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name: Build InSilico Metagenomes from Isolate Reads
+name: Build InSilico Metagenomes with Grinder v0.5.4
 tooltip: |
-    Split Reads Libraries into a set of randomly subsampled Reads Libraries following population proportions
+    Generate In Silico reads from microbial genomes following input proportions
 screenshots: []
 
 icon: kb-pink.png
@@ -68,4 +68,13 @@ parameter-groups :
             Provide number of reads per sublibrary and percentage of that output library for each genome/readsLib
 
 description : |
-    <p>This method allows the user to randomly subsample Reads Libraries into Reads Libraries that correspond to population percentages, organized into a ReadsSet.</p>
+    <p>This method allows the user to generate In Silico reads using the Grinder method (v0.5.4).  This is especially useful in benchmarking methods applied to reads, such as assembly.</p>
+
+publications:
+    -
+        pmid : 22434876
+        display-text : |
+            'Angly FE1, Willner D, Rohwer F, Hugenholtz P, Tyson GW. (2012) Grinder: a versatile amplicon and shotgun sequence simulator. Nucleic Acids Res. 2012 Jul;40(12):e94. doi:10.1093/nar/gks251'
+        link: https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gks251
+    -
+        link: https://sourceforge.net/projects/biogrinder/

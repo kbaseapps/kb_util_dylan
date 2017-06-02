@@ -94,7 +94,7 @@
         "service-mapping": {
             "url": "",
             "name": "kb_util_dylan",
-            "method": "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads",
+            "method": "KButil_Build_InSilico_Metagenomes_with_Grinder",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
