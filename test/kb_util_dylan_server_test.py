@@ -43,6 +43,36 @@ class kb_util_dylanTest(unittest.TestCase):
             cls.wsClient.delete_workspace({'workspace': cls.wsName})
             print('Test workspace was deleted')
 
+        
+    @classmethod
+    def upload_file_to_shock(cls, file_path):
+        """
+        Use HTTP multi-part POST to save a file to a SHOCK instance.
+        """
+
+        header = dict()
+        header["Authorization"] = "Oauth {0}".format(cls.token)
+
+        if file_path is None:
+            raise Exception("No file given for upload to SHOCK!")
+
+        with open(os.path.abspath(file_path), 'rb') as dataFile:
+            files = {'upload': dataFile}
+            response = requests.post(
+                cls.shockURL + '/node', headers=header, files=files,
+                stream=True, allow_redirects=True, timeout=30)
+
+        if not response.ok:
+            response.raise_for_status()
+
+        result = response.json()
+
+        if result['error']:
+            raise Exception(result['error'][0])
+        else:
+            return result["data"]
+
+
     def getWsClient(self):
         return self.__class__.wsClient
 
@@ -226,31 +256,3 @@ class kb_util_dylanTest(unittest.TestCase):
         self.assertEqual(readsLib_info[1],output_name)
         self.assertEqual(readsLib_info[2].split('-')[0],output_type)
 
-        
-    @classmethod
-    def upload_file_to_shock(cls, file_path):
-        """
-        Use HTTP multi-part POST to save a file to a SHOCK instance.
-        """
-
-        header = dict()
-        header["Authorization"] = "Oauth {0}".format(cls.token)
-
-        if file_path is None:
-            raise Exception("No file given for upload to SHOCK!")
-
-        with open(os.path.abspath(file_path), 'rb') as dataFile:
-            files = {'upload': dataFile}
-            response = requests.post(
-                cls.shockURL + '/node', headers=header, files=files,
-                stream=True, allow_redirects=True, timeout=30)
-
-        if not response.ok:
-            response.raise_for_status()
-
-        result = response.json()
-
-        if result['error']:
-            raise Exception(result['error'][0])
-        else:
-            return result["data"]
