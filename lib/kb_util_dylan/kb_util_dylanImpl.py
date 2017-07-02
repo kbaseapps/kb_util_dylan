@@ -53,8 +53,8 @@ class kb_util_dylan:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.3"
-    GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "fa3e7a0c7c7565a311bed9dcc1ae1cdc48fea3eb"
+    GIT_URL = "https://github.com/kbaseapps/kb_util_dylan"
+    GIT_COMMIT_HASH = "7ef43562a6722b8788936a2d59ed8bbadff8b642"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
