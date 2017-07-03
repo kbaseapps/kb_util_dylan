@@ -266,75 +266,26 @@ class kb_util_dylan:
             raise ValueError('input_ref parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
+        input_ref = params['input_ref']
 
 
-        # Obtain the input object
+        # Download Reads
         #
-        forward_reads_file_compression = None
         sequencing_tech = 'N/A'
+        self.log (console, "DOWNLOADING READS")  # DEBUG
         try:
-            ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['input_ref']}])
-            data = objects[0]['data']
-            info = objects[0]['info']
-            # Object Info Contents
-            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
-            # 0 - obj_id objid
-            # 1 - obj_name name
-            # 2 - type_string type
-            # 3 - timestamp save_date
-            # 4 - int version
-            # 5 - username saved_by
-            # 6 - ws_id wsid
-            # 7 - ws_name workspace
-            # 8 - string chsum
-            # 9 - int size 
-            # 10 - usermeta meta
-            type_name = info[2].split('.')[1].split('-')[0]
-
-            if type_name == 'SingleEndLibrary':
-                type_namespace = info[2].split('.')[0]
-                if type_namespace == 'KBaseAssembly':
-                    file_name = data['handle']['file_name']
-                elif type_namespace == 'KBaseFile':
-                    file_name = data['lib']['file']['file_name']
-                else:
-                    raise ValueError('bad data type namespace: '+type_namespace)
-                #self.log(console, 'INPUT_FILENAME: '+file_name)  # DEBUG
-                if file_name[-3:] == ".gz":
-                    forward_reads_file_compression = 'gz'
-                if 'sequencing_tech' in data:
-                    sequencing_tech = data['sequencing_tech']
-
+            readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
         except Exception as e:
-            raise ValueError('Unable to fetch input_ref object from workspace: ' + str(e))
-            #to get the full stack trace: traceback.format_exc()
-        
-        # pull data from SHOCK
-        #
+            raise ValueError('Unable to get ReadsUtils Client' +"\n" + str(e))
         try:
-            if 'lib' in data:
-                forward_reads = data['lib']['file']
-            elif 'handle' in data:
-                forward_reads = data['handle']
-            else:
-                self.log(console,"bad structure for 'forward_reads'")
-                raise ValueError("bad structure for 'forward_reads'")
-
-            ### NOTE: this section is what could be replaced by the transform services
-            forward_reads_file_path = os.path.join(self.scratch,forward_reads['file_name'])
-            forward_reads_file_handle = open(forward_reads_file_path, 'w', 0)
-            self.log(console, 'downloading reads file: '+str(forward_reads_file_path))
-            headers = {'Authorization': 'OAuth '+ctx['token']}
-            r = requests.get(forward_reads['url']+'/node/'+forward_reads['id']+'?download', stream=True, headers=headers)
-            for chunk in r.iter_content(1024):
-                forward_reads_file_handle.write(chunk)
-            forward_reads_file_handle.close();
-            self.log(console, 'done')
-            ### END NOTE
+            readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [input_ref],
+                                                             'interleaved': 'false'
+                                                             })
         except Exception as e:
-            print(traceback.format_exc())
-            raise ValueError('Unable to download single-end read library files: ' + str(e))
+            raise ValueError('Unable to download read library sequences from workspace: (' + str(input_ref) +")\n" + str(e))
+
+        forward_reads_file_path = readsLibrary['files'][input_ref]['files']['fwd']
+        sequencing_tech     = readsLibrary['files'][input_ref]['sequencing_tech']
 
 
         #### Create the file to upload
