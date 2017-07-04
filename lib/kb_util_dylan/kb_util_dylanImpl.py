@@ -19,7 +19,8 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Alphabet import generic_protein
-from biokbase.workspace.client import Workspace as workspaceService
+#from biokbase.workspace.client import Workspace as workspaceService
+from Workspace.WorkspaceClient import Workspace as workspaceService
 from requests_toolbelt import MultipartEncoder  # added
 from biokbase.AbstractHandle.Client import AbstractHandle as HandleService
 
@@ -473,7 +474,8 @@ class kb_util_dylan:
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': featureSet_ref}])
+                #objects = ws.get_objects([{'ref': featureSet_ref}])
+                objects = ws.get_objects2({'objects':[{'ref': featureSet_ref}]})['data']
                 data = objects[0]['data']
                 info = objects[0]['info']
                 # Object Info Contents
@@ -681,7 +683,8 @@ class kb_util_dylan:
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': input_genomeset_ref}])
+                #objects = ws.get_objects([{'ref': input_genomeset_ref}])
+                objects = ws.get_objects2({'objects':[{'ref': input_genomeset_ref}]})['data']
                 genomeSet = objects[0]['data']
                 info = objects[0]['info']
                 
@@ -842,7 +845,8 @@ class kb_util_dylan:
 
                 try:
                     ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                    objects = ws.get_objects([{'ref': genomeRef}])
+                    #objects = ws.get_objects([{'ref': genomeRef}])
+                    objects = ws.get_objects2({'objects':[{'ref': genomeRef}]})['data']
                     data = objects[0]['data']
                     info = objects[0]['info']
                     genomeObj = data
@@ -993,7 +997,8 @@ class kb_util_dylan:
         #
         try:
             ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['input_ref']}])
+            #objects = ws.get_objects([{'ref': params['input_ref']}])
+            objects = ws.get_objects2({'objects':[{'ref': params['input_ref']}]})['data']
             data = objects[0]['data']
             info = objects[0]['info']
             # Object Info Contents
@@ -1033,7 +1038,8 @@ class kb_util_dylan:
 
                     try:
                         ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                        objects = ws.get_objects([{'ref': genomeRef}])
+                        #objects = ws.get_objects([{'ref': genomeRef}])
+                        objects = ws.get_objects2({'objects':[{'ref': genomeRef}]})['data']
                         data = objects[0]['data']
                         info = objects[0]['info']
                         genomeObj = data
@@ -1193,7 +1199,8 @@ class kb_util_dylan:
         #
         if 'input_genomeset_ref' in params and params['input_genomeset_ref'] != None:
             try:
-                objects = ws.get_objects([{'ref': params['input_genomeset_ref']}])
+                #objects = ws.get_objects([{'ref': params['input_genomeset_ref']}])
+                objects = ws.get_objects2({'objects':[{'ref': params['input_genomeset_ref']}]})['data']
                 genomeSet = objects[0]['data']
                 info = objects[0]['info']
                 
@@ -1217,7 +1224,8 @@ class kb_util_dylan:
         for genomeRef in params['input_genome_refs']:
 
             try:
-                objects = ws.get_objects([{'ref': genomeRef}])
+                #objects = ws.get_objects([{'ref': genomeRef}])
+                objects = ws.get_objects2({'objects':[{'ref': genomeRef}]})['data']
                 genomeObj = objects[0]['data']
                 info = objects[0]['info']
 
@@ -1404,7 +1412,8 @@ class kb_util_dylan:
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': MSA_ref}])
+                #objects = ws.get_objects([{'ref': MSA_ref}])
+                objects = ws.get_objects2({'objects':[{'ref': MSA_ref}]})['data']
                 data = objects[0]['data']
                 info = objects[0]['info']
                 # Object Info Contents
@@ -1521,11 +1530,11 @@ class kb_util_dylan:
             for genome_id in row_order:
                 try:
                     discard = discard_set[genome_id]
-                    self.log(console,'incomplete row: '+genome_id+"\n")
-                    report += 'incomplete row: '+genome_id
+                    self.log(console,'incomplete row: '+genome_id)
+                    report += 'incomplete row: '+genome_id+"\n"
                 except:
-                    self.log(console,'complete row: '+genome_id+"\n")
-                    report += 'complete row: '+genome_id
+                    self.log(console,'complete row: '+genome_id)
+                    report += 'complete row: '+genome_id+"\n"
         
 
             # remove incomplete rows if not adding blanks
@@ -1545,8 +1554,8 @@ class kb_util_dylan:
 
             # report which rows are retained
             for genome_id in row_order:
-                self.log(console,'output MSA contains row: '+genome_id+"\n")
-                report += 'output MSA contains row: '+genome_id
+                self.log(console,'output MSA contains row: '+genome_id)
+                report += 'output MSA contains row: '+genome_id+"\n"
 
 
         # load the method provenance from the context object
@@ -1718,7 +1727,8 @@ class kb_util_dylan:
 
                 try:
                     ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                    objects = ws.get_objects([{'ref': libRef}])
+                    #objects = ws.get_objects([{'ref': libRef}])
+                    objects = ws.get_objects2({'objects':[{'ref': libRef}]})['data']
                     data = objects[0]['data']
                     info = objects[0]['info']
                     libObj = data
@@ -2994,7 +3004,6 @@ class kb_util_dylan:
         except Exception as e:
             raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
 
-
         acceptable_types = ["KBaseSets.ReadsSet"]
         if input_reads_obj_type not in acceptable_types:
             raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
@@ -3027,13 +3036,17 @@ class kb_util_dylan:
                 # object_info tuple
                 [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
 
-                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':params['input_ref']}]})[0]
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':input_reads_library_ref}]})[0]
                 input_reads_obj_type = input_reads_obj_info[TYPE_I]
                 input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
 
             except Exception as e:
                 raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
-            
+
+            acceptable_types = ["KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary"]
+            if input_reads_obj_type not in acceptable_types:
+                raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+
             if read_library_type == None:
                 read_library_type = input_reads_obj_type
             elif input_reads_obj_type != read_library_type:
@@ -3265,7 +3278,7 @@ class kb_util_dylan:
             except Exception as e:
                 raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
 
-            acceptable_types = ["KBaseSets.ReadsSet", "KBaseFile.PairedEndLibrary"]
+            acceptable_types = ["KBaseSets.ReadsSet", "KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary"]
             if input_reads_obj_type not in acceptable_types:
                 raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
 
@@ -3303,7 +3316,11 @@ class kb_util_dylan:
 
             except Exception as e:
                 raise ValueError('Unable to get read library object from workspace: (' + input_reads_library_ref +')' + str(e))
-            
+
+            acceptable_types = ["KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary"]
+            if input_reads_obj_type not in acceptable_types:
+                raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+
             if read_library_type == None:
                 read_library_type = input_reads_obj_type
             elif input_reads_obj_type != read_library_type:
@@ -3777,6 +3794,9 @@ class kb_util_dylan:
         paired_readsSet_refs       = []
         unpaired_fwd_readsSet_refs = []
         unpaired_rev_readsSet_refs = []
+        paired_obj_refs            = []
+        unpaired_fwd_obj_refs      = []
+        unpaired_rev_obj_refs      = []
 
         for lib_i,input_reads_ref in enumerate(readsSet_ref_list):
 
@@ -3951,8 +3971,8 @@ class kb_util_dylan:
                             if capture_type_paired:
                                 paired_output_reads_file_handle.writelines(rec_buf)
                                 paired_cnt += 1
-                                if paired_cnt % recs_beep_n == 0:
-                                    self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                                #if paired_cnt % recs_beep_n == 0:
+                                #    self.log(console,"\t"+str(paired_cnt)+" recs processed")
                             else:
                                 unpaired_output_reads_file_handle.writelines(rec_buf)
                                 unpaired_cnt += 1
@@ -3972,8 +3992,8 @@ class kb_util_dylan:
                     if capture_type_paired:
                         paired_output_reads_file_handle.writelines(rec_buf)
                         paired_cnt += 1
-                        if paired_cnt % recs_beep_n == 0:
-                            self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                        #if paired_cnt % recs_beep_n == 0:
+                        #    self.log(console,"\t"+str(paired_cnt)+" recs processed")
                     else:
                         unpaired_output_reads_file_handle.writelines(rec_buf)
                         unpaired_cnt += 1
@@ -4037,8 +4057,8 @@ class kb_util_dylan:
                                 else:
                                     paired_unsynch_buf[last_read_id] = rec_buf
 
-                                if paired_cnt % recs_beep_n == 0:
-                                    self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                                #if paired_cnt % recs_beep_n == 0:
+                                #    self.log(console,"\t"+str(paired_cnt)+" recs processed")
                             else:
                                 unpaired_cnt += 1
                                 unpaired_output_reads_file_handle.writelines(rec_buf)
@@ -4077,8 +4097,8 @@ class kb_util_dylan:
                             else:
                                 paired_unsynch_buf[last_read_id] = rec_buf
 
-                            if paired_cnt % recs_beep_n == 0:
-                                self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                            #if paired_cnt % recs_beep_n == 0:
+                            #    self.log(console,"\t"+str(paired_cnt)+" recs processed")
                         else:
                             unpaired_cnt += 1
                             unpaired_output_reads_file_handle.writelines(rec_buf)
@@ -4110,7 +4130,7 @@ class kb_util_dylan:
             #
             if paired_read_cnt > 0:
                 self.log (console, "UPLOAD PAIRED READS LIBS")  # DEBUG
-                paired_obj_refs = []
+                #paired_obj_refs = []
                 output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 output_rev_paired_file_path = output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 if not os.path.isfile (output_fwd_paired_file_path) \
@@ -4133,7 +4153,7 @@ class kb_util_dylan:
                     
 
             # upload reads forward unpaired
-            unpaired_fwd_obj_refs = []
+            #unpaired_fwd_obj_refs = []
             if unpaired_fwd_read_cnt > 0:
                 self.log (console, "UPLOAD UNPAIRED FWD READS LIB")  # DEBUG
                 unpaired_fwd_ref = None
@@ -4155,7 +4175,7 @@ class kb_util_dylan:
 
 
             # upload reads reverse unpaired
-            unpaired_rev_obj_refs = []
+            #unpaired_rev_obj_refs = []
             if unpaired_rev_read_cnt > 0:
                 self.log (console, "UPLOAD UNPAIRED REV READS LIB")  # DEBUG
                 unpaired_rev_ref = None
