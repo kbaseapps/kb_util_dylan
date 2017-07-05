@@ -19,7 +19,8 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Alphabet import generic_protein
-from biokbase.workspace.client import Workspace as workspaceService
+#from biokbase.workspace.client import Workspace as workspaceService
+from Workspace.WorkspaceClient import Workspace as workspaceService
 from requests_toolbelt import MultipartEncoder  # added
 from biokbase.AbstractHandle.Client import AbstractHandle as HandleService
 
@@ -53,8 +54,8 @@ class kb_util_dylan:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.3"
-    GIT_URL = "https://github.com/kbaseapps/kb_util_dylan.git"
-    GIT_COMMIT_HASH = "b3880ba1a568d50f6c387f67747c227c93231ec7"
+    GIT_URL = "https://github.com/kbaseapps/kb_util_dylan"
+    GIT_COMMIT_HASH = "7ef43562a6722b8788936a2d59ed8bbadff8b642"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -266,75 +267,26 @@ class kb_util_dylan:
             raise ValueError('input_ref parameter is required')
         if 'output_name' not in params:
             raise ValueError('output_name parameter is required')
+        input_ref = params['input_ref']
 
 
-        # Obtain the input object
+        # Download Reads
         #
-        forward_reads_file_compression = None
         sequencing_tech = 'N/A'
+        self.log (console, "DOWNLOADING READS")  # DEBUG
         try:
-            ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['input_ref']}])
-            data = objects[0]['data']
-            info = objects[0]['info']
-            # Object Info Contents
-            # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
-            # 0 - obj_id objid
-            # 1 - obj_name name
-            # 2 - type_string type
-            # 3 - timestamp save_date
-            # 4 - int version
-            # 5 - username saved_by
-            # 6 - ws_id wsid
-            # 7 - ws_name workspace
-            # 8 - string chsum
-            # 9 - int size 
-            # 10 - usermeta meta
-            type_name = info[2].split('.')[1].split('-')[0]
-
-            if type_name == 'SingleEndLibrary':
-                type_namespace = info[2].split('.')[0]
-                if type_namespace == 'KBaseAssembly':
-                    file_name = data['handle']['file_name']
-                elif type_namespace == 'KBaseFile':
-                    file_name = data['lib']['file']['file_name']
-                else:
-                    raise ValueError('bad data type namespace: '+type_namespace)
-                #self.log(console, 'INPUT_FILENAME: '+file_name)  # DEBUG
-                if file_name[-3:] == ".gz":
-                    forward_reads_file_compression = 'gz'
-                if 'sequencing_tech' in data:
-                    sequencing_tech = data['sequencing_tech']
-
+            readsUtils_Client = ReadsUtils (url=self.callbackURL, token=ctx['token'])  # SDK local
         except Exception as e:
-            raise ValueError('Unable to fetch input_ref object from workspace: ' + str(e))
-            #to get the full stack trace: traceback.format_exc()
-        
-        # pull data from SHOCK
-        #
+            raise ValueError('Unable to get ReadsUtils Client' +"\n" + str(e))
         try:
-            if 'lib' in data:
-                forward_reads = data['lib']['file']
-            elif 'handle' in data:
-                forward_reads = data['handle']
-            else:
-                self.log(console,"bad structure for 'forward_reads'")
-                raise ValueError("bad structure for 'forward_reads'")
-
-            ### NOTE: this section is what could be replaced by the transform services
-            forward_reads_file_path = os.path.join(self.scratch,forward_reads['file_name'])
-            forward_reads_file_handle = open(forward_reads_file_path, 'w', 0)
-            self.log(console, 'downloading reads file: '+str(forward_reads_file_path))
-            headers = {'Authorization': 'OAuth '+ctx['token']}
-            r = requests.get(forward_reads['url']+'/node/'+forward_reads['id']+'?download', stream=True, headers=headers)
-            for chunk in r.iter_content(1024):
-                forward_reads_file_handle.write(chunk)
-            forward_reads_file_handle.close();
-            self.log(console, 'done')
-            ### END NOTE
+            readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [input_ref],
+                                                             'interleaved': 'false'
+                                                             })
         except Exception as e:
-            print(traceback.format_exc())
-            raise ValueError('Unable to download single-end read library files: ' + str(e))
+            raise ValueError('Unable to download read library sequences from workspace: (' + str(input_ref) +")\n" + str(e))
+
+        forward_reads_file_path = readsLibrary['files'][input_ref]['files']['fwd']
+        sequencing_tech     = readsLibrary['files'][input_ref]['sequencing_tech']
 
 
         #### Create the file to upload
@@ -349,9 +301,14 @@ class kb_util_dylan:
         header = None
         last_header = None
         last_seq_buf = None
-        last_line_was_header = False
+        rec_line_i = -1
         for line in input_file_handle:
-            if line.startswith('@'):
+            rec_line_i += 1
+            if rec_line_i == 3:
+                rec_line_i = -1
+            elif rec_line_i == 0:
+                if not line.startswith('@'):
+                    raise ValueError ("badly formatted rec line: '"+line+"'")
                 seq_cnt += 1
                 header = line[1:]
                 if last_header != None:
@@ -359,12 +316,8 @@ class kb_util_dylan:
                     output_file_handle.write(last_seq_buf)
                 last_seq_buf = None
                 last_header = header
-                last_line_was_header = True
-            elif last_line_was_header:
+            elif rec_line_i == 1:
                 last_seq_buf = line
-                last_line_was_header = False
-            else:
-                continue
         if last_header != None:
             output_file_handle.write('>'+last_header)
             output_file_handle.write(last_seq_buf)
@@ -521,7 +474,8 @@ class kb_util_dylan:
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': featureSet_ref}])
+                #objects = ws.get_objects([{'ref': featureSet_ref}])
+                objects = ws.get_objects2({'objects':[{'ref': featureSet_ref}]})['data']
                 data = objects[0]['data']
                 info = objects[0]['info']
                 # Object Info Contents
@@ -729,7 +683,8 @@ class kb_util_dylan:
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': input_genomeset_ref}])
+                #objects = ws.get_objects([{'ref': input_genomeset_ref}])
+                objects = ws.get_objects2({'objects':[{'ref': input_genomeset_ref}]})['data']
                 genomeSet = objects[0]['data']
                 info = objects[0]['info']
                 
@@ -890,7 +845,8 @@ class kb_util_dylan:
 
                 try:
                     ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                    objects = ws.get_objects([{'ref': genomeRef}])
+                    #objects = ws.get_objects([{'ref': genomeRef}])
+                    objects = ws.get_objects2({'objects':[{'ref': genomeRef}]})['data']
                     data = objects[0]['data']
                     info = objects[0]['info']
                     genomeObj = data
@@ -1041,7 +997,8 @@ class kb_util_dylan:
         #
         try:
             ws = workspaceService(self.workspaceURL, token=ctx['token'])
-            objects = ws.get_objects([{'ref': params['input_ref']}])
+            #objects = ws.get_objects([{'ref': params['input_ref']}])
+            objects = ws.get_objects2({'objects':[{'ref': params['input_ref']}]})['data']
             data = objects[0]['data']
             info = objects[0]['info']
             # Object Info Contents
@@ -1081,7 +1038,8 @@ class kb_util_dylan:
 
                     try:
                         ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                        objects = ws.get_objects([{'ref': genomeRef}])
+                        #objects = ws.get_objects([{'ref': genomeRef}])
+                        objects = ws.get_objects2({'objects':[{'ref': genomeRef}]})['data']
                         data = objects[0]['data']
                         info = objects[0]['info']
                         genomeObj = data
@@ -1241,7 +1199,8 @@ class kb_util_dylan:
         #
         if 'input_genomeset_ref' in params and params['input_genomeset_ref'] != None:
             try:
-                objects = ws.get_objects([{'ref': params['input_genomeset_ref']}])
+                #objects = ws.get_objects([{'ref': params['input_genomeset_ref']}])
+                objects = ws.get_objects2({'objects':[{'ref': params['input_genomeset_ref']}]})['data']
                 genomeSet = objects[0]['data']
                 info = objects[0]['info']
                 
@@ -1265,7 +1224,8 @@ class kb_util_dylan:
         for genomeRef in params['input_genome_refs']:
 
             try:
-                objects = ws.get_objects([{'ref': genomeRef}])
+                #objects = ws.get_objects([{'ref': genomeRef}])
+                objects = ws.get_objects2({'objects':[{'ref': genomeRef}]})['data']
                 genomeObj = objects[0]['data']
                 info = objects[0]['info']
 
@@ -1452,7 +1412,8 @@ class kb_util_dylan:
 
             try:
                 ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                objects = ws.get_objects([{'ref': MSA_ref}])
+                #objects = ws.get_objects([{'ref': MSA_ref}])
+                objects = ws.get_objects2({'objects':[{'ref': MSA_ref}]})['data']
                 data = objects[0]['data']
                 info = objects[0]['info']
                 # Object Info Contents
@@ -1569,11 +1530,11 @@ class kb_util_dylan:
             for genome_id in row_order:
                 try:
                     discard = discard_set[genome_id]
-                    self.log(console,'incomplete row: '+genome_id+"\n")
-                    report += 'incomplete row: '+genome_id
+                    self.log(console,'incomplete row: '+genome_id)
+                    report += 'incomplete row: '+genome_id+"\n"
                 except:
-                    self.log(console,'complete row: '+genome_id+"\n")
-                    report += 'complete row: '+genome_id
+                    self.log(console,'complete row: '+genome_id)
+                    report += 'complete row: '+genome_id+"\n"
         
 
             # remove incomplete rows if not adding blanks
@@ -1593,8 +1554,8 @@ class kb_util_dylan:
 
             # report which rows are retained
             for genome_id in row_order:
-                self.log(console,'output MSA contains row: '+genome_id+"\n")
-                report += 'output MSA contains row: '+genome_id
+                self.log(console,'output MSA contains row: '+genome_id)
+                report += 'output MSA contains row: '+genome_id+"\n"
 
 
         # load the method provenance from the context object
@@ -1766,7 +1727,8 @@ class kb_util_dylan:
 
                 try:
                     ws = workspaceService(self.workspaceURL, token=ctx['token'])
-                    objects = ws.get_objects([{'ref': libRef}])
+                    #objects = ws.get_objects([{'ref': libRef}])
+                    objects = ws.get_objects2({'objects':[{'ref': libRef}]})['data']
                     data = objects[0]['data']
                     info = objects[0]['info']
                     libObj = data
@@ -2009,8 +1971,14 @@ class kb_util_dylan:
 #            rec_cnt = 0  # DEBUG
             self.log (console, "GETTING IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
                         read_id = re.sub ("[\/\.\_\-\:\;][012lrLRfrFR53]\'*$", "", read_id)
@@ -2035,8 +2003,14 @@ class kb_util_dylan:
             capture_type_paired = False
 
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             if capture_type_paired:
                                 lib_i = paired_cnt % params['split_num']
@@ -2100,8 +2074,14 @@ class kb_util_dylan:
             capture_type_paired = False
 
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             if capture_type_paired:
                                 lib_i = paired_lib_i[last_read_id]
@@ -2174,7 +2154,7 @@ class kb_util_dylan:
                     paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
                                                                               # remove sequencing_tech when source_reads_ref working
-                                                                              'sequencing_tech': sequencing_tech,
+                                                                              #'sequencing_tech': sequencing_tech,
                                                                               'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path,
                                                                               'rev_file': output_rev_paired_file_path
@@ -2192,7 +2172,7 @@ class kb_util_dylan:
                 unpaired_fwd_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
                                                                      # remove sequencing_tech when source_reads_ref working
-                                                                     'sequencing_tech': sequencing_tech,
+                                                                     #'sequencing_tech': sequencing_tech,
                                                                      'source_reads_ref': input_reads_ref,
                                                                      'fwd_file': output_fwd_unpaired_file_path
                                                                      })['obj_ref']
@@ -2209,7 +2189,7 @@ class kb_util_dylan:
                 unpaired_rev_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                      'name': output_obj_name,
                                                                      # remove sequencing_tech when source_reads_ref working
-                                                                     'sequencing_tech': sequencing_tech,
+                                                                     #'sequencing_tech': sequencing_tech,
                                                                      'source_reads_ref': input_reads_ref,
                                                                      'fwd_file': output_rev_unpaired_file_path
                                                                      })['obj_ref']
@@ -2246,8 +2226,14 @@ class kb_util_dylan:
             paired_cnt = 0
             recs_beep_n = 100000
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             lib_i = paired_cnt % params['split_num']
                             total_paired_reads_by_set[lib_i] += 1
@@ -2297,7 +2283,7 @@ class kb_util_dylan:
                     paired_obj_refs.append( readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
                                                                               # remove sequencing_tech when source_reads_ref working
-                                                                              'sequencing_tech': sequencing_tech,
+                                                                              #'sequencing_tech': sequencing_tech,
                                                                               'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path
                                                                               })['obj_ref'])
@@ -2388,6 +2374,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Random_Subsample_Reads
         console = []
+        invalid_msgs = []
         self.log(console, 'Running KButil_Random_Subsample_Reads() with parameters: ')
         self.log(console, "\n"+pformat(params))
         report = ''
@@ -2523,12 +2510,19 @@ class kb_util_dylan:
 #            rec_cnt = 0  # DEBUG
             self.log (console, "GETTING IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
                         read_id = re.sub ("[\/\.\_\-\:\;][012lrLRfrFR53]\'*$", "", read_id)
                         fwd_ids[read_id] = True
+
                         # DEBUG
 #                        if rec_cnt % 100 == 0:
 #                            self.log(console,"read_id: '"+str(read_id)+"'")
@@ -2538,14 +2532,21 @@ class kb_util_dylan:
             # read reverse to determine paired
             self.log (console, "DETERMINING PAIRED IDS")  # DEBUG
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
                         read_id = re.sub ("[\/\.\_\-\:\;][012lrLRfrFR53]\'*$", "", read_id)
                         if fwd_ids[read_id]:
                             paired_ids[read_id] = True
                             paired_ids_list.append(read_id)
+
                         # DEBUG
 #                        if rec_cnt % 100 == 0:
 #                            self.log(console,"read_id: '"+str(read_id)+"'")
@@ -2588,8 +2589,14 @@ class kb_util_dylan:
             capture_type_paired = False
 
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             if capture_type_paired:
                                 lib_i = paired_lib_i[last_read_id]
@@ -2644,8 +2651,14 @@ class kb_util_dylan:
             capture_type_paired = False
 
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             if capture_type_paired:
                                 lib_i = paired_lib_i[last_read_id]
@@ -2716,7 +2729,7 @@ class kb_util_dylan:
                     paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
                                                                               # remove sequencing_tech when source_reads_ref is working
-                                                                              'sequencing_tech': sequencing_tech,
+                                                                              #'sequencing_tech': sequencing_tech,
                                                                               'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path,
                                                                               'rev_file': output_rev_paired_file_path
@@ -2741,8 +2754,14 @@ class kb_util_dylan:
             # get "paired" ids
             self.log (console, "DETERMINING IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
                         read_id = re.sub ("[\/\.\_\-\:\;][012lrLRfrFR53]\'*$", "", read_id)
@@ -2795,8 +2814,14 @@ class kb_util_dylan:
             paired_cnt = 0
             recs_beep_n = 100000
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         total_paired_reads += 1
                         if last_read_id != None:
                             try:
@@ -2855,7 +2880,7 @@ class kb_util_dylan:
                     paired_obj_refs.append( readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
                                                                               # remove sequencing_tech when source_reads_ref is working
-                                                                              'sequencing_tech': sequencing_tech,
+                                                                              #'sequencing_tech': sequencing_tech,
                                                                               'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path
                                                                               })['obj_ref'])
@@ -2979,7 +3004,6 @@ class kb_util_dylan:
         except Exception as e:
             raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
 
-
         acceptable_types = ["KBaseSets.ReadsSet"]
         if input_reads_obj_type not in acceptable_types:
             raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
@@ -3012,13 +3036,17 @@ class kb_util_dylan:
                 # object_info tuple
                 [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
 
-                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':params['input_ref']}]})[0]
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':input_reads_library_ref}]})[0]
                 input_reads_obj_type = input_reads_obj_info[TYPE_I]
                 input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
 
             except Exception as e:
                 raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
-            
+
+            acceptable_types = ["KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary"]
+            if input_reads_obj_type not in acceptable_types:
+                raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+
             if read_library_type == None:
                 read_library_type = input_reads_obj_type
             elif input_reads_obj_type != read_library_type:
@@ -3121,8 +3149,9 @@ class kb_util_dylan:
             reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                   'name': output_obj_name,
                                                                   # remove sequencing_tech when source_reads_ref is working
-                                                                  'sequencing_tech': sequencing_tech,
+                                                                  #'sequencing_tech': sequencing_tech,
                                                                   'source_reads_ref': readsSet_ref_list[0],
+                                                                  'single_genome': 0,
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   'rev_file': combined_input_rev_path
                                                                   })['obj_ref']
@@ -3130,8 +3159,9 @@ class kb_util_dylan:
             reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                   'name': output_obj_name,
                                                                   # remove sequencing_tech when source_reads_ref is working
-                                                                  'sequencing_tech': sequencing_tech,
+                                                                  #'sequencing_tech': sequencing_tech,
                                                                   'source_reads_ref': readsSet_ref_list[0],
+                                                                  'single_genome': 0,
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   })['obj_ref']
             
@@ -3188,6 +3218,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Merge_MultipleReadsLibs_to_OneLibrary
         console = []
+        invalid_msgs = []
         report = ''
         self.log(console, 'Running KButil_Merge_MultipleReadsLibs_to_OneLibrary with parameters: ')
         self.log(console, "\n"+pformat(params))
@@ -3226,7 +3257,9 @@ class kb_util_dylan:
         if 'provenance' in ctx:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
-        provenance[0]['input_ws_objects']=[str(params['input_ref'])]
+        provenance[0]['input_ws_objects']=[]
+        for input_ref in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(input_ref)
 
         # get set
         #
@@ -3245,7 +3278,7 @@ class kb_util_dylan:
             except Exception as e:
                 raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
 
-            acceptable_types = ["KBaseSets.ReadsSet", "KBaseFile.PairedEndLibrary"]
+            acceptable_types = ["KBaseSets.ReadsSet", "KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary"]
             if input_reads_obj_type not in acceptable_types:
                 raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
 
@@ -3276,18 +3309,22 @@ class kb_util_dylan:
                 # object_info tuple
                 [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
 
-                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':params['input_ref']}]})[0]
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':input_reads_library_ref}]})[0]
                 input_reads_obj_type = input_reads_obj_info[TYPE_I]
                 input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
                 readsSet_names_list.append(input_reads_obj_info[NAME_I])
 
             except Exception as e:
-                raise ValueError('Unable to get read library object from workspace: (' + str(params['input_ref']) +')' + str(e))
-            
+                raise ValueError('Unable to get read library object from workspace: (' + input_reads_library_ref +')' + str(e))
+
+            acceptable_types = ["KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary"]
+            if input_reads_obj_type not in acceptable_types:
+                raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+
             if read_library_type == None:
                 read_library_type = input_reads_obj_type
             elif input_reads_obj_type != read_library_type:
-                raise ValueError ("incompatible read library types in ReadsSet "+params['input_ref'])
+                raise ValueError ("incompatible read library types in ReadsSet "+input_reads_library_ref)
             
         # combine read libraries
         #
@@ -3317,6 +3354,8 @@ class kb_util_dylan:
         # add libraries, one at a time
         sequencing_tech = None
         for this_input_reads_ref in readsSet_ref_list:
+            clean_ref = re.sub("\/", "_", this_input_reads_ref)
+            
             self.log (console, "DOWNLOADING FASTQ FILES FOR ReadsSet member: "+str(this_input_reads_ref))
             try:
                 readsLibrary = readsUtils_Client.download_reads ({'read_libraries': [this_input_reads_ref],
@@ -3342,12 +3381,23 @@ class kb_util_dylan:
             this_input_path = this_input_fwd_path
             cat_file_handle = combined_input_fwd_handle
             with open (this_input_path, 'r', read_buf_size) as this_input_handle:
-                while True:
-                    read_data = this_input_handle.read(read_buf_size)
-                    if read_data:
-                        cat_file_handle.write(read_data)
-                    else:
-                        break
+                #while True:
+                #    read_data = this_input_handle.read(read_buf_size)
+                #    if read_data:
+                #        cat_file_handle.write(read_data)
+                #    else:
+                #        break
+                rec_line_i = -1
+                for line in this_input_handle:
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
+                        
+                        line = '@'+clean_ref+':'+line[1:]
+                    cat_file_handle.write(line)
             os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # append rev
@@ -3355,12 +3405,23 @@ class kb_util_dylan:
                 this_input_path = this_input_rev_path
                 cat_file_handle = combined_input_rev_handle
                 with open (this_input_path, 'r', read_buf_size) as this_input_handle:
-                    while True:
-                        read_data = this_input_handle.read(read_buf_size)
-                        if read_data:
-                            cat_file_handle.write(read_data)
-                        else:
-                            break
+                    #while True:
+                    #    read_data = this_input_handle.read(read_buf_size)
+                    #    if read_data:
+                    #        cat_file_handle.write(read_data)
+                    #    else:
+                    #        break
+                    rec_line_i = -1
+                    for line in this_input_handle:
+                        rec_line_i += 1
+                        if rec_line_i == 3:
+                            rec_line_i = -1
+                        elif rec_line_i == 0:
+                            if not line.startswith('@'):
+                                raise ValueError ("badly formatted rec line: '"+line+"'")
+                        
+                            line = '@'+clean_ref+':'+line[1:]
+                        cat_file_handle.write(line)
                 os.remove (this_input_path)  # create space since we no longer need the piece file
 
         combined_input_fwd_handle.close()
@@ -3386,8 +3447,9 @@ class kb_util_dylan:
             reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                   'name': output_obj_name,
                                                                   # remove sequencing_tech when source_reads_ref is working
-                                                                  'sequencing_tech': sequencing_tech,
+                                                                  #'sequencing_tech': sequencing_tech,
                                                                   'source_reads_ref': readsSet_ref_list[0],
+                                                                  'single_genome': 0,
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   'rev_file': combined_input_rev_path
                                                                   })['obj_ref']
@@ -3395,8 +3457,9 @@ class kb_util_dylan:
             reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                   'name': output_obj_name,
                                                                   # remove sequencing_tech when source_reads_ref is working
-                                                                  'sequencing_tech': sequencing_tech,
+                                                                  #'sequencing_tech': sequencing_tech,
                                                                   'source_reads_ref': readsSet_ref_list[0],
+                                                                  'single_genome': 0,
                                                                   'fwd_file': combined_input_fwd_path,
                                                                   })['obj_ref']
             
@@ -3731,6 +3794,9 @@ class kb_util_dylan:
         paired_readsSet_refs       = []
         unpaired_fwd_readsSet_refs = []
         unpaired_rev_readsSet_refs = []
+        paired_obj_refs            = []
+        unpaired_fwd_obj_refs      = []
+        unpaired_rev_obj_refs      = []
 
         for lib_i,input_reads_ref in enumerate(readsSet_ref_list):
 
@@ -3785,8 +3851,14 @@ class kb_util_dylan:
             rec_cnt = 0
             self.log (console, "GETTING REV IDS")  # DEBUG
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         rec_cnt += 1 
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
@@ -3803,8 +3875,14 @@ class kb_util_dylan:
             pair_pos = 0
             self.log (console, "GETTING FWD IDS")  # DEBUG
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         rec_cnt += 1
                         read_id = line.rstrip('\n')
                         read_id = re.sub ("[ \t]+.*$", "", read_id)
@@ -3881,14 +3959,20 @@ class kb_util_dylan:
             capture_type_paired = False
 
             with open (input_fwd_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             if capture_type_paired:
                                 paired_output_reads_file_handle.writelines(rec_buf)
                                 paired_cnt += 1
-                                if paired_cnt % recs_beep_n == 0:
-                                    self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                                #if paired_cnt % recs_beep_n == 0:
+                                #    self.log(console,"\t"+str(paired_cnt)+" recs processed")
                             else:
                                 unpaired_output_reads_file_handle.writelines(rec_buf)
                                 unpaired_cnt += 1
@@ -3908,8 +3992,8 @@ class kb_util_dylan:
                     if capture_type_paired:
                         paired_output_reads_file_handle.writelines(rec_buf)
                         paired_cnt += 1
-                        if paired_cnt % recs_beep_n == 0:
-                            self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                        #if paired_cnt % recs_beep_n == 0:
+                        #    self.log(console,"\t"+str(paired_cnt)+" recs processed")
                     else:
                         unpaired_output_reads_file_handle.writelines(rec_buf)
                         unpaired_cnt += 1
@@ -3943,8 +4027,14 @@ class kb_util_dylan:
             capture_type_paired = False
 
             with open (input_rev_file_path, 'r', 0) as input_reads_file_handle:
+                rec_line_i = -1
                 for line in input_reads_file_handle:
-                    if line.startswith('@'):
+                    rec_line_i += 1
+                    if rec_line_i == 3:
+                        rec_line_i = -1
+                    elif rec_line_i == 0:
+                        if not line.startswith('@'):
+                            raise ValueError ("badly formatted rec line: '"+line+"'")
                         if last_read_id != None:
                             if capture_type_paired:
                                 paired_cnt += 1
@@ -3967,8 +4057,8 @@ class kb_util_dylan:
                                 else:
                                     paired_unsynch_buf[last_read_id] = rec_buf
 
-                                if paired_cnt % recs_beep_n == 0:
-                                    self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                                #if paired_cnt % recs_beep_n == 0:
+                                #    self.log(console,"\t"+str(paired_cnt)+" recs processed")
                             else:
                                 unpaired_cnt += 1
                                 unpaired_output_reads_file_handle.writelines(rec_buf)
@@ -4007,8 +4097,8 @@ class kb_util_dylan:
                             else:
                                 paired_unsynch_buf[last_read_id] = rec_buf
 
-                            if paired_cnt % recs_beep_n == 0:
-                                self.log(console,"\t"+str(paired_cnt)+" recs processed")
+                            #if paired_cnt % recs_beep_n == 0:
+                            #    self.log(console,"\t"+str(paired_cnt)+" recs processed")
                         else:
                             unpaired_cnt += 1
                             unpaired_output_reads_file_handle.writelines(rec_buf)
@@ -4040,7 +4130,7 @@ class kb_util_dylan:
             #
             if paired_read_cnt > 0:
                 self.log (console, "UPLOAD PAIRED READS LIBS")  # DEBUG
-                paired_obj_refs = []
+                #paired_obj_refs = []
                 output_fwd_paired_file_path = output_fwd_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 output_rev_paired_file_path = output_rev_paired_file_path_base+"-"+str(lib_i)+".fastq"
                 if not os.path.isfile (output_fwd_paired_file_path) \
@@ -4055,7 +4145,7 @@ class kb_util_dylan:
                     paired_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                               'name': output_obj_name,
                                                                               # remove sequencing_tech when source_reads_ref is working
-                                                                              'sequencing_tech': sequencing_tech,
+                                                                              #'sequencing_tech': sequencing_tech,
                                                                               'source_reads_ref': input_reads_ref,
                                                                               'fwd_file': output_fwd_paired_file_path,
                                                                               'rev_file': output_rev_paired_file_path
@@ -4063,7 +4153,7 @@ class kb_util_dylan:
                     
 
             # upload reads forward unpaired
-            unpaired_fwd_obj_refs = []
+            #unpaired_fwd_obj_refs = []
             if unpaired_fwd_read_cnt > 0:
                 self.log (console, "UPLOAD UNPAIRED FWD READS LIB")  # DEBUG
                 unpaired_fwd_ref = None
@@ -4076,7 +4166,7 @@ class kb_util_dylan:
                     unpaired_fwd_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                                     'name': output_obj_name,
                                                                                     # remove sequencing_tech when source_reads_ref is working
-                                                                                    'sequencing_tech': sequencing_tech,
+                                                                                    #'sequencing_tech': sequencing_tech,
                                                                                     'source_reads_ref': input_reads_ref,
                                                                                     'fwd_file': output_fwd_unpaired_file_path
                                                                                     })['obj_ref'])
@@ -4085,7 +4175,7 @@ class kb_util_dylan:
 
 
             # upload reads reverse unpaired
-            unpaired_rev_obj_refs = []
+            #unpaired_rev_obj_refs = []
             if unpaired_rev_read_cnt > 0:
                 self.log (console, "UPLOAD UNPAIRED REV READS LIB")  # DEBUG
                 unpaired_rev_ref = None
@@ -4098,7 +4188,7 @@ class kb_util_dylan:
                     unpaired_rev_obj_refs.append (readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                                     'name': output_obj_name,
                                                                                     # remove sequencing_tech when source_reads_ref is working
-                                                                                    'sequencing_tech': sequencing_tech,
+                                                                                    #'sequencing_tech': sequencing_tech,
                                                                                     'source_reads_ref': input_reads_ref,
                                                                                     'fwd_file': output_rev_unpaired_file_path
                                                                                     })['obj_ref'])
@@ -4301,6 +4391,7 @@ class kb_util_dylan:
         # return variables are: returnVal
         #BEGIN KButil_Translate_ReadsLibs_QualScores
         console = []
+        invalid_msgs = []
         report = ''
         self.log(console, 'Running KButil_Translate_ReadsLibs_QualScores with parameters: ')
         self.log(console, "\n"+pformat(params))
@@ -4312,7 +4403,7 @@ class kb_util_dylan:
         env['KB_AUTH_TOKEN'] = token
 
         # internal Methods
-        def q33(q64): return chr(ord(q64)-31)
+        def qual33(qual64): return chr(ord(qual64)-31)
 
         #SERVICE_VER = 'dev'  # DEBUG
         SERVICE_VER = 'release'
@@ -4332,16 +4423,15 @@ class kb_util_dylan:
                 clean_input_refs.append(ref)
         params['input_refs'] = clean_input_refs
 
-        if len(params['input_refs']) < 2:
-            self.log(console,"Must provide at least two ReadsLibs or ReadsSets")
-            self.log(invalid_msgs,"Must provide at least two ReadsLibs or ReadsSets")
 
         # load provenance
         provenance = [{}]
         if 'provenance' in ctx:
             provenance = ctx['provenance']
         # add additional info to provenance here, in this case the input data object reference
-        provenance[0]['input_ws_objects']=[str(params['input_ref'])]
+        provenance[0]['input_ws_objects'] = []
+        for input_ref in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(input_ref)
 
         # Determine whether read library or read set is input object
         #
@@ -4371,7 +4461,7 @@ class kb_util_dylan:
             
             if input_reads_obj_type != "KBaseSets.ReadsSet":  # readsLib
                 readsSet_ref_list.append(reads_ref)
-                
+
             else:  # readsSet
                 try:
                     setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
@@ -4383,7 +4473,8 @@ class kb_util_dylan:
                     readsSet_ref_list.append(readsLibrary_obj['ref'])
 #                    NAME_I = 1
 #                    readsSet_names_list.append(readsLibrary_obj['info'][NAME_I])
-        # add names
+        # add names and types
+        reads_obj_types_list = []
         for reads_ref in readsSet_ref_list:
             try:
                 # object_info tuple
@@ -4391,12 +4482,14 @@ class kb_util_dylan:
                 
                 input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':reads_ref}]})[0]
                 input_reads_obj_name = input_reads_obj_info[NAME_I]
-                #input_reads_obj_type = input_reads_obj_info[TYPE_I]
-                #input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+                input_readsLib_obj_type = input_reads_obj_info[TYPE_I]
+                input_readsLib_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+
             except Exception as e:
                 raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
 
-            readsSet_names_list.append(input_reads_obj_name)
+            readsSet_names_list.append (input_reads_obj_name)
+            reads_obj_types_list.append (input_readsLib_obj_type)
 
 
         # translate qual scores for each read library
@@ -4430,18 +4523,11 @@ class kb_util_dylan:
                 raise ValueError('Unable to get reads object from workspace: (' + this_input_reads_ref +")\n" + str(e))
 
             this_input_fwd_path = readsLibrary['files'][this_input_reads_ref]['files']['fwd']
-
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+            if reads_obj_types_list[reads_i] == "KBaseFile.PairedEndLibrary":
                 this_input_rev_path = readsLibrary['files'][this_input_reads_ref]['files']['rev']
 
-            this_sequencing_tech = readsLibrary['files'][this_input_reads_ref]['sequencing_tech']
-            if sequencing_tech == None:
-                sequencing_tech = this_sequencing_tech
-            elif this_sequencing_tech != sequencing_tech:
-                sequencing_tech = 'N/A'
-
             # read through and translate qual scores
-            self.log (console, "APPENDING FASTQ FILES FOR ReadsSet member: "+str(this_input_reads_ref))
+            self.log (console, "TRANSLATING FWD FASTQ FILE FOR ReadsSet member: "+str(this_input_reads_ref))
             read_buf_size  = 65536
             write_buf_size = 65536
 
@@ -4463,56 +4549,64 @@ class kb_util_dylan:
                         buf.append(this_input_handle.readline())  # seq
                         buf.append(this_input_handle.readline())  # '+'
 
-                        qual_line = this_input_handle.readline()
-                        qual_line.rstrip()
+                        qual_line = this_input_handle.readline().rstrip()
                         q33_line = ''
+                        #def qual33(qual64): return chr(ord(qual64)-31)
+                        #trans_report = ''  # DEBUG
+                        #self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
                         for q64 in qual_line:
                             q64_ascii = ord(q64)
+                            #trans_report += q64+'('+str(q64_ascii)+')'
                             if q64_ascii < 64:
                                 input_is_already_phred33 = True
                                 break
                             q33_line += chr(q64_ascii - 31)
-                        buf.append(q33_line)
-                    q33_fwd_handle.write("\n".join(buf)+"\n")
+                        buf.append(q33_line+"\n")
+                        #self.log (console, "TRNS_LINE: "+trans_report)  # DEBUG
+                        #self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
+                        qual33_fwd_handle.write(''.join(buf))
 
-            q33_fwd_handle.close()
+            qual33_fwd_handle.close()
             os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # append rev
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary" and \
+            if reads_obj_types_list[reads_i] == "KBaseFile.PairedEndLibrary" and \
                     not input_is_already_phred33:
+                
+                self.log (console, "TRANSLATING REV FASTQ FILE FOR ReadsSet member: "+str(this_input_reads_ref))
 
                 qual33_rev_path = this_input_rev_path + '.qual33'
                 qual33_rev_handle = open (qual33_rev_path, 'w', write_buf_size)
                 this_input_path = this_input_rev_path
 
-            with open (this_input_path, 'r', read_buf_size) as this_input_handle:
-                while True:
-                    buf = []
-                    line = this_input_handle.readline()
-                    if not line:
-                        break
-                    if input_is_already_phred33:
-                        break
-                    if line.startswith('@'):
-                        buf.append(line)  # header
-                        buf.append(this_input_handle.readline())  # seq
-                        buf.append(this_input_handle.readline())  # '+'
+                with open (this_input_path, 'r', read_buf_size) as this_input_handle:
+                    while True:
+                        buf = []
+                        line = this_input_handle.readline()
+                        if not line:
+                            break
+                        if input_is_already_phred33:
+                            break
+                        if line.startswith('@'):
+                            buf.append(line)  # header
+                            buf.append(this_input_handle.readline())  # seq
+                            buf.append(this_input_handle.readline())  # '+'
+                            
+                            qual_line = this_input_handle.readline().rstrip()
+                            q33_line = ''
+                            #self.log (console, "ORIG_LINE: "+qual_line)  # DEBUG
+                            for q64 in qual_line:
+                                q64_ascii = ord(q64)
+                                if q64_ascii < 64:
+                                    input_is_already_phred33 = True
+                                    break
+                                q33_line += chr(q64_ascii - 31)
+                            buf.append(q33_line+"\n")
+                            #self.log (console, "TRNS_LINE: "+q33_line)  # DEBUG
+                            qual33_rev_handle.write(''.join(buf))
 
-                        qual_line = this_input_handle.readline()
-                        qual_line.rstrip()
-                        q33_line = ''
-                        for q64 in qual_line:
-                            q64_ascii = ord(q64)
-                            if q64_ascii < 64:
-                                input_is_already_phred33 = True
-                                break
-                            q33_line += chr(q64_ascii - 31)
-                        buf.append(q33_line)
-                    q33_rev_handle.write("\n".join(buf)+"\n")
-
-            q33_rev_handle.close()
-            os.remove (this_input_path)  # create space since we no longer need the piece file
+                qual33_rev_handle.close()
+                os.remove (this_input_path)  # create space since we no longer need the piece file
 
             # upload reads
             #
@@ -4522,34 +4616,34 @@ class kb_util_dylan:
 
             translated_cnt += 1
             self.log (console, "UPLOADING Translated 64->33 READS LIB")  # DEBUG
-            if not os.path.isfile (q33_fwd_path) \
-                    or os.path.getsize (q33_fwd_path) == 0:
+            if not os.path.isfile (qual33_fwd_path) \
+                    or os.path.getsize (qual33_fwd_path) == 0:
                 raise ValueError ("failed to create fwd read library output")
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
-                if not os.path.isfile (q33_rev_path) \
-                        or os.path.getsize (q33_rev_path) == 0:
+            if reads_obj_types_list[reads_i] == "KBaseFile.PairedEndLibrary":
+                if not os.path.isfile (qual33_rev_path) \
+                        or os.path.getsize (qual33_rev_path) == 0:
                     
                     raise ValueError ("failed to create rev read library output")
 
             output_obj_name = readsSet_names_list[reads_i]+".phred33"
             self.log(console, 'Uploading reads library: '+output_obj_name)
 
-            if input_reads_obj_type == "KBaseFile.PairedEndLibrary":
+            if reads_obj_types_list[reads_i] == "KBaseFile.PairedEndLibrary":
                 reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                       'name': output_obj_name,
                                                                       # remove sequencing_tech when source_reads_ref is working
-                                                                      'sequencing_tech': sequencing_tech,
+                                                                      #'sequencing_tech': sequencing_tech,
                                                                       'source_reads_ref': readsSet_ref_list[0],
-                                                                      'fwd_file': q33_fwd_path,
-                                                                      'rev_file': q33_rev_path
+                                                                      'fwd_file': qual33_fwd_path,
+                                                                      'rev_file': qual33_rev_path
                                                                       })['obj_ref']
             else:
                 reads_library_ref = readsUtils_Client.upload_reads ({ 'wsname': str(params['workspace_name']),
                                                                       'name': output_obj_name,
                                                                       # remove sequencing_tech when source_reads_ref is working
-                                                                      'sequencing_tech': sequencing_tech,
+                                                                      #'sequencing_tech': sequencing_tech,
                                                                       'source_reads_ref': readsSet_ref_list[0],
-                                                                      'fwd_file': q33_fwd_path,
+                                                                      'fwd_file': qual33_fwd_path,
                                                                       })['obj_ref']
             
 
@@ -4582,39 +4676,6 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_Translate_ReadsLibs_QualScores return value ' +
-                             'returnVal is not type dict as required.')
-        # return the results
-        return [returnVal]
-
-    def KButil_Build_InSilico_Metagenomes_from_Isolate_Reads(self, ctx, params):
-        """
-        :param params: instance of type
-           "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params"
-           (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads() ** ** 
-           Method for Combining reads libs in user-defined proportions) ->
-           structure: parameter "workspace_name" of type "workspace_name" (**
-           The workspace object refs are of form: ** **    objects =
-           ws.get_objects([{'ref':
-           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
-           the entire name combining the workspace id and the object name **
-           "id" is a numerical identifier of the workspace or object, and
-           should just be used for workspace ** "name" is a string identifier
-           of a workspace or object.  This is received from Narrative.),
-           parameter "input_refs" of type "data_obj_ref", parameter
-           "output_name" of type "data_obj_name", parameter "desc" of String
-        :returns: instance of type
-           "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output" ->
-           structure: parameter "report_name" of type "data_obj_name",
-           parameter "report_ref" of type "data_obj_ref"
-        """
-        # ctx is the context object
-        # return variables are: returnVal
-        #BEGIN KButil_Build_InSilico_Metagenomes_from_Isolate_Reads
-        #END KButil_Build_InSilico_Metagenomes_from_Isolate_Reads
-
-        # At some point might do deeper type checking...
-        if not isinstance(returnVal, dict):
-            raise ValueError('Method KButil_Build_InSilico_Metagenomes_from_Isolate_Reads return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]

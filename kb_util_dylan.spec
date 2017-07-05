@@ -348,24 +348,5 @@ module kb_util_dylan {
 
     funcdef KButil_Translate_ReadsLibs_QualScores (KButil_Translate_ReadsLibs_QualScores_Params params)  returns (KButil_Translate_ReadsLibs_QualScores_Output) authentication required;
 
-
-    /* KButil_Build_InSilico_Metagenomes_from_Isolate_Reads()
-    **
-    **  Method for Combining reads libs in user-defined proportions
-    */
-    typedef structure {
-        workspace_name workspace_name;
-	data_obj_ref   input_refs;    /* ReadsLibraries */
-        data_obj_name  output_name;  /* ReadsLibrary */
-	string         desc;
-    } KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params;
-
-    typedef structure {
-	data_obj_name report_name;
-	data_obj_ref  report_ref;
-    } KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output;
-
-    funcdef KButil_Build_InSilico_Metagenomes_from_Isolate_Reads (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params params)  returns (KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output) authentication required;
-
 };
 

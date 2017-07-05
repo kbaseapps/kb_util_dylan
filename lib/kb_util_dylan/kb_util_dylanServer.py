@@ -393,10 +393,6 @@ class Application(object):
                              name='kb_util_dylan.KButil_Translate_ReadsLibs_QualScores',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Translate_ReadsLibs_QualScores'] = 'required'  # noqa
-        self.rpc_service.add(impl_kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads,
-                             name='kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads',
-                             types=[dict])
-        self.method_authentication['kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.status,
                              name='kb_util_dylan.status',
                              types=[dict])
@@ -464,7 +460,7 @@ class Application(object):
                                 ctx['user_id'] = user
                                 ctx['authenticated'] = 1
                                 ctx['token'] = token
-                            except Exception as e:
+                            except Exception, e:
                                 if auth_req == 'required':
                                     err = JSONServerError()
                                     err.data = \

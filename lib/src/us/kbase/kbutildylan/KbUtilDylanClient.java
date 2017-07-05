@@ -419,23 +419,6 @@ public class KbUtilDylanClient {
         return res.get(0);
     }
 
-    /**
-     * <p>Original spec-file function name: KButil_Build_InSilico_Metagenomes_from_Isolate_Reads</p>
-     * <pre>
-     * </pre>
-     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilBuildInSilicoMetagenomesFromIsolateReadsParams KButilBuildInSilicoMetagenomesFromIsolateReadsParams} (original type "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Params")
-     * @return   instance of type {@link us.kbase.kbutildylan.KButilBuildInSilicoMetagenomesFromIsolateReadsOutput KButilBuildInSilicoMetagenomesFromIsolateReadsOutput} (original type "KButil_Build_InSilico_Metagenomes_from_Isolate_Reads_Output")
-     * @throws IOException if an IO exception occurs
-     * @throws JsonClientException if a JSON RPC exception occurs
-     */
-    public KButilBuildInSilicoMetagenomesFromIsolateReadsOutput kButilBuildInSilicoMetagenomesFromIsolateReads(KButilBuildInSilicoMetagenomesFromIsolateReadsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
-        List<Object> args = new ArrayList<Object>();
-        args.add(params);
-        TypeReference<List<KButilBuildInSilicoMetagenomesFromIsolateReadsOutput>> retType = new TypeReference<List<KButilBuildInSilicoMetagenomesFromIsolateReadsOutput>>() {};
-        List<KButilBuildInSilicoMetagenomesFromIsolateReadsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_Build_InSilico_Metagenomes_from_Isolate_Reads", args, retType, true, true, jsonRpcContext, this.serviceVersion);
-        return res.get(0);
-    }
-
     public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};

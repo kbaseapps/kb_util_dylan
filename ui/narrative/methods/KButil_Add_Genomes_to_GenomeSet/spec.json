@@ -36,7 +36,7 @@
         },
         {
             "id": "input_genomeset_ref",
-            "optional": true,
+            "optional": false,
             "advanced": false,
             "allow_multiple": false,
             "default_values": [ "" ],
