@@ -850,6 +850,7 @@ class kb_util_dylan:
                     data = objects[0]['data']
                     info = objects[0]['info']
                     genomeObj = data
+                    obj_name = info[1]
                     type_name = info[2].split('.')[1].split('-')[0]
                 except Exception as e:
                     raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
@@ -857,10 +858,15 @@ class kb_util_dylan:
                     raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"' for ref: '"+genomeRef+"'")
                     
                 genome_id = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
-                if not genome_id in elements.keys():
-                    elements[genome_id] = dict()
-                elements[genome_id]['ref'] = genomeRef  # the key line
-                self.log(console,"adding element "+genome_id+" : "+genomeRef)  # DEBUG
+                genome_sci_name = genomeObj['scientific_name']
+
+                #if not genome_id in elements.keys():
+                #    elements[genome_id] = dict()
+                #elements[genome_id]['ref'] = genomeRef  # the key line
+                if not genomeRef in elements.keys(): 
+                    elements[genomeRef] = dict()
+                elements[genomeRef]['ref'] = genomeRef  # the key line
+                self.log(console,"adding element "+obj_name+" ("+genome_sci_name+") aka ("+genome_id+") : "+genomeRef)  # DEBUG
 
 
         # load the method provenance from the context object
@@ -1043,6 +1049,7 @@ class kb_util_dylan:
                         data = objects[0]['data']
                         info = objects[0]['info']
                         genomeObj = data
+                        obj_name = info[1]
                         type_name = info[2].split('.')[1].split('-')[0]
                     except Exception as e:
                         raise ValueError('Unable to fetch genomeRef object from workspace: ' + str(e))
@@ -1050,10 +1057,15 @@ class kb_util_dylan:
                         raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"' for ref: '"+genomeRef+"'")
                     
                     genome_id = genomeObj['id'] if type_name == 'Genome' else genomeObj['genome_annotation_id']
-                    if not genome_id in elements.keys():
-                        elements[genome_id] = dict()
-                    elements[genome_id]['ref'] = genomeRef  # the key line
-                    self.log(console,"adding element "+genome_id+" : "+genomeRef)  # DEBUG
+                    genome_sci_name = genomeObj['scientific_name']
+                    
+                    #if not genome_id in elements.keys():
+                    #    elements[genome_id] = dict()
+                    #elements[genome_id]['ref'] = genomeRef  # the key line
+                    if not genomeRef in elements.keys(): 
+                        elements[genomeRef] = dict()
+                    elements[genomeRef]['ref'] = genomeRef  # the key line
+                    self.log(console,"adding element "+obj_name+" ("+genome_sci_name+") aka ("+genome_id+") : "+genomeRef)  # DEBUG
             
 
         # load the method provenance from the context object
@@ -1228,7 +1240,7 @@ class kb_util_dylan:
                 objects = ws.get_objects2({'objects':[{'ref': genomeRef}]})['data']
                 genomeObj = objects[0]['data']
                 info = objects[0]['info']
-
+                obj_name = info[1]
                 type_name = info[2].split('.')[1].split('-')[0]
                 if type_name != 'Genome':
                     raise ValueError("Bad Type:  Should be Genome or GenomeAnnotation instead of '"+type_name+"'")
@@ -1237,9 +1249,10 @@ class kb_util_dylan:
                 raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
                 #to get the full stack trace: traceback.format_exc()
             
-            gId = genomeObj['id']
-            if gId == 'Unknown':
-                gId = genomeRef
+            #gId = genomeObj['id']
+            #if gId == 'Unknown':
+            #    gId = genomeRef
+            gId = genomeRef
             try:
                 already_included = elements[gId]
             except:
