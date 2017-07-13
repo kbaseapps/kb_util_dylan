@@ -1700,7 +1700,7 @@ $return is a kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs_Output
 KButil_AddInsertLen_to_ReadsLibs_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
 	input_refs has a value which is a kb_util_dylan.data_obj_ref
-	insert_len has a value which is an int
+	insert_len has a value which is a float
 	insert_stddev has a value which is a float
 workspace_name is a string
 data_obj_ref is a string
@@ -1720,7 +1720,7 @@ $return is a kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs_Output
 KButil_AddInsertLen_to_ReadsLibs_Params is a reference to a hash where the following keys are defined:
 	workspace_name has a value which is a kb_util_dylan.workspace_name
 	input_refs has a value which is a kb_util_dylan.data_obj_ref
-	insert_len has a value which is an int
+	insert_len has a value which is a float
 	insert_stddev has a value which is a float
 workspace_name is a string
 data_obj_ref is a string
@@ -3200,7 +3200,7 @@ KButil_AddInsertLen_to_ReadsLibs()
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
 input_refs has a value which is a kb_util_dylan.data_obj_ref
-insert_len has a value which is an int
+insert_len has a value which is a float
 insert_stddev has a value which is a float
 
 </pre>
@@ -3212,7 +3212,7 @@ insert_stddev has a value which is a float
 a reference to a hash where the following keys are defined:
 workspace_name has a value which is a kb_util_dylan.workspace_name
 input_refs has a value which is a kb_util_dylan.data_obj_ref
-insert_len has a value which is an int
+insert_len has a value which is a float
 insert_stddev has a value which is a float
 
 

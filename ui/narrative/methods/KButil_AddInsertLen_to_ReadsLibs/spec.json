@@ -27,10 +27,10 @@
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
-            "default_values": [ "450" ],
+            "default_values": [ "450.0" ],
             "field_type": "text",
             "text_options": {
-                "validate_as": "int"
+                "validate_as": "float"
             }
         },
         {

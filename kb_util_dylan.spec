@@ -356,7 +356,7 @@ module kb_util_dylan {
     typedef structure {
         workspace_name workspace_name;
 	data_obj_ref   input_refs;    /* ReadsLibraries */
-	int            insert_len;
+	float          insert_len;
 	float          insert_stddev;
     } KButil_AddInsertLen_to_ReadsLibs_Params;
 

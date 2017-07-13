@@ -400,7 +400,7 @@ class kb_util_dylan(object):
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
            parameter "input_refs" of type "data_obj_ref", parameter
-           "insert_len" of Long, parameter "insert_stddev" of Double
+           "insert_len" of Double, parameter "insert_stddev" of Double
         :returns: instance of type "KButil_AddInsertLen_to_ReadsLibs_Output"
            -> structure: parameter "report_name" of type "data_obj_name",
            parameter "report_ref" of type "data_obj_ref"

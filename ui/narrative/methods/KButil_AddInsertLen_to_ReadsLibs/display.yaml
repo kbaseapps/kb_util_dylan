@@ -36,7 +36,7 @@ parameters :
         ui-name : |
             Insert length
         short-hint : |
-            Insert length, including read lengths (e.g. for 2x150bp with a 150 base gap, enter "450")
+            Insert length, including read lengths (e.g. for 2x150bp with a 150 base gap, enter "450.0")
     insert_stddev:
         ui-name : |
             Insert length stddev

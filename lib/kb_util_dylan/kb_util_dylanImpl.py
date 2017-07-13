@@ -55,7 +55,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "1.0.0"
     GIT_URL = "https://github.com/dcchivian/kb_util_dylan"
-    GIT_COMMIT_HASH = "dec08b1720cb7b9963bacaa9bd45aa1ed80fb5ea"
+    GIT_COMMIT_HASH = "934bc6db1dd9783841dbc455a4244ccc2c2f1be2"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -4707,7 +4707,7 @@ class kb_util_dylan:
            should just be used for workspace ** "name" is a string identifier
            of a workspace or object.  This is received from Narrative.),
            parameter "input_refs" of type "data_obj_ref", parameter
-           "insert_len" of Long, parameter "insert_stddev" of Double
+           "insert_len" of Double, parameter "insert_stddev" of Double
         :returns: instance of type "KButil_AddInsertLen_to_ReadsLibs_Output"
            -> structure: parameter "report_name" of type "data_obj_name",
            parameter "report_ref" of type "data_obj_ref"
@@ -4817,7 +4817,7 @@ class kb_util_dylan:
             self.log (console, "UPDATING ReadsSet member: "+readsSet_names_list[reads_i]+" ("+str(this_input_reads_ref)+")")
 
             try:
-                objects = ws.get_objects2({'objects':[{'ref': this_input_reads_ref}]})['data']
+                objects = wsClient.get_objects2({'objects':[{'ref': this_input_reads_ref}]})['data']
                 new_reads_lib_obj = objects[0]['data']
                 #info = objects[0]['info']
             except Exception as e:
@@ -4839,8 +4839,8 @@ class kb_util_dylan:
             provenance[0]['input_ws_objects'] = [this_input_reads_ref]
 
             try:
-                new_obj_info = ws.save_objects({
-                        'workspace':workspace_name,
+                new_obj_info = wsClient.save_objects({
+                        'workspace':params['workspace_name'],
                         'objects':[
                             {
                                 'type':'KBaseFile.PairedEndLibrary',
@@ -4868,7 +4868,7 @@ class kb_util_dylan:
             readsSet_desc = "ReadsLibs "+", ".join(readsSet_names_list)+" with InsertLen:"+str(params['insert_len'])+" Insert_STDDEV:"+str(params['insert_stddev'])
             items = []
             for reads_i,this_input_reads_ref in enumerate(readsSet_ref_list):
-                items.append({ 'ref': new_objects['ref'],
+                items.append({ 'ref': new_objects[reads_i]['ref'],
                                'label': readsSet_names_list[reads_i]
                            })
 
