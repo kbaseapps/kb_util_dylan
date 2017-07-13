@@ -348,5 +348,24 @@ module kb_util_dylan {
 
     funcdef KButil_Translate_ReadsLibs_QualScores (KButil_Translate_ReadsLibs_QualScores_Params params)  returns (KButil_Translate_ReadsLibs_QualScores_Output) authentication required;
 
+
+    /* KButil_AddInsertLen_to_ReadsLibs()
+    **
+    **  Method for Adding Insert Len to PairedEnd ReadsLibs
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_refs;    /* ReadsLibraries */
+	int            insert_len;
+	float          insert_stddev;
+    } KButil_AddInsertLen_to_ReadsLibs_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_AddInsertLen_to_ReadsLibs_Output;
+
+    funcdef KButil_AddInsertLen_to_ReadsLibs (KButil_AddInsertLen_to_ReadsLibs_Params params)  returns (KButil_AddInsertLen_to_ReadsLibs_Output) authentication required;
+
 };
 

@@ -1682,6 +1682,110 @@ data_obj_name is a string
     }
 }
  
+
+
+=head2 KButil_AddInsertLen_to_ReadsLibs
+
+  $return = $obj->KButil_AddInsertLen_to_ReadsLibs($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs_Params
+$return is a kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs_Output
+KButil_AddInsertLen_to_ReadsLibs_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
+	insert_len has a value which is an int
+	insert_stddev has a value which is a float
+workspace_name is a string
+data_obj_ref is a string
+KButil_AddInsertLen_to_ReadsLibs_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+data_obj_name is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs_Params
+$return is a kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs_Output
+KButil_AddInsertLen_to_ReadsLibs_Params is a reference to a hash where the following keys are defined:
+	workspace_name has a value which is a kb_util_dylan.workspace_name
+	input_refs has a value which is a kb_util_dylan.data_obj_ref
+	insert_len has a value which is an int
+	insert_stddev has a value which is a float
+workspace_name is a string
+data_obj_ref is a string
+KButil_AddInsertLen_to_ReadsLibs_Output is a reference to a hash where the following keys are defined:
+	report_name has a value which is a kb_util_dylan.data_obj_name
+	report_ref has a value which is a kb_util_dylan.data_obj_ref
+data_obj_name is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub KButil_AddInsertLen_to_ReadsLibs
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function KButil_AddInsertLen_to_ReadsLibs (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to KButil_AddInsertLen_to_ReadsLibs:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'KButil_AddInsertLen_to_ReadsLibs');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'KButil_AddInsertLen_to_ReadsLibs',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method KButil_AddInsertLen_to_ReadsLibs",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'KButil_AddInsertLen_to_ReadsLibs',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -1725,16 +1829,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'KButil_Translate_ReadsLibs_QualScores',
+                method_name => 'KButil_AddInsertLen_to_ReadsLibs',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method KButil_Translate_ReadsLibs_QualScores",
+            error => "Error invoking method KButil_AddInsertLen_to_ReadsLibs",
             status_line => $self->{client}->status_line,
-            method_name => 'KButil_Translate_ReadsLibs_QualScores',
+            method_name => 'KButil_AddInsertLen_to_ReadsLibs',
         );
     }
 }
@@ -3044,6 +3148,81 @@ input_refs has a value which is a kb_util_dylan.data_obj_ref
 
 
 =head2 KButil_Translate_ReadsLibs_QualScores_Output
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+report_name has a value which is a kb_util_dylan.data_obj_name
+report_ref has a value which is a kb_util_dylan.data_obj_ref
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_AddInsertLen_to_ReadsLibs_Params
+
+=over 4
+
+
+
+=item Description
+
+KButil_AddInsertLen_to_ReadsLibs()
+**
+**  Method for Adding Insert Len to PairedEnd ReadsLibs
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
+insert_len has a value which is an int
+insert_stddev has a value which is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+workspace_name has a value which is a kb_util_dylan.workspace_name
+input_refs has a value which is a kb_util_dylan.data_obj_ref
+insert_len has a value which is an int
+insert_stddev has a value which is a float
+
+
+=end text
+
+=back
+
+
+
+=head2 KButil_AddInsertLen_to_ReadsLibs_Output
 
 =over 4
 
