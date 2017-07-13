@@ -1179,3 +1179,49 @@ class kb_util_dylanTest(unittest.TestCase):
             self.assertEqual(output_info[2].split('-')[0],output_type)
         pass
 
+
+    #### test_KButil_AddInsertLen_to_ReadsLibs()
+    ##
+    def test_KButil_AddInsertLen_to_ReadsLibs (self):
+        method = 'KButil_AddInsertLen_to_ReadsLibs'
+
+        print ("\n\nRUNNING: test_KButil_AddInsertLen_to_ReadsLibs()")
+        print ("================================================\n\n")
+
+        # figure out where the test data lives
+        lib_basenames = ['test_quick', 'small']
+        lib_obj_names = []
+        input_refs = []
+        for lib_i,lib_basename in enumerate(lib_basenames):
+            pe_lib_info = self.getPairedEndLibInfo(lib_basename, lib_i=lib_i)
+            pprint(pe_lib_info)
+            lib_obj_names.append(str(pe_lib_info[1]))
+            input_refs.append(str(pe_lib_info[6])+'/'+str(pe_lib_info[0])+'/'+str(pe_lib_info[4]))
+
+        # run method
+        params = {
+            'workspace_name': self.getWsName(),
+            'input_refs': input_refs,
+            'insert_len': '450.0',
+            'insert_stddev': '15.0'
+        }
+        result = self.getImpl().KButil_AddInsertLen_to_ReadsLibs(self.getContext(),params)
+        print('RESULT:')
+        pprint(result)
+
+        # check the output
+        for lib_i,lib_basename in enumerate(lib_basenames):
+            output_name = lib_obj_names[lib_i]
+            output_type = 'KBaseFile.PairedEndLibrary'
+            output_ref = self.getWsName()+'/'+output_name
+            info_list = self.getWsClient().get_object_info_new({'objects':[{'ref':output_ref}]})
+            self.assertEqual(len(info_list),1)
+            output_info = info_list[0]
+            self.assertEqual(output_info[1],output_name)
+            self.assertEqual(output_info[2].split('-')[0],output_type)
+            output_obj = self.getWsClient().get_objects2({'objects': [{'ref': output_ref}]})['data'][0]['data']
+            print ('OUTPUT_OBJ:')
+            pprint(output_obj)
+            self.assertEqual(output_obj['insert_size_mean'],450.0)
+            self.assertEqual(output_obj['insert_size_std_dev'],15.0)
+        pass

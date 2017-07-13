@@ -53,9 +53,9 @@ class kb_util_dylan:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "0.0.3"
-    GIT_URL = "https://github.com/kbaseapps/kb_util_dylan"
-    GIT_COMMIT_HASH = "7ef43562a6722b8788936a2d59ed8bbadff8b642"
+    VERSION = "1.0.0"
+    GIT_URL = "https://github.com/dcchivian/kb_util_dylan"
+    GIT_COMMIT_HASH = "934bc6db1dd9783841dbc455a4244ccc2c2f1be2"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -4689,6 +4689,231 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_Translate_ReadsLibs_QualScores return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_AddInsertLen_to_ReadsLibs(self, ctx, params):
+        """
+        :param params: instance of type
+           "KButil_AddInsertLen_to_ReadsLibs_Params"
+           (KButil_AddInsertLen_to_ReadsLibs() ** **  Method for Adding
+           Insert Len to PairedEnd ReadsLibs) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_refs" of type "data_obj_ref", parameter
+           "insert_len" of Double, parameter "insert_stddev" of Double
+        :returns: instance of type "KButil_AddInsertLen_to_ReadsLibs_Output"
+           -> structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_AddInsertLen_to_ReadsLibs
+        console = []
+        invalid_msgs = []
+        report = ''
+        self.log(console, 'Running KButil_AddInsertLen_to_ReadsLibs with parameters: ')
+        self.log(console, "\n"+pformat(params))
+
+        token = ctx['token']
+        wsClient = workspaceService(self.workspaceURL, token=token)
+        headers = {'Authorization': 'OAuth '+token}
+        env = os.environ.copy()
+        env['KB_AUTH_TOKEN'] = token
+
+        #SERVICE_VER = 'dev'  # DEBUG
+        SERVICE_VER = 'release'
+
+        # param checks
+        required_params = ['workspace_name',
+                           'input_refs', 
+                           'insert_len',
+                           'insert_stddev'
+                           ]
+        for required_param in required_params:
+            if required_param not in params or params[required_param] == None:
+                raise ValueError ("Must define required param: '"+required_param+"'")
+            
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
+
+
+        # Determine whether read library or read set is input object
+        #
+        first_input_ref = params['input_refs']
+
+
+        # get set
+        #
+        readsSet_ref_list = []
+        readsSet_names_list = []
+        for reads_ref in params['input_refs']:
+            try:
+                # object_info tuple
+                [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+                
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':reads_ref}]})[0]
+                input_reads_obj_type = input_reads_obj_info[TYPE_I]
+                input_reads_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+                #input_reads_obj_version = input_reads_obj_info[VERSION_I]  # this is object version, not type version
+
+            except Exception as e:
+                raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
+            
+            acceptable_types = ["KBaseSets.ReadsSet", "KBaseFile.PairedEndLibrary"]
+            if input_reads_obj_type not in acceptable_types:
+                raise ValueError ("Input reads of type: '"+input_reads_obj_type+"'.  Must be one of "+", ".join(acceptable_types))
+            
+            if input_reads_obj_type != "KBaseSets.ReadsSet":  # readsLib
+                readsSet_ref_list.append(reads_ref)
+
+            else:  # readsSet
+                try:
+                    setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
+                    input_readsSet_obj = setAPI_Client.get_reads_set_v1 ({'ref':reads_ref,'include_item_info':1})
+                except Exception as e:
+                    raise ValueError('SetAPI FAILURE: Unable to get read library set object from workspace: (' + str(reads_ref)+")\n" + str(e))
+                
+                for readsLibrary_obj in input_readsSet_obj['data']['items']:
+                    readsSet_ref_list.append(readsLibrary_obj['ref'])
+#                    NAME_I = 1
+#                    readsSet_names_list.append(readsLibrary_obj['info'][NAME_I])
+        # add names and types
+        reads_obj_types_list = []
+        for reads_ref in readsSet_ref_list:
+            try:
+                # object_info tuple
+                [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+                
+                input_reads_obj_info = wsClient.get_object_info_new ({'objects':[{'ref':reads_ref}]})[0]
+                input_reads_obj_name = input_reads_obj_info[NAME_I]
+                input_readsLib_obj_type = input_reads_obj_info[TYPE_I]
+                input_readsLib_obj_type = re.sub ('-[0-9]+\.[0-9]+$', "", input_reads_obj_type)  # remove trailing version
+
+            except Exception as e:
+                raise ValueError('Unable to get read library object from workspace: (' + str(reads_ref) +')' + str(e))
+
+            readsSet_names_list.append (input_reads_obj_name)
+            reads_obj_types_list.append (input_readsLib_obj_type)
+
+
+        # Add insert len vals to read library objects
+        #
+        self.log (console, "CREATING UPDATED READ LIBRARY OBJECTS")
+
+        new_objects = []
+        updated_cnt = 0
+        for reads_i,this_input_reads_ref in enumerate(readsSet_ref_list):
+            self.log (console, "UPDATING ReadsSet member: "+readsSet_names_list[reads_i]+" ("+str(this_input_reads_ref)+")")
+
+            try:
+                objects = wsClient.get_objects2({'objects':[{'ref': this_input_reads_ref}]})['data']
+                new_reads_lib_obj = objects[0]['data']
+                #info = objects[0]['info']
+            except Exception as e:
+                raise ValueError('Unable to get reads object from workspace: '+str(readsSet_names_list[reads_i])+'(' + this_input_reads_ref +")\n" + str(e))
+
+            new_reads_lib_obj['insert_size_mean'] = float(params['insert_len'])
+            new_reads_lib_obj['insert_size_std_dev'] = float(params['insert_stddev'])
+
+            updated_cnt += 1
+
+            # Save updated object
+            self.log (console, "SAVING READS LIB")  # DEBUG
+            output_obj_name = readsSet_names_list[reads_i]
+
+            # load provenance
+            provenance = [{}]
+            if 'provenance' in ctx:
+                provenance = ctx['provenance']
+            provenance[0]['input_ws_objects'] = [this_input_reads_ref]
+
+            try:
+                new_obj_info = wsClient.save_objects({
+                        'workspace':params['workspace_name'],
+                        'objects':[
+                            {
+                                'type':'KBaseFile.PairedEndLibrary',
+                                'data':new_reads_lib_obj,
+                                'name':output_obj_name,
+                                'meta':{},
+                                'provenance':provenance
+                            }]
+                        })[0]
+            except Exception as e:
+                raise ValueError('Unable to save reads object to workspace: '+str(readsSet_names_list[reads_i])+'(' + this_input_reads_ref +")\n" + str(e))
+
+            # object_info tuple
+            [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)
+            # new ref
+            new_reads_library_ref = str(new_obj_info[WSID_I]) +'/'+str(new_obj_info[OBJID_I]) +'/'+ str(new_obj_info[VERSION_I])
+
+            # add object to list
+            desc = readsSet_names_list[reads_i]+' (with Insert Length and Stddev Added)'
+            new_objects.append({'ref':new_reads_library_ref,
+                                'description':desc})
+
+        # Create new ReadsSet with updated libs if more than one input lib
+        if len(params['input_refs']) > 1:
+            readsSet_desc = "ReadsLibs "+", ".join(readsSet_names_list)+" with InsertLen:"+str(params['insert_len'])+" Insert_STDDEV:"+str(params['insert_stddev'])
+            items = []
+            for reads_i,this_input_reads_ref in enumerate(readsSet_ref_list):
+                items.append({ 'ref': new_objects[reads_i]['ref'],
+                               'label': readsSet_names_list[reads_i]
+                           })
+
+            try:
+                setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
+            except Exception as e:
+                raise ValueError('ERROR: unable to instantiate SetAPI' + str(e))
+
+            output_readsSet_obj = { 'description': readsSet_desc,
+                                    'items': items
+                                    }
+            output_readsSet_name = 'Updated_ReadsLibs_with_Insert_Len.ReadsSet'
+            try:
+                output_readsSet_ref = setAPI_Client.save_reads_set_v1 ({'workspace_name': params['workspace_name'],
+                                                                        'output_object_name': output_readsSet_name,
+                                                                        'data': output_readsSet_obj
+                                                                        })['set_ref']
+            except Exception as e:
+                raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + param['workspace_name']+")\n" + str(e))
+            new_objects = [{'ref':output_readsSet_ref,'description':readsSet_desc}] + new_objects
+
+
+        # build report message
+        report += "NUM READS LIBRARIES INPUT: " + str(len(readsSet_ref_list))+"\n"
+        report += "NUM READS LIBRARIES TRANSLATED: " + str(updated_cnt)+"\n"
+
+
+        # build report
+        #
+        self.log (console, "SAVING REPORT")  # DEBUG        
+        reportObj = {'objects_created':new_objects, 
+                     'text_message': report}
+
+
+        # save report object
+        #
+        report = KBaseReport(self.callbackURL, token=ctx['token'], service_ver=SERVICE_VER)
+        report_info = report.create({'report':reportObj, 'workspace_name':params['workspace_name']})
+
+        returnVal = { 'report_name': report_info['name'], 'report_ref': report_info['ref'] }
+        #END KButil_AddInsertLen_to_ReadsLibs
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_AddInsertLen_to_ReadsLibs return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]

@@ -419,6 +419,23 @@ public class KbUtilDylanClient {
         return res.get(0);
     }
 
+    /**
+     * <p>Original spec-file function name: KButil_AddInsertLen_to_ReadsLibs</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.kbutildylan.KButilAddInsertLenToReadsLibsParams KButilAddInsertLenToReadsLibsParams} (original type "KButil_AddInsertLen_to_ReadsLibs_Params")
+     * @return   instance of type {@link us.kbase.kbutildylan.KButilAddInsertLenToReadsLibsOutput KButilAddInsertLenToReadsLibsOutput} (original type "KButil_AddInsertLen_to_ReadsLibs_Output")
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public KButilAddInsertLenToReadsLibsOutput kButilAddInsertLenToReadsLibs(KButilAddInsertLenToReadsLibsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<KButilAddInsertLenToReadsLibsOutput>> retType = new TypeReference<List<KButilAddInsertLenToReadsLibsOutput>>() {};
+        List<KButilAddInsertLenToReadsLibsOutput> res = caller.jsonrpcCall("kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
     public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};

@@ -393,6 +393,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_Translate_ReadsLibs_QualScores',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_Translate_ReadsLibs_QualScores'] = 'required'  # noqa
+        self.rpc_service.add(impl_kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs,
+                             name='kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.status,
                              name='kb_util_dylan.status',
                              types=[dict])

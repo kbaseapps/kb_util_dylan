@@ -386,6 +386,29 @@ class kb_util_dylan(object):
             'kb_util_dylan.KButil_Translate_ReadsLibs_QualScores',
             [params], self._service_ver, context)
 
+    def KButil_AddInsertLen_to_ReadsLibs(self, params, context=None):
+        """
+        :param params: instance of type
+           "KButil_AddInsertLen_to_ReadsLibs_Params"
+           (KButil_AddInsertLen_to_ReadsLibs() ** **  Method for Adding
+           Insert Len to PairedEnd ReadsLibs) -> structure: parameter
+           "workspace_name" of type "workspace_name" (** The workspace object
+           refs are of form: ** **    objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_refs" of type "data_obj_ref", parameter
+           "insert_len" of Double, parameter "insert_stddev" of Double
+        :returns: instance of type "KButil_AddInsertLen_to_ReadsLibs_Output"
+           -> structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        return self._client.call_method(
+            'kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs',
+            [params], self._service_ver, context)
+
     def status(self, context=None):
         return self._client.call_method('kb_util_dylan.status',
                                         [], self._service_ver, context)
