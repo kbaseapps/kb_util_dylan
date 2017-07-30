@@ -397,6 +397,10 @@ class Application(object):
                              name='kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs',
                              types=[dict])
         self.method_authentication['kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs'] = 'required'  # noqa
+        self.rpc_service.add(impl_kb_util_dylan.KButil_Build_AssemblySet,
+                             name='kb_util_dylan.KButil_Build_AssemblySet',
+                             types=[dict])
+        self.method_authentication['kb_util_dylan.KButil_Build_AssemblySet'] = 'required'  # noqa
         self.rpc_service.add(impl_kb_util_dylan.status,
                              name='kb_util_dylan.status',
                              types=[dict])

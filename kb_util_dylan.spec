@@ -367,5 +367,24 @@ module kb_util_dylan {
 
     funcdef KButil_AddInsertLen_to_ReadsLibs (KButil_AddInsertLen_to_ReadsLibs_Params params)  returns (KButil_AddInsertLen_to_ReadsLibs_Output) authentication required;
 
+
+    /* KButil_Build_AssemblySet()
+    **
+    **  Method for creating an AssemblySet
+    */
+    typedef structure {
+        workspace_name workspace_name;
+	data_obj_ref   input_refs;
+        data_obj_name  output_name;
+	string         desc;
+    } KButil_Build_AssemblySet_Params;
+
+    typedef structure {
+	data_obj_name report_name;
+	data_obj_ref  report_ref;
+    } KButil_Build_AssemblySet_Output;
+
+    funcdef KButil_Build_AssemblySet (KButil_Build_AssemblySet_Params params)  returns (KButil_Build_AssemblySet_Output) authentication required;
+
 };
 

@@ -1,0 +1,50 @@
+#
+# define display information
+#
+name: Build AssemblySet
+tooltip: |
+    Allows user to create an AssemblySet
+screenshots: []
+
+icon: kb-teal.png
+
+#
+# define a set of similar methods that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    desc:
+        ui-name : |
+            Description
+        short-hint : |
+            Describe Purpose or Contents of Output AssemblySet
+        placeholder: |
+            Enter Description
+    input_refs:
+        ui-name : |
+            Assembly Object Names
+        short-hint : |
+            Add a list of Assembly Object Names here
+    output_name:
+        ui-name : |
+            Output AssemblySet Name
+        short-hint : |
+            Name for the Output AssemblySet Collection
+
+
+description : |
+    <p>This method allows the user to group Assemblies into an AssemblySet.</p>

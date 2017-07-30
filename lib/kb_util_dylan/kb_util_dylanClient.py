@@ -409,6 +409,28 @@ class kb_util_dylan(object):
             'kb_util_dylan.KButil_AddInsertLen_to_ReadsLibs',
             [params], self._service_ver, context)
 
+    def KButil_Build_AssemblySet(self, params, context=None):
+        """
+        :param params: instance of type "KButil_Build_AssemblySet_Params"
+           (KButil_Build_AssemblySet() ** **  Method for creating an
+           AssemblySet) -> structure: parameter "workspace_name" of type
+           "workspace_name" (** The workspace object refs are of form: ** ** 
+           objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_refs" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Build_AssemblySet_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        return self._client.call_method(
+            'kb_util_dylan.KButil_Build_AssemblySet',
+            [params], self._service_ver, context)
+
     def status(self, context=None):
         return self._client.call_method('kb_util_dylan.status',
                                         [], self._service_ver, context)
