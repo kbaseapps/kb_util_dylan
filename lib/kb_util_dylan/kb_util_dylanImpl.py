@@ -1801,7 +1801,7 @@ class kb_util_dylan:
                                                                         'data': output_readsSet_obj
                                                                         })['set_ref']
             except Exception as e:
-                raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + param['workspace_name']+")\n" + str(e))
+                raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + params['workspace_name']+")\n" + str(e))
 
 
         # build output report object
@@ -3654,7 +3654,7 @@ class kb_util_dylan:
                                                                     'data': output_readsSet_obj
                                                                     })['set_ref']
         except Exception as e:
-            raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + param['workspace_name']+")\n" + str(e))
+            raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + params['workspace_name']+")\n" + str(e))
 
 
         # build report
@@ -4887,7 +4887,7 @@ class kb_util_dylan:
                                                                         'data': output_readsSet_obj
                                                                         })['set_ref']
             except Exception as e:
-                raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + param['workspace_name']+")\n" + str(e))
+                raise ValueError('SetAPI FAILURE: Unable to save read library set object to workspace: (' + params['workspace_name']+")\n" + str(e))
             new_objects = [{'ref':output_readsSet_ref,'description':readsSet_desc}] + new_objects
 
 
@@ -5039,8 +5039,8 @@ class kb_util_dylan:
                 raise ValueError('ERROR: unable to instantiate SetAPI' + str(e))
 
             output_assemblySet_obj = { 'description': params['desc'],
-                                    'items': items
-                                    }
+                                       'items': items
+                                     }
             output_assemblySet_name = params['output_name']
             try:
                 output_assemblySet_ref = setAPI_Client.save_assembly_set_v1 ({'workspace_name': params['workspace_name'],
@@ -5048,7 +5048,7 @@ class kb_util_dylan:
                                                                         'data': output_assemblySet_obj
                                                                         })['set_ref']
             except Exception as e:
-                raise ValueError('SetAPI FAILURE: Unable to save assembly set object to workspace: (' + param['workspace_name']+")\n" + str(e))
+                raise ValueError('SetAPI FAILURE: Unable to save assembly set object to workspace: (' + params['workspace_name']+")\n" + str(e))
 
 
         # build output report object
