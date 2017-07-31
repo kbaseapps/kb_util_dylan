@@ -298,7 +298,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_FASTQ_to_FASTA():
     ##
-    def HIDE_KButil_FASTQ_to_FASTA (self):
+    def test_KButil_FASTQ_to_FASTA (self):
         method = 'KButil_FASTQ_to_FASTA'
 
         print ("\n\nRUNNING: test_KButil_FASTQ_to_FASTA()")
@@ -332,7 +332,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Merge_FeatureSet_Collection():
     ##
-    def HIDE_KButil_Merge_FeatureSet_Collection (self):
+    def test_KButil_Merge_FeatureSet_Collection (self):
         method = 'KButil_Merge_FeatureSet_Collection'
 
         print ("\n\nRUNNING: test_KButil_Merge_FeatureSet_Collection()")
@@ -428,7 +428,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Merge_GenomeSets():
     ##
-    def HIDE_KButil_Merge_GenomeSets (self):
+    def test_KButil_Merge_GenomeSets (self):
         method = 'KButil_Merge_GenomeSets'
 
         print ("\n\nRUNNING: test_KButil_Merge_GenomeSets()")
@@ -516,7 +516,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Build_GenomeSet():
     ##
-    def HIDE_KButil_Build_GenomeSet (self):
+    def test_KButil_Build_GenomeSet (self):
         method = 'KButil_Build_GenomeSet'
 
         print ("\n\nRUNNING: test_KButil_Build_GenomeSet()")
@@ -560,7 +560,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Build_GenomeSet_from_FeatureSet():
     ##
-    def HIDE_KButil_Build_GenomeSet_from_FeatureSet (self):
+    def test_KButil_Build_GenomeSet_from_FeatureSet (self):
         method = 'KButil_Build_GenomeSet_from_FeatureSet'
 
         print ("\n\nRUNNING: test_KButil_Build_GenomeSet_from_FeatureSet()")
@@ -633,7 +633,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Add_Genomes_to_GenomeSet():
     ##
-    def HIDE_KButil_Add_Genomes_to_GenomeSet (self):
+    def test_KButil_Add_Genomes_to_GenomeSet (self):
         method = 'KButil_Add_Genomes_to_GenomeSet'
 
         print ("\n\nRUNNING: test_KButil_Add_Genomes_to_GenomeSet()")
@@ -700,7 +700,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Concat_MSAs():
     ##
-    def HIDE_KButil_Concat_MSAs (self):
+    def test_KButil_Concat_MSAs (self):
         method = 'KButil_Concat_MSAs'
 
         print ("\n\nRUNNING: test_KButil_Concat_MSAs()")
@@ -770,7 +770,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Build_ReadsSet()
     ##
-    def HIDE_KButil_Build_ReadsSet (self):
+    def test_KButil_Build_ReadsSet (self):
         method = 'KButil_Build_ReadsSet'
         
         print ("\n\nRUNNING: test_KButil_Build_ReadsSet()")
@@ -816,7 +816,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Split_Reads():
     ##
-    def HIDE_KButil_Split_Reads (self):
+    def test_KButil_Split_Reads (self):
         method = 'KButil_Split_Reads'
         
         print ("\n\nRUNNING: test_KButil_Split_Reads()")
@@ -875,7 +875,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Random_Subsample_Reads():
     ##
-    def HIDE_KButil_Random_Subsample_Reads (self):
+    def test_KButil_Random_Subsample_Reads (self):
         method = 'KButil_Random_Subsample_Reads'
         
         print ("\n\nRUNNING: test_KButil_Random_Subsample_Reads()")
@@ -924,7 +924,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Merge_ReadsSet_to_OneLibrary()
     ##
-    def HIDE_KButil_Merge_ReadsSet_to_OneLibrary (self):
+    def test_KButil_Merge_ReadsSet_to_OneLibrary (self):
         method = 'KButil_Merge_ReadsSet_to_OneLibrary'
 
         print ("\n\nRUNNING: test_KButil_Merge_ReadsSet_to_OneLibrary()")
@@ -959,7 +959,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Merge_MultipleReadsLibs_to_OneLibrary()
     ##
-    def HIDE_KButil_Merge_MultipleReadsLibs_to_OneLibrary (self):
+    def test_KButil_Merge_MultipleReadsLibs_to_OneLibrary (self):
         method = 'KButil_Merge_MultipleReadsLibs_to_OneLibrary'
 
         print ("\n\nRUNNING: test_KButil_Merge_MultipleReadsLibs_to_OneLibrary()")
@@ -1002,7 +1002,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Merge_MultipleReadsSets_to_OneReadsSet()
     ##
-    def HIDE_KButil_Merge_MultipleReadsSets_to_OneReadsSet (self):
+    def test_KButil_Merge_MultipleReadsSets_to_OneReadsSet (self):
         method = 'KButil_Merge_MultipleReadsSets_to_OneReadsSet'
 
         print ("\n\nRUNNING: test_KButil_Merge_MultipleReadsSetss_to_OneReadsSet()")
@@ -1105,7 +1105,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs():
     ##
-    def HIDE_KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs (self):
+    def test_KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs (self):
         method = 'KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs'
 
         print ("\n\nRUNNING: test_KButil_Extract_Unpaired_Reads_and_Synchronize_Pairs()")
@@ -1147,7 +1147,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_Translate_ReadsLibs_QualScores()
     ##
-    def HIDE_KButil_Translate_ReadsLibs_QualScores (self):
+    def test_KButil_Translate_ReadsLibs_QualScores (self):
         method = 'KButil_Translate_ReadsLibs_QualScores'
 
         print ("\n\nRUNNING: test_KButil_Translate_ReadsLibs_QualScores()")
@@ -1187,7 +1187,7 @@ class kb_util_dylanTest(unittest.TestCase):
 
     #### test_KButil_AddInsertLen_to_ReadsLibs()
     ##
-    def HIDE_KButil_AddInsertLen_to_ReadsLibs (self):
+    def test_KButil_AddInsertLen_to_ReadsLibs (self):
         method = 'KButil_AddInsertLen_to_ReadsLibs'
 
         print ("\n\nRUNNING: test_KButil_AddInsertLen_to_ReadsLibs()")
