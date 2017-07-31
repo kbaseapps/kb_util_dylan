@@ -14,6 +14,8 @@ from Workspace.WorkspaceClient import Workspace as workspaceService
 from biokbase.AbstractHandle.Client import AbstractHandle as HandleService
 from kb_util_dylan.kb_util_dylanImpl import kb_util_dylan
 from ReadsUtils.ReadsUtilsClient import ReadsUtils
+from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
+
 
 class kb_util_dylanTest(unittest.TestCase):
 
@@ -35,9 +37,12 @@ class kb_util_dylanTest(unittest.TestCase):
         cls.shockURL = cls.cfg['shock-url']
         cls.handleURL = cls.cfg['handle-service-url']
         cls.serviceWizardURL = cls.cfg['service-wizard-url']
+        cls.callbackURL = os.environ['SDK_CALLBACK_URL']
         cls.wsClient = workspaceService(cls.wsURL, token=token)
         cls.serviceImpl = kb_util_dylan(cls.cfg)
-
+        cls.scratch = os.path.abspath(cls.cfg['scratch'])
+        if not os.path.exists(cls.scratch):
+            os.makedirs(cls.scratch)
 
     @classmethod
     def tearDownClass(cls):
@@ -1224,4 +1229,61 @@ class kb_util_dylanTest(unittest.TestCase):
             pprint(output_obj)
             self.assertEqual(output_obj['insert_size_mean'],450.0)
             self.assertEqual(output_obj['insert_size_std_dev'],15.0)
+        pass
+
+
+    #### test_KButil_Build_AssemblySet()
+    ##
+    def test_KButil_Build_AssemblySet (self):
+        method = 'KButil_Build_AssemblySet'
+        
+        print ("\n\nRUNNING: test_KButil_Build_AssemblySet()")
+        print ("========================================\n\n")
+
+        # upload test data
+        try:
+            auClient = AssemblyUtil(self.callbackURL, token=self.token)
+        except Exception as e:
+            raise ValueError('Unable to instantiate auClient with callbackURL: '+ self.callbackURL +' ERROR: ' + str(e))
+        ass_file_1 = 'assembly_1.fa'
+        ass_file_2 = 'assembly_2.fa'
+        ass_path_1 = os.path.join(self.scratch, ass_file_1)
+        ass_path_2 = os.path.join(self.scratch, ass_file_2)
+        shutil.copy(os.path.join("data", ass_file_1), ass_path_1)
+        shutil.copy(os.path.join("data", ass_file_2), ass_path_2)
+        ass_ref_1 = auClient.save_assembly_from_fasta({
+            'file': {'path': ass_path_1},
+            'workspace_name': self.getWsName(),
+            'assembly_name': 'assembly_1'
+        })
+        ass_ref_2 = auClient.save_assembly_from_fasta({
+            'file': {'path': ass_path_2},
+            'workspace_name': self.getWsName(),
+            'assembly_name': 'assembly_1'
+        })
+
+        # run method
+        input_refs = [ ass_ref_1, ass_ref_2 ]
+        base_output_name = method+'_output'
+        params = {
+            'workspace_name': self.getWsName(),
+            'input_refs': input_refs,
+            'output_name': base_output_name,
+            'desc':'test build assemblySet'
+        }
+        result = self.getImpl().KButil_Build_AssemblySet(self.getContext(),params)
+        print('RESULT:')
+        pprint(result)
+
+        # check the output
+        output_name = base_output_name
+        output_type = 'KBaseSets.AssemblySet'
+        output_ref = self.getWsName() + '/' + output_name
+        info_list = self.getWsClient().get_object_info_new({'objects':[{'ref':output_ref}]})
+        self.assertEqual(len(info_list),1)
+        assemblySet_info = info_list[0]
+        self.assertEqual(assemblySet_info[1],output_name)
+        self.assertEqual(assemblySet_info[2].split('-')[0],output_type)
+        output_obj = self.getWsClient().get_objects2({'objects': [{'ref': output_ref}]})['data'][0]['data']
+        self.assertEqual(len(output_obj['items']), len(input_refs))
         pass

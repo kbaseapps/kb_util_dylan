@@ -55,7 +55,7 @@ class kb_util_dylan:
     ######################################### noqa
     VERSION = "1.0.0"
     GIT_URL = "https://github.com/dcchivian/kb_util_dylan"
-    GIT_COMMIT_HASH = "934bc6db1dd9783841dbc455a4244ccc2c2f1be2"
+    GIT_COMMIT_HASH = "83a58d9cb59b8a9bbc089729008e8ba70f3aec0e"
 
     #BEGIN_CLASS_HEADER
     workspaceURL = None
@@ -4914,6 +4914,190 @@ class kb_util_dylan:
         # At some point might do deeper type checking...
         if not isinstance(returnVal, dict):
             raise ValueError('Method KButil_AddInsertLen_to_ReadsLibs return value ' +
+                             'returnVal is not type dict as required.')
+        # return the results
+        return [returnVal]
+
+    def KButil_Build_AssemblySet(self, ctx, params):
+        """
+        :param params: instance of type "KButil_Build_AssemblySet_Params"
+           (KButil_Build_AssemblySet() ** **  Method for creating an
+           AssemblySet) -> structure: parameter "workspace_name" of type
+           "workspace_name" (** The workspace object refs are of form: ** ** 
+           objects = ws.get_objects([{'ref':
+           params['workspace_id']+'/'+params['obj_name']}]) ** ** "ref" means
+           the entire name combining the workspace id and the object name **
+           "id" is a numerical identifier of the workspace or object, and
+           should just be used for workspace ** "name" is a string identifier
+           of a workspace or object.  This is received from Narrative.),
+           parameter "input_refs" of type "data_obj_ref", parameter
+           "output_name" of type "data_obj_name", parameter "desc" of String
+        :returns: instance of type "KButil_Build_AssemblySet_Output" ->
+           structure: parameter "report_name" of type "data_obj_name",
+           parameter "report_ref" of type "data_obj_ref"
+        """
+        # ctx is the context object
+        # return variables are: returnVal
+        #BEGIN KButil_Build_AssemblySet
+        console = []
+        invalid_msgs = []
+        self.log(console,'Running KButil_Build_AssemblySet with params=')
+        self.log(console, "\n"+pformat(params))
+        report = ''
+#        report = 'Running KButil_Build_AssemblySet with params='
+#        report += "\n"+pformat(params)
+
+
+        #### do some basic checks
+        #
+        if 'workspace_name' not in params:
+            raise ValueError('workspace_name parameter is required')
+        if 'desc' not in params:
+            raise ValueError('desc parameter is required')
+        if 'input_refs' not in params:
+            raise ValueError('input_refs parameter is required')
+        if 'output_name' not in params:
+            raise ValueError('output_name parameter is required')
+
+        # clean input_refs
+        clean_input_refs = []
+        for ref in params['input_refs']:
+            if ref != None and ref != '':
+                clean_input_refs.append(ref)
+        params['input_refs'] = clean_input_refs
+
+        if len(params['input_refs']) < 1:
+            self.log(console,"Must provide at least one Assembly")
+            self.log(invalid_msgs,"Must provide at least one Assembly")
+
+            
+        # Build AssemblySet
+        #
+        items = []
+        ass_seen = dict()
+        set_type = None
+        
+        # DEBUG
+        #params['input_refs'] = ['18858/2/1', '18858/5/1']
+
+        for assRef in params['input_refs']:
+
+            try:
+                already_included = ass_seen[assRef]
+            except:
+                ass_seen[assRef] = True
+
+                try:
+                    ws = workspaceService(self.workspaceURL, token=ctx['token'])
+                    #objects = ws.get_objects([{'ref': assRef}])
+                    objects = ws.get_objects2({'objects':[{'ref': assRef}]})['data']
+                    data = objects[0]['data']
+                    info = objects[0]['info']
+                    assObj = data
+                    NAME_I = 1
+                    TYPE_I = 2
+                    ass_name = info[NAME_I]
+                    ass_type = info[TYPE_I].split('.')[1].split('-')[0]
+
+                    if set_type != None:
+                        if ass_type != set_type:
+                            raise ValueError ("Don't currently support heterogeneous AssemblySets.  You have more than one type in your input")
+                        set_type = ass_type
+                except Exception as e:
+                    raise ValueError('Unable to fetch input_name object from workspace: ' + str(e))
+                    
+                # add assembly
+                self.log(console,"adding assembly "+ass_name+" : "+assRef)  # DEBUG
+                items.append ({'ref': assRef,
+                               'label': ass_name
+                               #'data_attachment': ,
+                               #'info'
+                               })
+
+        # load the method provenance from the context object
+        #
+        self.log(console,"SETTING PROVENANCE")  # DEBUG
+        provenance = [{}]
+        if 'provenance' in ctx:
+            provenance = ctx['provenance']
+        # add additional info to provenance here, in this case the input data object reference
+        provenance[0]['input_ws_objects'] = []
+        for assRef in params['input_refs']:
+            provenance[0]['input_ws_objects'].append(assRef)
+        provenance[0]['service'] = 'kb_util_dylan'
+        provenance[0]['method'] = 'KButil_Build_AssemblySet'
+
+
+        # Store output object
+        #
+        if len(invalid_msgs) == 0:
+            self.log(console,"SAVING ASSEMBLY_SET")  # DEBUG
+
+            try:
+                setAPI_Client = SetAPI (url=self.serviceWizardURL, token=ctx['token'])  # for dynamic service
+            except Exception as e:
+                raise ValueError('ERROR: unable to instantiate SetAPI' + str(e))
+
+            output_assemblySet_obj = { 'description': params['desc'],
+                                    'items': items
+                                    }
+            output_assemblySet_name = params['output_name']
+            try:
+                output_assemblySet_ref = setAPI_Client.save_assembly_set_v1 ({'workspace_name': params['workspace_name'],
+                                                                        'output_object_name': output_assemblySet_name,
+                                                                        'data': output_assemblySet_obj
+                                                                        })['set_ref']
+            except Exception as e:
+                raise ValueError('SetAPI FAILURE: Unable to save assembly set object to workspace: (' + param['workspace_name']+")\n" + str(e))
+
+
+        # build output report object
+        #
+        self.log(console,"SAVING REPORT")  # DEBUG
+        if len(invalid_msgs) == 0:
+            self.log(console,"assembly objs in output set "+params['output_name']+": "+str(len(params['input_refs'])))
+            report += 'assembly objs in output set '+params['output_name']+': '+str(len(params['input_refs']))
+            reportObj = {
+                'objects_created':[{'ref':params['workspace_name']+'/'+params['output_name'], 'description':'KButil_Build_AssemblySet'}],
+                'text_message':report
+                }
+        else:
+            report += "FAILURE:\n\n"+"\n".join(invalid_msgs)+"\n"
+            reportObj = {
+                'objects_created':[],
+                'text_message':report
+                }
+
+        reportName = 'kb_util_dylan_build_assemblyset_report_'+str(uuid.uuid4())
+        ws = workspaceService(self.workspaceURL, token=ctx['token'])
+        report_obj_info = ws.save_objects({
+#                'id':info[6],
+                'workspace':params['workspace_name'],
+                'objects':[
+                    {
+                        'type':'KBaseReport.Report',
+                        'data':reportObj,
+                        'name':reportName,
+                        'meta':{},
+                        'hidden':1,
+                        'provenance':provenance
+                    }
+                ]
+            })[0]
+
+
+        # Build report and return
+        #
+        self.log(console,"BUILDING RETURN OBJECT")
+        returnVal = { 'report_name': reportName,
+                      'report_ref': str(report_obj_info[6]) + '/' + str(report_obj_info[0]) + '/' + str(report_obj_info[4]),
+                      }
+        self.log(console,"KButil_Build_AssemblySet DONE")
+        #END KButil_Build_AssemblySet
+
+        # At some point might do deeper type checking...
+        if not isinstance(returnVal, dict):
+            raise ValueError('Method KButil_Build_AssemblySet return value ' +
                              'returnVal is not type dict as required.')
         # return the results
         return [returnVal]
