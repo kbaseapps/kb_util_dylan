@@ -2691,7 +2691,7 @@ class kb_util_dylan:
                             found = paired_lib_i[read_id]
                             capture_type_paired = True
                         except:
-                            total_unpaired_fwd_reads += 1
+                            total_unpaired_rev_reads += 1
                             capture_type_paired = False
                     rec_buf.append(line)
                 # last rec
